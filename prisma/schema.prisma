@@ -1,0 +1,118 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id             Int              @id @default(autoincrement())
+  user_email          String           @unique
+  user_image_url      String? //윤수님 쳌
+  user_nickname       String?
+  user_point          Int              @default(0) // 탐험포인트 작명 어떻게
+  user_level          Int              @default(1) // 사용자의 레벨 정보
+  user_is_admin       Role             @default(BASIC)
+  user_authored_posts Post[] // 사용자가 작성한 포스트들
+  user_visited_places PlaceVisit[] // 사용자가 방문한 장소들
+  user_badges         Badge[] // 사용자의 뱃지들
+  user_is_deleted     Boolean          @default(false)
+  user_created_at     DateTime         @default(now())
+  user_updated_at     DateTime         @updatedAt
+  user_search_history SearchHistory[]
+  user_activities     UserActivities[]
+  user_refresh_token  String?
+}
+
+model UserActivities {
+  activity_id         Int      @id @default(autoincrement())
+  activity_user_id    Int?
+  activity_type       String // 활동 유형 (포스트 작성, 장소 방문, 뱃지 획득 등)
+  activity_details    Json // 활동에 대한 추가 정보 (예: 포스트 ID, 장소 ID, 뱃지 ID 등)
+  activity_created_at DateTime @default(now())
+  activity_user       User?    @relation(fields: [activity_user_id], references: [user_id])
+}
+
+model Post {
+  post_id          Int      @id @default(autoincrement())
+  post_created_at  DateTime @default(now())
+  post_updated_at  DateTime @updatedAt
+  post_description String?
+  post_image_url   String
+  post_author      User?    @relation(fields: [post_author_id], references: [user_id])
+  post_author_id   Int?
+  post_star_rating Float?
+  post_place       Place?   @relation(fields: [post_place_id], references: [place_id])
+  post_place_id    Int?
+  post_is_deleted  Boolean  @default(false)
+}
+
+model Place {
+  place_id          Int          @id @default(autoincrement())
+  place_created_at  DateTime     @default(now())
+  place_updated_at  DateTime     @updatedAt
+  place_name        String
+  place_star_rating Float?
+  place_point       Int?
+  place_address     String?
+  place_latitude    Float?
+  place_longitude   Float?
+  place_visited_by  PlaceVisit[]
+  place_category    Category?    @relation(fields: [place_category_id], references: [category_id])
+  place_category_id Int
+  place_posts       Post[] // 한 장소에 여러 개의 포스트가 연결됩니다.
+}
+
+model PlaceVisit {
+  visited_id       Int      @id @default(autoincrement())
+  visited_date     DateTime @default(now())
+  visited_place    Place    @relation(fields: [visited_place_id], references: [place_id])
+  visited_place_id Int
+  visited_user     User     @relation(fields: [visited_user_id], references: [user_id])
+  visited_user_id  Int
+}
+
+model Category {
+  category_id         Int      @id @default(autoincrement())
+  category_name       String
+  category_score      Int?
+  category_created_at DateTime @default(now())
+  category_updated_at DateTime @updatedAt
+  category_places     Place[]
+}
+
+model Badge {
+  badge_id       Int    @id @default(autoincrement())
+  badge_name     String
+  badge_category String // 뱃지 카테고리 
+  badge_criteria Int // 조건 레벨이랑 똑같이 어떻게 구현할지 지피티 더 고문해보갰씁니다
+  badge_user     User?  @relation(fields: [badge_user_id], references: [user_id])
+  badge_user_id  Int?
+}
+
+model SearchHistory {
+  search_history_id Int      @id @default(autoincrement())
+  search_keyword    String
+  search_time       DateTime @default(now())
+  search_user       User     @relation(fields: [search_user_id], references: [user_id])
+  search_user_id    Int
+}
+
+model Level {
+  level_id         Int      @id @default(autoincrement())
+  level_number     Int      @unique
+  level_name       String
+  level_min_score  Int // 499 짱탐험가, 500 짱짱탐험가 // 범위로 안하고 해도 되는지 지피티 짱 고문하기
+  level_created_at DateTime @default(now())
+  level_updated_at DateTime @updatedAt
+}
+
+enum Role {
+  BASIC
+  ADMIN
+}
+
+//참고 : https://vertabelo.com/blog/user-profile-database-model/
