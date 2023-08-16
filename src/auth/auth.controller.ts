@@ -1,19 +1,9 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Redirect,
-  Req,
-  Res,
-  UseGuards,
-} from "@nestjs/common";
+import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiProperty, ApiCreatedResponse, ApiTags } from "@nestjs/swagger";
 import { Response } from "express";
+import { GoogleAuthGuard, LoginGuard } from "./guard/auth.guard";
 
 export class AuthRes {
   @ApiProperty()
@@ -26,7 +16,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get("google")
-  @UseGuards(AuthGuard("google"))
+  @UseGuards(GoogleAuthGuard)
   async googleAuth(@Req() req) {}
 
   @Get("google/redirect")
@@ -36,16 +26,18 @@ export class AuthController {
     type: AuthRes,
   })
   @ApiCreatedResponse({ status: 403, description: "Forbidden." })
-  @UseGuards(AuthGuard("google"))
+  @UseGuards(GoogleAuthGuard)
   async googleAuthRedirect(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
   ) {
-    const token = await this.authService.googleLogin(req);
-    // 쿠키를 설정한 후 응답을 보내기
-    res.cookie("access_token", token, { domain: "fog-of-war-gray.vercel.app" });
-    // 리다이렉트 수행
-    res.redirect("https://fog-of-war-gray.vercel.app/");
+    const { user } = req;
+    return res.send(user);
+    // const token = await this.authService.googleLogin(req);
+    // // 쿠키를 설정한 후 응답을 보내기
+    // res.cookie("access_token", token, {
+    //   httpOnly: false,
+    // });
   }
 
   @Get("naver")
@@ -66,9 +58,7 @@ export class AuthController {
     const token = await this.authService.naverLogin(req);
 
     // 쿠키를 설정한 후 응답을 보내기
-    res.cookie("access_token", token, { domain: "fog-of-war-gray.vercel.app" });
-    // 리다이렉트 수행
-    res.redirect("https://fog-of-war-gray.vercel.app/");
+    res.cookie("access_token", token);
   }
 
   @Get("kakao")
@@ -88,8 +78,12 @@ export class AuthController {
   ) {
     const token = await this.authService.naverLogin(req);
     // 쿠키를 설정한 후 응답을 보내기
-    res.cookie("access_token", token, { domain: "fog-of-war-gray.vercel.app" });
-    // 리다이렉트 수행
-    res.redirect("https://fog-of-war-gray.vercel.app/");
+    res.cookie("access_token", token);
+  }
+
+  @UseGuards(LoginGuard)
+  @Get("test")
+  testGuard() {
+    return "로그인한사람만 보이지롱";
   }
 }

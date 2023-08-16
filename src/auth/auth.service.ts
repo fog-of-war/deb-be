@@ -28,10 +28,7 @@ export class AuthService {
     return this.signToken(user["user_id"], user["user_nickname"]);
   }
 
-  async signToken(
-    userId: number,
-    userNickname: string
-  ): Promise<{ access_token: string }> {
+  async signToken(userId: number, userNickname: string): Promise<string> {
     const payload = {
       sub: userId,
       userNickname,
@@ -41,6 +38,6 @@ export class AuthService {
       expiresIn: "60m",
       secret: secret,
     });
-    return { access_token: token };
+    return token;
   }
 }

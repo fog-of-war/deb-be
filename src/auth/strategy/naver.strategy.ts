@@ -43,11 +43,12 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
       })
       .toPromise();
     const profileInfo = response.data.response;
-    const { email, profile_image } = profileInfo;
+    const { id, email, profile_image } = profileInfo;
     let user = await this.usersService.findUserByEmail(email);
 
     if (!user) {
       const userDto = {
+        user_providerId: id,
         user_email: email,
         user_image_url: profile_image,
       };

@@ -11,6 +11,7 @@ datasource db {
 model User {
   user_id             Int              @id @default(autoincrement())
   user_email          String           @unique
+  user_providerId     String
   user_image_url      String? //윤수님 쳌
   user_nickname       String?
   user_point          Int              @default(0) // 탐험포인트 작명 어떻게

@@ -12,6 +12,11 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
+  user_providerId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
   user_email: string;
 
   @IsString()

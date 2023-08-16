@@ -26,13 +26,21 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
     profile: any,
     done: VerifyCallback
   ): Promise<any> {
-    const { emails, photos } = profile;
+    const { id, emails, photos } = profile;
+    console.log(
+      "🚀 ~ file: google.strategy.ts:30 ~ GoogleStrategy ~ classGoogleStrategyextendsPassportStrategy ~ id, emails, photos:",
+      id,
+      emails,
+      photos
+    );
+
     const email = emails[0].value;
 
     let user = await this.usersService.findUserByEmail(email);
 
     if (!user) {
       const userDto = {
+        user_providerId: id,
         user_email: email,
         user_image_url: photos[0].value,
       };
