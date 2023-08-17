@@ -54,7 +54,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       const userDto = {
         user_providerId: id,
         user_email: email,
-        user_image_url: photos[0].value,
       };
       try {
         user = await this.usersService.createUser(userDto);

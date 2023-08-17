@@ -18,9 +18,4 @@ export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty()
   user_email: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty()
-  user_image_url: string;
 }

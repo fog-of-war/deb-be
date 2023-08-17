@@ -29,7 +29,6 @@ export class KakaoStrategy extends PassportStrategy(Strategy, "kakao") {
       const userDto = {
         user_providerId: "kakao",
         user_email: _json.kakao_account.email,
-        user_image_url: _json.properties.thumbnail_image,
       };
       const user = await this.usersService.createUser(userDto);
       done(null, user);
