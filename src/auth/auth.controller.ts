@@ -19,7 +19,7 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   async googleAuth(@Req() req) {}
 
-  @Post("google/tokenplease")
+  @Post("google/oauth")
   @ApiCreatedResponse({
     status: 201,
     description: "success",
@@ -34,14 +34,14 @@ export class AuthController {
     const token = await this.authService.googleLogin(req);
     // 응답 헤더에 액세스 토큰을 추가
     res.header("Authorization", `Bearer ${token}`);
-    res.status(201).send({ access_token: token }); // 필요에 따라 응답 본문에도 추가
+    res.status(201).send({ access_token: token });
   }
 
   @Get("naver")
   @UseGuards(AuthGuard("naver"))
   async naverAuth(@Req() req) {}
 
-  @Get("naver/tokenplease")
+  @Post("naver/oauth")
   @ApiCreatedResponse({
     status: 201,
     description: "success",
@@ -53,16 +53,15 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ) {
     const token = await this.authService.naverLogin(req);
-    // 쿠키를 설정한 후 응답을 보내기
     res.header("Authorization", `Bearer ${token}`);
-    res.status(201).send({ access_token: token }); // 필요에 따라 응답 본문에도 추가
+    res.status(201).send({ access_token: token });
   }
 
   @Get("kakao")
   @UseGuards(AuthGuard("kakao"))
   async kakaoAuth(@Req() req) {}
 
-  @Get("kakao/tokenplease")
+  @Post("kakao/oauth")
   @ApiCreatedResponse({
     status: 201,
     description: "success",
@@ -81,7 +80,5 @@ export class AuthController {
 
   @UseGuards(LoginGuard)
   @Get("testno")
-  testGuard() {
-    return "로그인한사람만 보이지롱";
-  }
+  testGuard() {}
 }
