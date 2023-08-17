@@ -31,17 +31,17 @@ export class AuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
   ) {
-    console.log(req);
     const token = await this.authService.googleLogin(req);
-    // 쿠키를 설정한 후 응답을 보내기
-    return { access_token: token };
+    // 응답 헤더에 액세스 토큰을 추가
+    res.header("Authorization", `Bearer ${token}`);
+    res.status(201).send({ access_token: token }); // 필요에 따라 응답 본문에도 추가
   }
 
   @Get("naver")
   @UseGuards(AuthGuard("naver"))
   async naverAuth(@Req() req) {}
 
-  @Get("naver/redirect")
+  @Get("naver/tokenplease")
   @ApiCreatedResponse({
     status: 201,
     description: "success",
@@ -54,14 +54,15 @@ export class AuthController {
   ) {
     const token = await this.authService.naverLogin(req);
     // 쿠키를 설정한 후 응답을 보내기
-    res.cookie("access_token", token);
+    res.header("Authorization", `Bearer ${token}`);
+    res.status(201).send({ access_token: token }); // 필요에 따라 응답 본문에도 추가
   }
 
   @Get("kakao")
   @UseGuards(AuthGuard("kakao"))
   async kakaoAuth(@Req() req) {}
 
-  @Get("kakao/redirect")
+  @Get("kakao/tokenplease")
   @ApiCreatedResponse({
     status: 201,
     description: "success",
@@ -74,7 +75,8 @@ export class AuthController {
   ) {
     const token = await this.authService.naverLogin(req);
     // 쿠키를 설정한 후 응답을 보내기
-    res.cookie("access_token", token);
+    res.header("Authorization", `Bearer ${token}`);
+    res.status(201).send({ access_token: token }); // 필요에 따라 응답 본문에도 추가
   }
 
   @UseGuards(LoginGuard)
