@@ -6,7 +6,7 @@ import { Request, Response, NextFunction } from "express";
 @Injectable()
 export class PrefixMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    req.url = `/api/v1${req.url}`;
+    req.url = `${req.url}`;
     next();
   }
 }

@@ -55,6 +55,11 @@ export class AuthenticatedGuard implements CanActivate {
 @Injectable()
 export class GoogleAuthGuard extends AuthGuard("google") {
   async canActivate(context: any): Promise<boolean> {
+    // console.log(
+    //   "🚀 이게 뭔데 ~ file: auth.guard.ts:58 ~ GoogleAuthGuard ~ canActivate ~ context:",
+    //   context
+    // );
+
     const result = (await super.canActivate(context)) as boolean;
     const request = context.switchToHttp().getRequest();
     await super.logIn(request);

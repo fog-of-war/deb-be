@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiProperty, ApiCreatedResponse, ApiTags } from "@nestjs/swagger";
@@ -19,7 +19,7 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   async googleAuth(@Req() req) {}
 
-  @Get("google/redirect")
+  @Post("google/tokenplease")
   @ApiCreatedResponse({
     status: 201,
     description: "success",
@@ -31,13 +31,10 @@ export class AuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
   ) {
-    const { user } = req;
-    return res.send(user);
-    // const token = await this.authService.googleLogin(req);
-    // // 쿠키를 설정한 후 응답을 보내기
-    // res.cookie("access_token", token, {
-    //   httpOnly: false,
-    // });
+    console.log(req);
+    const token = await this.authService.googleLogin(req);
+    // 쿠키를 설정한 후 응답을 보내기
+    return { access_token: token };
   }
 
   @Get("naver")
@@ -56,7 +53,6 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ) {
     const token = await this.authService.naverLogin(req);
-
     // 쿠키를 설정한 후 응답을 보내기
     res.cookie("access_token", token);
   }
@@ -82,7 +78,7 @@ export class AuthController {
   }
 
   @UseGuards(LoginGuard)
-  @Get("test")
+  @Get("testno")
   testGuard() {
     return "로그인한사람만 보이지롱";
   }
