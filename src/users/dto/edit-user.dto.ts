@@ -2,10 +2,10 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsOptional, IsString, IsUrl, Length } from "class-validator";
 
 export class EditUserDto {
-  @IsEmail()
-  @IsOptional()
-  @ApiProperty()
-  user_email?: string;
+  // @IsEmail()
+  // @IsOptional()
+  // @ApiProperty()
+  // user_email?: string;
 
   @IsString()
   @IsOptional()
