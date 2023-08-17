@@ -26,4 +26,14 @@ export class UsersService {
       data: userDto,
     });
   }
+
+  leanUserInfo(user: any) {
+    delete user.user_id;
+    delete user.user_providerId;
+    delete user.is_deleted;
+    delete user.user_created_at;
+    delete user.user_updated_at;
+    delete user.user_refresh_token;
+    return user;
+  }
 }

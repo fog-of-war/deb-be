@@ -23,8 +23,9 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get("me")
-  getMe(@GetUser() user: User) {
-    return user;
+  async getMe(@GetUser() user: User) {
+    const result = await this.userService.leanUserInfo(user);
+    return result;
   }
 
   @Patch("me")
