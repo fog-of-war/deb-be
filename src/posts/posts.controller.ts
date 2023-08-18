@@ -9,6 +9,8 @@ import {
   Post,
   UseGuards,
   HttpCode,
+  HttpException,
+  HttpStatus,
 } from "@nestjs/common";
 import { JwtGuard } from "../auth/guard";
 import { PostsService } from "./posts.service";
@@ -25,7 +27,6 @@ export class PostsController {
   @Get()
   @SetPublic()
   getPosts() {
-    console.log("안녕");
     const result = this.postService.getPosts();
     console.log(result);
     return result;
@@ -53,8 +54,16 @@ export class PostsController {
       const result = this.postService.createPost(userId, dto);
       return result;
     } catch (error) {
-      // 에러 핸들링 코드
-      return { message: "Error occurred during post creation.", error };
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          error: "입력 형식을 확인하세요",
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        {
+          cause: error,
+        }
+      );
     }
   }
 
@@ -65,7 +74,21 @@ export class PostsController {
     @Param("id", ParseIntPipe) postId: number,
     @Body() dto: EditPostDto
   ) {
-    return this.postService.editPostById(userId, postId, dto);
+    try {
+      return this.postService.editPostById(userId, postId, dto);
+    } catch (error) {
+      // 에러 핸들링 코드
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          error: "입력 형식을 확인하세요",
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        {
+          cause: error,
+        }
+      );
+    }
   }
 
   @Delete(":id")
