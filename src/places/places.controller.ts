@@ -7,12 +7,14 @@ export class PlacesController {
 
   @Get("/search")
   async getPlaceSearch(
+    @Query("query") query: number,
     @Query("x") xCoordinate: number,
     @Query("y") yCoordinate: number,
     @Res() res
   ): Promise<void> {
     try {
       const searchResult = await this.placesService.findPlaceInfoFromKakao(
+        query,
         xCoordinate,
         yCoordinate
       );

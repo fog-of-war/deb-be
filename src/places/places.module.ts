@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
-import { PlacesService } from './places.service';
-import { PlacesController } from './places.controller';
+import { Module } from "@nestjs/common";
+import { PlacesService } from "./places.service";
+import { PlacesController } from "./places.controller";
+import { PrismaService } from "src/prisma/prisma.service";
 
 @Module({
-  providers: [PlacesService],
-  controllers: [PlacesController]
+  providers: [PlacesService, PrismaService],
+  controllers: [PlacesController],
 })
 export class PlacesModule {}
