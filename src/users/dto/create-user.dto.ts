@@ -1,6 +1,7 @@
 import { Optional } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import {
+  IsArray,
   IsEmail,
   IsNotEmpty,
   IsOptional,

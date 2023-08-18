@@ -5,6 +5,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
 import * as session from "express-session";
 import * as passport from "passport";
+import { PrismaService } from "./prisma/prisma.service";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -36,7 +37,8 @@ async function bootstrap() {
       cookie: { maxAge: 3600000 },
     })
   );
-
+  // const prismaService = app.get(PrismaService);
+  // await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
   app.use(passport.initialize());
   app.use(passport.session());
 

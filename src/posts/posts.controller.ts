@@ -14,18 +14,25 @@ import { JwtGuard } from "../auth/guard";
 import { PostsService } from "./posts.service";
 import { CreatePostDto, EditPostDto } from "./dto";
 import { GetUser } from "../auth/decorator";
+import { SetPublic } from "./docorator";
 import { ApiTags } from "@nestjs/swagger";
+
 @ApiTags("posts")
-@UseGuards(JwtGuard)
 @Controller("posts")
 export class PostsController {
   constructor(private postService: PostsService) {}
 
   @Get()
+  @SetPublic()
   getPosts() {
-    return this.postService.getPosts();
+    console.log("안녕");
+    const result = this.postService.getPosts();
+    console.log(result);
+    return result;
   }
-  @Get()
+
+  @Get("me")
+  @UseGuards(JwtGuard)
   getPostsByUserId(@GetUser("user_id") userId: number) {
     return this.postService.getPostsByUserId(userId);
   }
@@ -39,8 +46,10 @@ export class PostsController {
   }
 
   @Post()
+  @UseGuards(JwtGuard)
   createPost(@GetUser("user_id") userId: number, @Body() dto: CreatePostDto) {
     try {
+      console.log(dto);
       const result = this.postService.createPost(userId, dto);
       return result;
     } catch (error) {
@@ -50,6 +59,7 @@ export class PostsController {
   }
 
   @Patch(":id")
+  @UseGuards(JwtGuard)
   editPostById(
     @GetUser("user_id") userId: number,
     @Param("id", ParseIntPipe) postId: number,
@@ -60,6 +70,7 @@ export class PostsController {
 
   @Delete(":id")
   @HttpCode(204)
+  @UseGuards(JwtGuard)
   deletePost(
     @GetUser("user_id") userId: number,
     @Param("id", ParseIntPipe) postId: number

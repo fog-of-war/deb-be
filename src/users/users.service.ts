@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateUserDto, EditUserDto } from "./dto";
+import { CreateUserDto, EditUserDto, InitUserDto } from "./dto";
 
 @Injectable()
 export class UsersService {
@@ -9,6 +9,13 @@ export class UsersService {
     const user = await this.prisma.user.update({
       where: { user_id: userId },
       data: { ...dto },
+      select: {
+        user_nickname: true,
+        user_image_url: true,
+        user_point: true,
+        user_level: true,
+        user_is_admin: true,
+      },
     });
     return user;
   }
@@ -22,8 +29,22 @@ export class UsersService {
   }
 
   async createUser(userDto: CreateUserDto) {
+    const payload = {
+      ...userDto,
+      // user_authored_posts: [],
+      // user_visited_places: [],
+      // user_badges: [],
+    };
+
+    return this.initUser(payload);
+  }
+
+  async initUser(userDto: any) {
+    console.log(userDto);
     return this.prisma.user.create({
-      data: userDto,
+      data: {
+        ...userDto,
+      },
     });
   }
 

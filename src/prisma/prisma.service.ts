@@ -31,7 +31,7 @@ export class PrismaService extends PrismaClient {
       data: categories,
       skipDuplicates: true,
     });
-
-    return this.$transaction([this.user.deleteMany(), this.post.deleteMany()]);
+    // this.user.deleteMany(),
+    return this.$transaction([this.post.deleteMany()]);
   }
 }

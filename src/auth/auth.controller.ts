@@ -33,6 +33,7 @@ export class AuthController {
   ) {
     const token = await this.authService.googleLogin(req);
     // 응답 헤더에 액세스 토큰을 추가
+    console.log(`Bearer ${token}`);
     res.header("Authorization", `Bearer ${token}`);
     res.status(201).send({ access_token: token });
   }
