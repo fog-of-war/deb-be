@@ -8,7 +8,7 @@ import { AuthModule } from "./auth/auth.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
-import { CategoriesModule } from './categories/categories.module';
+import { CategoriesModule } from "./categories/categories.module";
 
 @Module({
   imports: [

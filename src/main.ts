@@ -37,8 +37,8 @@ async function bootstrap() {
       cookie: { maxAge: 3600000 },
     })
   );
-  // const prismaService = app.get(PrismaService);
-  // await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
+  const prismaService = app.get(PrismaService);
+  await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
   app.use(passport.initialize());
   app.use(passport.session());
 
