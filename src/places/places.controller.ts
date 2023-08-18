@@ -1,35 +1,26 @@
-import { Controller, Get, Query, Res } from "@nestjs/common";
-import { AxiosResponse } from "axios";
+import { Controller, Get, Query, Res, HttpStatus } from "@nestjs/common";
+import { PlacesService } from "./places.service"; // PlacesService의 경로로 수정해야 합니다.
 
 @Controller("places")
 export class PlacesController {
-  private readonly client_id = "w09nlHFa7rKbe4JiUSoG";
-  private readonly client_secret = "rTN8tm8Vaq";
+  constructor(private readonly placesService: PlacesService) {}
 
   @Get("/search")
-  async getBlogSearch(
-    @Query("query") query: string,
+  async getPlaceSearch(
+    @Query("x") xCoordinate: number,
+    @Query("y") yCoordinate: number,
     @Res() res
   ): Promise<void> {
-    const api_url = `https://openapi.naver.com/v1/search/local.json?query=${encodeURIComponent(
-      query
-    )}&display=5`;
-    const axios = require("axios").default;
-    const options = {
-      headers: {
-        "X-Naver-Client-Id": this.client_id,
-        "X-Naver-Client-Secret": this.client_secret,
-      },
-    };
-
     try {
-      const response: AxiosResponse<any> = await axios.get(api_url, options);
-      res.writeHead(200, { "Content-Type": "text/json;charset=utf-8" });
-      res.end(JSON.stringify(response.data));
+      const searchResult = await this.placesService.findPlaceInfoFromKakao(
+        xCoordinate,
+        yCoordinate
+      );
+      res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
-      const statusCode = error?.response?.status || 500;
-      res.status(statusCode).end();
-      console.error("error = " + statusCode);
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error occurred during search." });
     }
   }
 }

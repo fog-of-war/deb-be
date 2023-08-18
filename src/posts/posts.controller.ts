@@ -16,7 +16,6 @@ import { JwtGuard } from "../auth/guard";
 import { PostsService } from "./posts.service";
 import { CreatePostDto, EditPostDto } from "./dto";
 import { GetUser } from "../auth/decorator";
-import { SetPublic } from "./docorator";
 import { ApiTags } from "@nestjs/swagger";
 
 @ApiTags("posts")
@@ -25,7 +24,6 @@ export class PostsController {
   constructor(private postService: PostsService) {}
 
   @Get()
-  @SetPublic()
   getPosts() {
     const result = this.postService.getPosts();
     console.log(result);

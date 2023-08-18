@@ -37,58 +37,137 @@ export class PostsService {
   }
 
   /** 게시물 생성하기 */
-  async createPost(userId: number, dto: CreatePostDto) {
-    console.log("hi");
-    const existingPlace = await this.prisma.place.findFirst({
-      where: {
-        place_latitude: dto.latitude,
-        place_longitude: dto.longitude,
-      },
-    });
+  // async createPost(userId: number, dto: CreatePostDto) {
+  //   console.log("hi");
+  //   const existingPlace = await this.prisma.place.findFirst({
+  //     where: {
+  //       place_latitude: dto.latitude,
+  //       place_longitude: dto.longitude,
+  //     },
+  //   });
+  //   let post;
+  //   if (existingPlace) {
+  //     post = await this.prisma.post.create({
+  //       data: {
+  //         post_star_rating: dto.star_rating,
+  //         post_description: dto.description,
+  //         post_image_url: dto.image_url,
+  //         post_place: {
+  //           connect: {
+  //             place_id: existingPlace.place_id,
+  //           },
+  //         },
+  //         post_author: {
+  //           connect: { user_id: userId },
+  //         },
+  //       },
+  //     });
+  //   } else {
+  //     const newPlace = await this.prisma.place.create({
+  //       data: {
+  //         place_name: "fake matzip",
+  //         place_latitude: dto.latitude,
+  //         place_longitude: dto.longitude,
+  //         place_category_id: 1,
+  //         // 다른 필요한 장소 정보도 추가하세요.
+  //       },
+  //     });
+  //     post = await this.prisma.post.create({
+  //       data: {
+  //         post_star_rating: dto.star_rating,
+  //         post_description: dto.description,
+  //         post_image_url: dto.image_url,
+  //         post_place: {
+  //           connect: {
+  //             place_id: newPlace.place_id,
+  //           },
+  //         },
+  //         post_author: {
+  //           connect: { user_id: userId },
+  //         },
+  //       },
+  //     });
+  //   }
+  //   return post;
+  // }
+  async createPost(userId: number, dto: CreatePostDto): Promise<any> {
+    const existingPlace = await this.findPlaceByCoordinates(
+      dto.latitude,
+      dto.longitude
+    );
     let post;
     if (existingPlace) {
-      post = await this.prisma.post.create({
-        data: {
-          post_star_rating: dto.star_rating,
-          post_description: dto.description,
-          post_image_url: dto.image_url,
-          post_place: {
-            connect: {
-              place_id: existingPlace.place_id,
-            },
-          },
-          post_author: {
-            connect: { user_id: userId },
-          },
-        },
-      });
+      post = await this.createPostWithExistingPlace(existingPlace, userId, dto);
     } else {
-      const newPlace = await this.prisma.place.create({
-        data: {
-          place_name: "fake matzip",
-          place_latitude: dto.latitude,
-          place_longitude: dto.longitude,
-          place_category_id: 1,
-          // 다른 필요한 장소 정보도 추가하세요.
-        },
-      });
-      post = await this.prisma.post.create({
-        data: {
-          post_star_rating: dto.star_rating,
-          post_description: dto.description,
-          post_image_url: dto.image_url,
-          post_place: {
-            connect: {
-              place_id: newPlace.place_id,
-            },
-          },
-          post_author: {
-            connect: { user_id: userId },
-          },
-        },
-      });
+      const newPlace = await this.createPlace(dto.latitude, dto.longitude);
+      post = await this.createPostWithNewPlace(newPlace, userId, dto);
     }
     return post;
+  }
+
+  private async findPlaceByCoordinates(latitude: number, longitude: number) {
+    return this.prisma.place.findFirst({
+      where: {
+        place_latitude: latitude,
+        place_longitude: longitude,
+      },
+    });
+  }
+
+  private async createPlace(latitude: number, longitude: number) {
+    return this.prisma.place.create({
+      data: {
+        place_name: "fake matzip",
+        place_latitude: latitude,
+        place_longitude: longitude,
+        place_category_id: 1,
+        // 다른 필요한 장소 정보도 추가하세요.
+      },
+    });
+  }
+
+  private async createPostWithExistingPlace(
+    existingPlace: any,
+    userId: number,
+    dto: CreatePostDto
+  ) {
+    return this.prisma.post.create({
+      data: {
+        post_star_rating: dto.star_rating,
+        post_description: dto.description,
+        post_image_url: dto.image_url,
+        post_place: {
+          connect: {
+            place_id: existingPlace.place_id,
+          },
+        },
+        post_author: {
+          connect: { user_id: userId },
+        },
+      },
+    });
+  }
+
+  private async createPostWithNewPlace(
+    newPlace: any,
+    userId: number,
+    dto: CreatePostDto
+  ) {
+    return this.prisma.post.create({
+      data: {
+        post_star_rating: dto.star_rating,
+        post_description: dto.description,
+        post_image_url: dto.image_url,
+        post_place: {
+          connect: {
+            place_id: newPlace.place_id,
+          },
+        },
+        post_author: {
+          connect: { user_id: userId },
+        },
+      },
+    });
   }
 
   /** 게시물 수정하기 */
