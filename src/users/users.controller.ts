@@ -29,15 +29,21 @@ export class UsersController {
   }
 
   @Patch("me")
-  async editUser(@GetUser("user_id") userId: number, @Body() dto: EditUserDto) {
+  async editUser(@Body() dto: EditUserDto) {
     // 유효성 검사 수행
     const errors = await validate(dto);
     if (errors.length > 0) {
-      throw new UnprocessableEntityException(errors);
+      const errorResponse = {
+        message: "Validation failed",
+        errors: errors.map((error) => ({
+          field: error.property,
+          message: Object.values(error.constraints).join(", "),
+        })),
+      };
+      throw new UnprocessableEntityException(errorResponse);
     }
     try {
-      const result = await this.userService.editUser(userId, dto);
-      return result;
+      // editUser 로직 실행
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaClient } from "@prisma/client";
+import * as placesData from "./landmarks.json";
 
 @Injectable()
 export class PrismaService extends PrismaClient {
@@ -31,10 +32,25 @@ export class PrismaService extends PrismaClient {
       data: categories,
       skipDuplicates: true,
     });
-    //this.user.deleteMany(),
-    //this.post.deleteMany()
-    //this.place.deleteMany()
-    //this.post.deleteMany()
+    await this.insertPlaces();
     return this.$transaction([]);
+  }
+
+  async insertPlaces() {
+    for (const placeName in placesData) {
+      const placeData = placesData[placeName];
+
+      await this.place.create({
+        data: {
+          place_name: placeData.place_name,
+          place_address: placeData.place_address,
+          place_latitude: placeData.place_latitude,
+          place_longitude: placeData.place_longitude,
+          place_category: {
+            connect: { category_id: placeData.place_category_id },
+          },
+        },
+      });
+    }
   }
 }
