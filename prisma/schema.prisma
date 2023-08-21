@@ -41,7 +41,7 @@ model Place {
   place_id          Int          @id @default(autoincrement())
   place_created_at  DateTime     @default(now())
   place_updated_at  DateTime     @updatedAt
-  place_name        String
+  place_name        String       @unique
   place_star_rating Float?
   place_point       Int?
   place_address     String?
