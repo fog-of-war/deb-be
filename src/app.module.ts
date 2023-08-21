@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, ValidationPipe } from "@nestjs/common";
 import { PlacesModule } from "./places/places.module";
 import { UsersModule } from "./users/users.module";
 import { BadgesModule } from "./badges/badges.module";
@@ -9,7 +9,7 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
 import { CategoriesModule } from "./categories/categories.module";
-
+import { ValidationPipe422 } from "./validation_custom";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -24,6 +24,11 @@ import { CategoriesModule } from "./categories/categories.module";
     CategoriesModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: ValidationPipe,
+      useClass: ValidationPipe422,
+    },
+  ],
 })
 export class AppModule {}
