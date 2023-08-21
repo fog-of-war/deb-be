@@ -40,17 +40,25 @@ export class PrismaService extends PrismaClient {
     for (const placeName in placesData) {
       const placeData = placesData[placeName];
 
-      await this.place.create({
-        data: {
-          place_name: placeData.place_name,
-          place_address: placeData.place_address,
-          place_latitude: placeData.place_latitude,
-          place_longitude: placeData.place_longitude,
-          place_category: {
-            connect: { category_id: placeData.place_category_id },
-          },
-        },
+      // 데이터베이스에 해당 장소 이름이 있는지 확인
+      const existingPlace = await this.place.findFirst({
+        where: { place_name: placeData.place_name },
       });
+
+      if (!existingPlace) {
+        // 장소 데이터 생성
+        await this.place.create({
+          data: {
+            place_name: placeData.place_name,
+            place_address: placeData.place_address,
+            place_latitude: placeData.place_latitude,
+            place_longitude: placeData.place_longitude,
+            place_category: {
+              connect: { category_id: placeData.place_category_id },
+            },
+          },
+        });
+      }
     }
   }
 }

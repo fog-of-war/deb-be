@@ -1,6 +1,10 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { ValidationPipe } from "@nestjs/common";
+import {
+  UnprocessableEntityException,
+  ValidationError,
+  ValidationPipe,
+} from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
 import * as session from "express-session";
@@ -23,10 +27,22 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      // 이 옵션을 추가하여 DTO에 정의되지 않은 속성은 필터링합니다.
-      // 몰래 id 를 보내서 pk를 조작하려고 하는 등의 경우를 막아줌
-      forbidNonWhitelisted: true, // 이 옵션을 추가하여 DTO에 정의되지 않은 속성이 들어올 경우 요청을 거부합니다.
-      transform: true, // 요청 본문 데이터 변환 활성화
+      forbidNonWhitelisted: true,
+      transform: true,
+      exceptionFactory: (validationErrors: ValidationError[]) => {
+        // 여기서 원하는 예외 처리 로직을 구현합니다.
+        // 예를 들어, 무조건 422 Unprocessable Entity를 반환하도록 만들 수 있습니다.
+        const formattedErrors = validationErrors.map((error) => ({
+          property: error.property,
+          constraints: error.constraints,
+        }));
+
+        return new UnprocessableEntityException({
+          statusCode: 422,
+          message: "입력 형식을 확인하세요",
+          errors: formattedErrors,
+        });
+      },
     })
   );
   app.use(cookieParser());

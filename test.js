@@ -128,7 +128,7 @@ const placesArray = [
     place_longitude: 37.5736051123377,
   },
 ];
-const baseUrl = "http://localhost:5000/v1/places/init";
+const baseUrl = "https://api.yubinhome.com/v1/places/init";
 async function fetchData(placeObj) {
   const { place_name, place_latitude, place_longitude } = placeObj;
   const url = `${baseUrl}?place_name=${encodeURIComponent(

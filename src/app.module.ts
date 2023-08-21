@@ -9,7 +9,6 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
 import { CategoriesModule } from "./categories/categories.module";
-import { ValidationPipe422 } from "./validation_custom";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -24,11 +23,6 @@ import { ValidationPipe422 } from "./validation_custom";
     CategoriesModule,
   ],
   controllers: [],
-  providers: [
-    {
-      provide: ValidationPipe,
-      useClass: ValidationPipe422,
-    },
-  ],
+  providers: [],
 })
 export class AppModule {}
