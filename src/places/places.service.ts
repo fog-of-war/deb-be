@@ -27,7 +27,13 @@ export class PlacesService {
     };
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
-      return response.data;
+      const place_address = this.addAddress(response.data.documents[0]);
+      const place_category = this.setCategory(response.data.documents[0]);
+      return {
+        response: response.data,
+        place_address: place_address,
+        place_category: place_category,
+      };
     } catch (error) {
       throw new Error(`findPlaceInfoFromKakao: 카카오에서 해당 장소 검색 실패`);
     }
@@ -39,7 +45,7 @@ export class PlacesService {
         doc.place_name.includes(query)
       );
       if (isQueryIncluded) {
-        console.log(`"${query}" 문자열이 응답 데이터 안에 포함되어 있습니다.`);
+        // console.log(`"${query}" 문자열이 응답 데이터 안에 포함되어 있습니다.`);
         // console.log(response.data);
         resolve(response);
       } else {
@@ -50,7 +56,11 @@ export class PlacesService {
     });
   }
 
-  setCategory(response: any, place: any) {
+  addAddress(payload: any): string {
+    return payload.road_address_name || payload.address_name || "";
+  }
+
+  setCategory(payload: any): number | undefined {
     const categoryMappings = {
       음식점: 1,
       "스포츠,레저": 2,
@@ -61,26 +71,39 @@ export class PlacesService {
       카페: 5,
       // ... 여기에 추가적인 카테고리와 매핑을 추가할 수 있습니다.
     };
+
+    for (const category of Object.keys(categoryMappings)) {
+      if (payload.category_name.includes(category)) {
+        return categoryMappings[category];
+      }
+    }
+
+    return undefined; // 매핑이 없는 경우 undefined 반환
   }
+
   async createPlace(
     place_name: string,
     place_latitude: number,
     place_longitude: number
   ) {
     try {
-      const search = await this.findPlaceInfoFromKakao(
-        place_name,
-        place_latitude,
-        place_longitude
-      );
-      await this.checkQueryInResponsePlaces(search, place_name);
+      const { response, place_address, place_category } =
+        await this.findPlaceInfoFromKakao(
+          place_name,
+          place_latitude,
+          place_longitude
+        );
+
+      await this.checkQueryInResponsePlaces(response, place_name);
+
       const createdPlace = await this.prisma.place.create({
         data: {
           place_name: place_name,
           place_latitude: place_latitude,
           place_longitude: place_longitude,
+          place_address: place_address,
           place_category: {
-            connect: { category_id: 1 },
+            connect: { category_id: place_category || 6 }, // If category is not found, default to 6(기본)
           },
         },
       });
