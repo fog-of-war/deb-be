@@ -54,7 +54,7 @@ COPY . .
 RUN npx prisma generate
 
 # Prisma 파일 생성
-RUN npx migrate dev 
+RUN npx prisma migrate dev 
 
 # 서버를 포트 5000으로 실행하도록 설정
 EXPOSE 5000
