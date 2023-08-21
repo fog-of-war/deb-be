@@ -26,6 +26,7 @@ async function bootstrap() {
       // 이 옵션을 추가하여 DTO에 정의되지 않은 속성은 필터링합니다.
       // 몰래 id 를 보내서 pk를 조작하려고 하는 등의 경우를 막아줌
       forbidNonWhitelisted: true, // 이 옵션을 추가하여 DTO에 정의되지 않은 속성이 들어올 경우 요청을 거부합니다.
+      transform: true, // 요청 본문 데이터 변환 활성화
     })
   );
   app.use(cookieParser());

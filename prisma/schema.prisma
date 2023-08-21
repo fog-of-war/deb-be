@@ -37,20 +37,6 @@ model UserActivities {
   activity_user       User?    @relation(fields: [activity_user_id], references: [user_id])
 }
 
-model Post {
-  post_id          Int      @id @default(autoincrement())
-  post_created_at  DateTime @default(now())
-  post_updated_at  DateTime @updatedAt
-  post_description String?
-  post_image_url   String
-  post_author      User     @relation(fields: [post_author_id], references: [user_id])
-  post_author_id   Int
-  post_star_rating Float?
-  post_place       Place?   @relation(fields: [post_place_id], references: [place_id])
-  post_place_id    Int?
-  post_is_deleted  Boolean  @default(false)
-}
-
 model Place {
   place_id          Int          @id @default(autoincrement())
   place_created_at  DateTime     @default(now())
@@ -64,7 +50,21 @@ model Place {
   place_visited_by  PlaceVisit[]
   place_category    Category?    @relation(fields: [place_category_id], references: [category_id])
   place_category_id Int
-  place_posts       Post[] // 한 장소에 여러 개의 포스트가 연결됩니다.
+  place_posts       Post[] // 연관된 게시물 필수 제약 조건 삭제
+}
+
+model Post {
+  post_id          Int      @id @default(autoincrement())
+  post_created_at  DateTime @default(now())
+  post_updated_at  DateTime @updatedAt
+  post_description String?
+  post_image_url   String
+  post_author      User     @relation(fields: [post_author_id], references: [user_id])
+  post_author_id   Int
+  post_star_rating Float?
+  post_place       Place?   @relation(fields: [post_place_id], references: [place_id])
+  post_place_id    Int?
+  post_is_deleted  Boolean  @default(false)
 }
 
 model PlaceVisit {
