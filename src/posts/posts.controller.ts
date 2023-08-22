@@ -18,6 +18,7 @@ import { CreatePostDto, EditPostDto } from "./dto";
 import { GetUser } from "../auth/decorator";
 import { ApiTags } from "@nestjs/swagger";
 import { ApiBearerAuth } from "@nestjs/swagger";
+
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {

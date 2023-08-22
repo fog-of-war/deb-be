@@ -84,8 +84,4 @@ export class AuthController {
     res.header("Authorization", `Bearer ${token}`);
     res.status(201).send({ access_token: token }); // 필요에 따라 응답 본문에도 추가
   }
-
-  @UseGuards(LoginGuard)
-  @Get("testno")
-  testGuard() {}
 }

@@ -55,6 +55,9 @@ export class UsersService {
       "user_level",
       "user_is_admin",
       "user_is_deleted",
+      "user_badges",
+      "user_visited_places",
+      "user_authored_posts",
     ];
 
     const leanUser = {};

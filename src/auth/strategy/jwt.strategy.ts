@@ -18,7 +18,16 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
       where: {
         user_id: payload.sub,
       },
+      include: {
+        user_badges: true,
+        user_visited_places: true,
+        user_authored_posts: true,
+      },
     });
+    console.log(
+      "🚀 ~ file: jwt.strategy.ts:27 ~ JwtStrategy ~ validate ~ user:",
+      user
+    );
     return user;
   }
 }
