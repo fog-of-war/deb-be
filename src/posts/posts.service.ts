@@ -38,6 +38,9 @@ export class PostsService {
       where: {
         post_id: postId,
       },
+      include: {
+        post_place: true, // Include the associated Place information
+      },
     });
 
     if (!post) {
