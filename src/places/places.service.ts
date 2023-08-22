@@ -118,13 +118,13 @@ export class PlacesService {
       createdPlace = await this.prisma.place.create({
         data: data,
       });
-      console.log(createdPlace);
+      // console.log(createdPlace);
       if (!createdPlace) {
         throw new Error(
           `createPlace: 장소 생성 실패 - 데이터베이스에 새 장소가 생성되지 않았습니다.`
         );
       }
-      console.log(createdPlace);
+      // console.log(createdPlace);
       return createdPlace;
     } catch (error) {
       throw new Error(`createPlace: 장소 생성 실패 - ${error.message}`);
@@ -133,7 +133,7 @@ export class PlacesService {
 
   async getAll() {
     const result = await this.prisma.place.findMany({});
-    console.log(result);
+    // console.log(result);
     return result;
   }
 }

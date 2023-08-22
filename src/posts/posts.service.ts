@@ -27,8 +27,6 @@ export class PostsService {
         post_place: true, // Include the associated Place information
       },
     });
-
-    console.log(result);
     return result;
   }
 

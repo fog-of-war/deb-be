@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   InternalServerErrorException,
   NotFoundException,
   Patch,
@@ -14,7 +15,7 @@ import { GetUser } from "../auth/decorator";
 import { JwtGuard } from "../auth/guard";
 import { UsersService } from "./users.service";
 import { EditUserDto } from "./dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { validate } from "class-validator";
 @ApiTags("users")
 @UseGuards(JwtGuard)
@@ -23,12 +24,15 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get("me")
+  @ApiBearerAuth("access_token")
   async getMe(@GetUser() user: User) {
     const result = await this.userService.leanUserInfo(user);
     return result;
   }
 
   @Patch("me")
+  @ApiBearerAuth("access_token")
+  @HttpCode(201)
   async editUser(@GetUser("user_id") userId: number, @Body() dto: EditUserDto) {
     // 유효성 검사 수행
     const errors = await validate(dto);

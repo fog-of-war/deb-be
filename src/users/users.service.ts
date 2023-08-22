@@ -17,7 +17,6 @@ export class UsersService {
         user_is_admin: true,
       },
     });
-    console.log(user);
     return user;
   }
 
@@ -41,7 +40,6 @@ export class UsersService {
   }
 
   async initUser(userDto: any) {
-    console.log(userDto);
     return this.prisma.user.create({
       data: {
         ...userDto,

@@ -17,7 +17,7 @@ import { PostsService } from "./posts.service";
 import { CreatePostDto, EditPostDto } from "./dto";
 import { GetUser } from "../auth/decorator";
 import { ApiTags } from "@nestjs/swagger";
-
+import { ApiBearerAuth } from "@nestjs/swagger";
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {
@@ -34,8 +34,13 @@ export class PostsController {
   }
 
   @Get("me")
+  @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
   async getPostsByUserId(@GetUser("user_id") userId: number) {
+    console.log(
+      "🚀 ~ file: posts.controller.ts:39 ~ PostsController ~ getPostsByUserId ~ user_id:",
+      userId
+    );
     const result = await this.postService.getPostsByUserId(userId);
     return result;
   }
@@ -49,10 +54,12 @@ export class PostsController {
   }
 
   @Post()
+  @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
+  @HttpCode(201)
   createPost(@GetUser("user_id") userId: number, @Body() dto: CreatePostDto) {
     try {
-      console.log(dto);
+      // console.log(dto);
       const result = this.postService.createPost(userId, dto);
       return result;
     } catch (error) {
@@ -70,7 +77,9 @@ export class PostsController {
   }
 
   @Patch(":id")
+  @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
+  @HttpCode(201)
   editPostById(
     @GetUser("user_id") userId: number,
     @Param("id", ParseIntPipe) postId: number,
