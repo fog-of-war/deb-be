@@ -48,7 +48,7 @@ export class UsersController {
     }
     try {
       const result = await this.userService.editUser(userId, dto);
-      return result;
+      return { message: "유저 정보 변경에 성공" };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

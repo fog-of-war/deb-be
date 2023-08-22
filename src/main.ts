@@ -45,6 +45,7 @@ async function bootstrap() {
       },
     })
   );
+
   app.use(cookieParser());
   app.use(
     session({
@@ -64,6 +65,11 @@ async function bootstrap() {
     .setDescription("The fog of war API description")
     .setVersion("1.0")
     .addTag("fog of war")
+    .addSecurity("bearer", {
+      type: "http",
+      scheme: "bearer",
+    })
+    .addOAuth2()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);

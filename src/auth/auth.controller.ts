@@ -1,7 +1,12 @@
 import { Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiProperty, ApiCreatedResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiProperty,
+  ApiCreatedResponse,
+  ApiTags,
+  ApiOAuth2,
+} from "@nestjs/swagger";
 import { Response } from "express";
 import { GoogleAuthGuard, LoginGuard } from "./guard/auth.guard";
 
@@ -16,6 +21,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get("google")
+  // @ApiOAuth2()
   @UseGuards(GoogleAuthGuard)
   async googleAuth(@Req() req) {}
 
