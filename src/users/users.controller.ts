@@ -29,7 +29,7 @@ export class UsersController {
   }
 
   @Patch("me")
-  async editUser(@Body() dto: EditUserDto) {
+  async editUser(@GetUser("user_id") userId: number, @Body() dto: EditUserDto) {
     // 유효성 검사 수행
     const errors = await validate(dto);
     if (errors.length > 0) {
@@ -43,7 +43,8 @@ export class UsersController {
       throw new UnprocessableEntityException(errorResponse);
     }
     try {
-      // editUser 로직 실행
+      const result = await this.userService.editUser(userId, dto);
+      return result;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

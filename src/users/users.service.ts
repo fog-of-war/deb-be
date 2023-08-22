@@ -17,6 +17,7 @@ export class UsersService {
         user_is_admin: true,
       },
     });
+    console.log(user);
     return user;
   }
 

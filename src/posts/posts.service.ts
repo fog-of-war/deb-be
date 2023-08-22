@@ -11,7 +11,11 @@ export class PostsService {
   ) {}
   /** 여러 개의 게시물 가져오기 */
   async getPosts() {
-    return this.prisma.post.findMany();
+    return this.prisma.post.findMany({
+      include: {
+        post_place: true, // Include the associated Place information
+      },
+    });
   }
 
   /** 여러 개의 게시물 가져오기 */
