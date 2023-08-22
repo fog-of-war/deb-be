@@ -25,10 +25,6 @@ export class UsersController {
   @Get("me")
   async getMe(@GetUser() user: User) {
     const result = await this.userService.leanUserInfo(user);
-    console.log(
-      "🚀 ~ file: users.controller.ts:47 ~ UsersController ~ getMe ~ result:",
-      result
-    );
     return result;
   }
 
@@ -48,11 +44,6 @@ export class UsersController {
     }
     try {
       const result = await this.userService.editUser(userId, dto);
-      console.log(
-        "🚀 ~ file: users.controller.ts:47 ~ UsersController ~ editUser ~ result:",
-        result
-      );
-
       return result;
     } catch (error) {
       if (error instanceof NotFoundException) {

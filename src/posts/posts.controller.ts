@@ -24,16 +24,20 @@ export class PostsController {
   constructor(private postService: PostsService) {}
 
   @Get()
-  getPosts() {
-    const result = this.postService.getPosts();
-    console.log(result);
+  async getPosts() {
+    const result = await this.postService.getPosts();
+    console.log(
+      "🚀 ~ file: posts.controller.ts:30 ~ PostsController ~ getPosts ~ result:",
+      result
+    );
     return result;
   }
 
   @Get("me")
   @UseGuards(JwtGuard)
-  getPostsByUserId(@GetUser("user_id") userId: number) {
-    return this.postService.getPostsByUserId(userId);
+  async getPostsByUserId(@GetUser("user_id") userId: number) {
+    const result = await this.postService.getPostsByUserId(userId);
+    return result;
   }
 
   @Get(":id")
