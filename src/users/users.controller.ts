@@ -44,6 +44,7 @@ export class UsersController {
     }
     try {
       const result = await this.userService.editUser(userId, dto);
+      console.log(result);
       return result;
     } catch (error) {
       if (error instanceof NotFoundException) {

@@ -50,12 +50,21 @@ export class UsersService {
   }
 
   leanUserInfo(user: any) {
-    delete user.user_id;
-    delete user.user_providerId;
-    delete user.is_deleted;
-    delete user.user_created_at;
-    delete user.user_updated_at;
-    delete user.user_refresh_token;
-    return user;
+    const selectedFields = [
+      "user_image_url",
+      "user_nickname",
+      "user_point",
+      "user_level",
+      "user_is_admin",
+      "user_is_deleted",
+    ];
+
+    const leanUser = {};
+
+    selectedFields.forEach((field) => {
+      leanUser[field] = user[field];
+    });
+
+    return leanUser;
   }
 }
