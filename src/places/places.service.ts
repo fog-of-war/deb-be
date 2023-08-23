@@ -18,13 +18,19 @@ export class PlacesService {
         Authorization: "KakaoAK " + this.clientID,
       },
       params: {
-        y: y,
         x: x,
+        y: y,
         query: query,
-        radius: 100,
+        radius: 20000,
         size: 15,
+        sort: "distance",
       },
     };
+    console.log(
+      "🚀 ~ file: places.service.ts:28 ~ PlacesService ~ findPlacesInfoFromKakao ~ options:",
+      options
+    );
+
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
 
