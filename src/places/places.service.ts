@@ -25,12 +25,8 @@ export class PlacesService {
     };
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
-      const place_address = this.addAddress(response.data.documents[0]);
-      const place_category = this.setCategory(response.data.documents[0]);
       return {
         response: response.data,
-        place_address: place_address,
-        place_category: place_category,
       };
     } catch (error) {
       throw new Error(`findPlaceInfoFromKakao: 카카오에서 해당 장소 검색 실패`);
@@ -55,6 +51,10 @@ export class PlacesService {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
       const place_address = this.addAddress(response.data.documents[0]);
       const place_category = this.setCategory(response.data.documents[0]);
+      console.log(
+        "🚀 ~ file: places.service.ts:54 ~ PlacesService ~ findPlaceInfoFromKakao ~ place_category:",
+        place_category
+      );
       return {
         response: response.data,
         place_address: place_address,
@@ -97,21 +97,39 @@ export class PlacesService {
   setCategory(payload: any): number | undefined {
     try {
       const categoryMappings = {
-        음식점: 1,
-        "스포츠,레저": 2,
-        미술관: 3,
-        문화유적: 4,
-        기념관: 4,
-        전시관: 4,
-        카페: 5,
+        음식점: 2,
+        "스포츠,레저": 3,
+        미술관: 4,
+        문화유적: 5,
+        기념관: 5,
+        전시관: 5,
+        카페: 6,
         // ... 여기에 추가적인 카테고리와 매핑을 추가할 수 있습니다.
       };
-      for (const category of Object.keys(categoryMappings)) {
-        if (payload.category_name.includes(category)) {
-          return categoryMappings[category];
+      let categoryNames = [];
+
+      if (typeof payload.category_name === "string") {
+        categoryNames.push(payload.category_name);
+      } else if (Array.isArray(payload.category_name)) {
+        categoryNames = payload.category_name;
+      }
+      console.log(
+        "🚀 ~ file: places.service.ts:106 ~ PlacesService ~ setCategory ~ categoryNames:",
+        categoryNames
+      );
+
+      let 객체;
+      for (const categoryName of categoryNames) {
+        if (categoryMappings.hasOwnProperty(categoryName)) {
+          객체 = categoryMappings[categoryName];
         }
       }
-      return 6; // 매핑이 없는 경우 undefined 반환
+
+      console.log(
+        "🚀 ~ file: places.service.ts:106 ~ PlacesService ~ setCategory ~ 객체:",
+        객체
+      );
+      return 7; // 매핑이 없는 경우 undefined 반환
     } catch (error) {
       console.error("setCategory 에러:", error);
       return undefined; // 에러 발생 시 undefined 반환
@@ -123,7 +141,6 @@ export class PlacesService {
     place_latitude: number,
     place_longitude: number
   ) {
-    let createdPlace;
     try {
       const { response, place_address, place_category } =
         await this.findPlaceInfoFromKakao(
@@ -132,25 +149,36 @@ export class PlacesService {
           place_longitude
         );
       await this.checkQueryInResponsePlaces(response, place_name);
-      const data = {
-        place_name: place_name,
-        place_latitude: place_latitude,
-        place_longitude: place_longitude,
-        place_address: place_address,
-        place_category: {
-          connect: { category_id: place_category | 6 }, // If category is not found, default to 6(기본)
+      const createdPlace = await this.prisma.place.create({
+        data: {
+          place_name: place_name,
+          place_latitude: place_latitude,
+          place_longitude: place_longitude,
+          place_address: place_address,
+          place_category_map: {
+            create: {
+              category: {
+                connect: {
+                  category_id: place_category || 1,
+                },
+              },
+            },
+          },
         },
-      };
-      createdPlace = await this.prisma.place.create({
-        data: data,
+        include: {
+          place_category_map: true, // Include the created map entry
+        },
       });
-      // console.log(createdPlace);
+
       if (!createdPlace) {
         throw new Error(
           `createPlace: 장소 생성 실패 - 데이터베이스에 새 장소가 생성되지 않았습니다.`
         );
       }
-      // console.log(createdPlace);
+      console.log(
+        "🚀 ~ file: places.service.ts:172 ~ PlacesService ~ createdPlace:",
+        createdPlace
+      );
       return createdPlace;
     } catch (error) {
       throw new Error(`createPlace: 장소 생성 실패 - ${error.message}`);

@@ -68,10 +68,10 @@ export class UsersService {
       "user_is_admin",
       "user_is_deleted",
       "user_badges",
-      "user_visited_places",
+      // "user_visited_places",
       "user_authored_posts",
     ];
-
+    // 방문장소말고 포스트에 장소 담아드리기
     const leanUser = {};
 
     selectedFields.forEach((field) => {

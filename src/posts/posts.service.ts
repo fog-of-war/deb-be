@@ -50,9 +50,12 @@ export class PostsService {
 
     return post;
   }
-
   /** 게시물 생성하기 */
   async createPost(userId: number, dto: CreatePostDto): Promise<any> {
+    console.log(
+      "🚀 ~ file: posts.service.ts:56 ~ PostsService ~ createPost ~ dto:",
+      dto
+    );
     const existingPlace = await this.findPlaceByCoordinates(dto.place_name);
     let post;
     if (existingPlace) {
@@ -65,7 +68,16 @@ export class PostsService {
         place_latitude,
         place_longitude
       );
+      console.log(
+        "🚀 ~ file: posts.service.ts:71 ~ PostsService ~ createPost ~ newPlace:",
+        newPlace
+      );
       post = await this.createPostWithNewPlace(newPlace, userId, dto);
+      console.log(
+        "🚀 ~ file: posts.service.ts:69 ~ PostsService ~ createPost ~ post:",
+        post
+      );
+      return post;
       // await this.badgesService.checkAndAssignBadge(
       //   userId,
       //   newPlace.place_category_id
@@ -73,6 +85,37 @@ export class PostsService {
     }
     return post;
   }
+  // /** 게시물 생성하기 */
+  // async createPost(userId: number, dto: CreatePostDto): Promise<any> {
+  //   console.log(
+  //     "🚀 ~ file: posts.service.ts:56 ~ PostsService ~ createPost ~ dto:",
+  //     dto
+  //   );
+  //   const existingPlace = await this.findPlaceByCoordinates(dto.place_name);
+  //   let post;
+  //   if (existingPlace) {
+  //     post = await this.createPostWithExistingPlace(existingPlace, userId, dto);
+  //   } else {
+  //     const { place_name, place_latitude, place_longitude } = dto;
+
+  //     const newPlace = await this.placesService.createPlace(
+  //       place_name,
+  //       place_latitude,
+  //       place_longitude
+  //     );
+  //     post = await this.createPostWithNewPlace(newPlace, userId, dto);
+  //     console.log(
+  //       "🚀 ~ file: posts.service.ts:69 ~ PostsService ~ createPost ~ post:",
+  //       post
+  //     );
+  //     return post;
+  //     // await this.badgesService.checkAndAssignBadge(
+  //     //   userId,
+  //     //   newPlace.place_category_id
+  //     // );
+  //   }
+  //   return post;
+  // }
 
   private async findPlaceByCoordinates(place_name) {
     return this.prisma.place.findFirst({
