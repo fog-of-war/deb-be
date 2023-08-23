@@ -1,4 +1,13 @@
-import { Controller, Get, Query, Res, HttpStatus, Post } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Query,
+  Res,
+  HttpStatus,
+  Post,
+  Param,
+  ParseIntPipe,
+} from "@nestjs/common";
 import { PlacesService } from "./places.service"; // PlacesService의 경로로 수정해야 합니다.
 
 @Controller("places")
@@ -47,8 +56,14 @@ export class PlacesController {
     }
   }
   @Get("/all")
-  async getAllCategories() {
+  async getAllPlaces() {
     const result = await this.placesService.getAll();
+    return result;
+  }
+
+  @Get("/:id")
+  async getPlace(@Param("id", ParseIntPipe) placeId: number) {
+    const result = await this.placesService.getOne(placeId);
     return result;
   }
 }

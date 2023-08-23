@@ -91,45 +91,8 @@ model MapPlaceCategory {
   category   Category @relation(fields: [categoryId], references: [category_id])
   categoryId Int
 
-  @@id([placeId, categoryId]) // 복합 기본 키 조합이 이미 고유한 식별자로 작용합니다.
+  @@id([placeId, categoryId]) // 복합 기본 키 조합이 pk 대신 고유한 식별자로 작용합니다
 }
-
-// model Place {
-//   place_id           Int                @id @default(autoincrement())
-//   place_created_at   DateTime           @default(now())
-//   place_updated_at   DateTime           @updatedAt
-//   place_name         String             @unique
-//   place_star_rating  Float?
-//   place_point        Int?
-//   place_address      String?
-//   place_latitude     Float?
-//   place_longitude    Float?
-//   place_visited_by   PlaceVisit[]
-//   place_posts        Post[] // 연관된 게시물 필수 제약 조건 삭제
-//   place_category     Category?          @relation("PlaceToCategories", fields: [place_category_map], references: [category_id])
-//   place_category_map MapPlaceCategory[]
-// }
-
-// model Category {
-//   category_id                 Int                @id @default(autoincrement())
-//   category_name               String             @unique
-//   category_score              Int?
-//   category_created_at         DateTime           @default(now())
-//   category_updated_at         DateTime           @updatedAt
-//   category_places             Place[]            @relation("PlaceToCategories")
-//   category_badges             Badge[]
-//   category_map_place_category MapPlaceCategory[]
-// }
-
-// model MapPlaceCategory {
-//   map_place_id    Int
-//   map_category_id Int
-
-//   map_place    Place    @relation(fields: [map_place_id], references: [place_id])
-//   map_category Category @relation(fields: [map_category_id], references: [category_id])
-
-//   @@id([map_place_id, map_category_id])
-// }
 
 model Badge {
   badge_id          Int      @id @default(autoincrement())

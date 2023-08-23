@@ -136,4 +136,19 @@ export class PlacesService {
     // console.log(result);
     return result;
   }
+  async getOne(placeId: number) {
+    const result = await this.prisma.place.findFirst({
+      where: { place_id: placeId },
+      include: {
+        place_posts: true, // Include related posts
+        place_category_map: {
+          include: {
+            category: true, // Include related category with its name
+          },
+        },
+        place_visited_by: true,
+      },
+    });
+    return result;
+  }
 }
