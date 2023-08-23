@@ -2,12 +2,14 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreatePostDto, EditPostDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { PlacesService } from "src/places/places.service";
+import { BadgesService } from "src/badges/badges.service";
 
 @Injectable()
 export class PostsService {
   constructor(
     private prisma: PrismaService,
-    private readonly placesService: PlacesService
+    private readonly placesService: PlacesService,
+    private readonly badgesService: BadgesService
   ) {}
   /** 여러 개의 게시물 가져오기 */
   async getPosts() {
@@ -64,6 +66,10 @@ export class PostsService {
         place_longitude
       );
       post = await this.createPostWithNewPlace(newPlace, userId, dto);
+      // await this.badgesService.checkAndAssignBadge(
+      //   userId,
+      //   newPlace.place_category_id
+      // );
     }
     return post;
   }

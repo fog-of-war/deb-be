@@ -88,7 +88,7 @@ model Category {
 model Badge {
   badge_id       Int    @id @default(autoincrement())
   badge_name     String
-  badge_category String // 뱃지 카테고리 
+  badge_category Int // 뱃지 카테고리 
   badge_criteria Int // 조건 레벨이랑 똑같이 어떻게 구현할지 지피티 더 고문해보갰씁니다
   badge_user     User?  @relation(fields: [badge_user_id], references: [user_id])
   badge_user_id  Int?

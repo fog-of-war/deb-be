@@ -58,10 +58,17 @@ export class PostsController {
   @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
   @HttpCode(201)
-  createPost(@GetUser("user_id") userId: number, @Body() dto: CreatePostDto) {
+  async createPost(
+    @GetUser("user_id") userId: number,
+    @Body() dto: CreatePostDto
+  ) {
     try {
-      // console.log(dto);
-      const result = this.postService.createPost(userId, dto);
+      //
+      const result = await this.postService.createPost(userId, dto);
+      console.log(
+        "🚀 ~ file: posts.controller.ts:66 ~ PostsController ~ createPost ~ result:",
+        result
+      );
       return result;
     } catch (error) {
       throw new HttpException(
@@ -81,13 +88,14 @@ export class PostsController {
   @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
   @HttpCode(201)
-  editPostById(
+  async editPostById(
     @GetUser("user_id") userId: number,
     @Param("id", ParseIntPipe) postId: number,
     @Body() dto: EditPostDto
   ) {
     try {
-      return this.postService.editPostById(userId, postId, dto);
+      const result = await this.postService.editPostById(userId, postId, dto);
+      return result;
     } catch (error) {
       // 에러 핸들링 코드
       throw new HttpException(

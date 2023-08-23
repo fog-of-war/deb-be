@@ -26,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
     });
     console.log(
       "🚀 ~ file: jwt.strategy.ts:27 ~ JwtStrategy ~ validate ~ user:",
-      user
+      user.user_nickname
     );
     return user;
   }

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaClient } from "@prisma/client";
 import * as placesData from "./landmarks.json";
-
+import * as badges from "./badges.json";
 @Injectable()
 export class PrismaService extends PrismaClient {
   constructor(config: ConfigService) {
@@ -28,11 +28,12 @@ export class PrismaService extends PrismaClient {
       { category_name: "협찬", category_score: 0 },
     ];
 
-    await this.category.createMany({
-      data: categories,
-      skipDuplicates: true,
-    });
-    await this.insertPlaces();
+    // await this.category.createMany({
+    //   data: categories,
+    //   skipDuplicates: true,
+    // });
+    // await this.insertPlaces();
+    await this.insertBadges();
     return this.$transaction([]);
   }
 
@@ -56,6 +57,25 @@ export class PrismaService extends PrismaClient {
             place_category: {
               connect: { category_id: placeData.place_category_id },
             },
+          },
+        });
+      }
+    }
+  }
+  async insertBadges() {
+    const badgeData = badges as Array<any>; // JSON 파일을 배열로 변환
+    for (const badge of badgeData) {
+      // 데이터베이스에 해당 뱃지 이름이 있는지 확인
+      const existingBadge = await this.badge.findFirst({
+        where: { badge_name: badge.badge_name },
+      });
+
+      if (!existingBadge) {
+        await this.badge.create({
+          data: {
+            badge_name: badge.badge_name,
+            badge_criteria: badge.badge_criteria,
+            badge_category: badge.badge_category,
           },
         });
       }

@@ -1,10 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateUserDto, EditUserDto, InitUserDto } from "./dto";
+import { BadgesService } from "../badges/badges.service";
+import { User } from "@prisma/client";
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private badgesService: BadgesService
+  ) {}
   async editUser(userId: number, dto: EditUserDto) {
     const user = await this.prisma.user.update({
       where: { user_id: userId },
@@ -20,7 +25,7 @@ export class UsersService {
     return user;
   }
 
-  async findUserByEmail(email: string) {
+  async findUserByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findFirst({
       where: {
         user_email: email,
@@ -31,12 +36,19 @@ export class UsersService {
   async createUser(userDto: CreateUserDto) {
     const payload = {
       ...userDto,
-      // user_authored_posts: [],
-      // user_visited_places: [],
-      // user_badges: [],
     };
-
-    return this.initUser(payload);
+    // 사용자에게 뱃지 부여
+    const createdUser = await this.initUser(payload);
+    const badgeIdToAssign = 1; // 부여할 뱃지의 ID
+    const userWithBadge = await this.badgesService.assignBadgeToUser(
+      createdUser.user_id,
+      badgeIdToAssign
+    );
+    console.log(
+      "🚀 ~ file: users.service.ts:48 ~ UsersService ~ createUser ~ userWithBadge:",
+      userWithBadge
+    );
+    return userWithBadge;
   }
 
   async initUser(userDto: any) {

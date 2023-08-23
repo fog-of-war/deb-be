@@ -1,0 +1,102 @@
+[
+  {
+    "badge_name": "부랑자",
+    "badge_criteria": 0,
+    "badge_category": 6
+  },
+  {
+    "badge_name": "시민",
+    "badge_criteria": 3,
+    "badge_category": 6
+  },
+  {
+    "badge_name": "모험가",
+    "badge_criteria": 10,
+    "badge_category": 6
+  },
+  {
+    "badge_name": "장군",
+    "badge_criteria": 50,
+    "badge_category": 6
+  },
+  {
+    "badge_name": "성주",
+    "badge_criteria": 100,
+    "badge_category": 6
+  },
+  {
+    "badge_name": "냠냠이",
+    "badge_criteria": 1,
+    "badge_category": 1
+  },
+  {
+    "badge_name": "미식가",
+    "badge_criteria": 5,
+    "badge_category": 1
+  },
+  {
+    "badge_name": "레스트랑 사장",
+    "badge_criteria": 10,
+    "badge_category": 1
+  },
+  {
+    "badge_name": "줄넘기",
+    "badge_criteria": 1,
+    "badge_category": 2
+  },
+  {
+    "badge_name": "몸짱",
+    "badge_criteria": 5,
+    "badge_category": 2
+  },
+  {
+    "badge_name": "트레이너",
+    "badge_criteria": 10,
+    "badge_category": 2
+  },
+  {
+    "badge_name": "화가",
+    "badge_criteria": 1,
+    "badge_category": 3
+  },
+  {
+    "badge_name": "다빈치",
+    "badge_criteria": 5,
+    "badge_category": 3
+  },
+  {
+    "badge_name": "피카소",
+    "badge_criteria": 10,
+    "badge_category": 3
+  },
+  {
+    "badge_name": "석기시대",
+    "badge_criteria": 1,
+    "badge_category": 4
+  },
+  {
+    "badge_name": "한능검",
+    "badge_criteria": 5,
+    "badge_category": 4
+  },
+  {
+    "badge_name": "고고학자",
+    "badge_criteria": 10,
+    "badge_category": 4
+  },
+  {
+    "badge_name": "아메리카노",
+    "badge_criteria": 1,
+    "badge_category": 5
+  },
+  {
+    "badge_name": "라떼는말야",
+    "badge_criteria": 5,
+    "badge_category": 5
+  },
+  {
+    "badge_name": "바리스타",
+    "badge_criteria": 10,
+    "badge_category": 5
+  }
+]
