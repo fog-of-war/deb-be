@@ -44,7 +44,7 @@ export class PlacesService {
         x: x,
         query: query,
         radius: 100,
-        size: 1,
+        size: 3,
       },
     };
     try {
@@ -94,7 +94,7 @@ export class PlacesService {
       throw new Error(errorMessage); // 에러 발생 시 에러를 내보냅니다.
     }
   }
-  setCategory(payload: any): number | undefined {
+  setCategory(payload: any): number[] | undefined {
     try {
       const categoryMappings = {
         음식점: 2,
@@ -106,30 +106,28 @@ export class PlacesService {
         카페: 6,
         // ... 여기에 추가적인 카테고리와 매핑을 추가할 수 있습니다.
       };
-      let categoryNames = [];
 
+      let categoryNames = [];
       if (typeof payload.category_name === "string") {
         categoryNames.push(payload.category_name);
       } else if (Array.isArray(payload.category_name)) {
         categoryNames = payload.category_name;
       }
-      console.log(
-        "🚀 ~ file: places.service.ts:106 ~ PlacesService ~ setCategory ~ categoryNames:",
-        categoryNames
-      );
 
-      let 객체;
+      const matchingCategories = [];
+
       for (const categoryName of categoryNames) {
         if (categoryMappings.hasOwnProperty(categoryName)) {
-          객체 = categoryMappings[categoryName];
+          matchingCategories.push(categoryMappings[categoryName]);
         }
       }
 
       console.log(
-        "🚀 ~ file: places.service.ts:106 ~ PlacesService ~ setCategory ~ 객체:",
-        객체
+        "🚀 ~ file: places.service.ts:106 ~ PlacesService ~ setCategory ~ matchingCategories:",
+        matchingCategories
       );
-      return 7; // 매핑이 없는 경우 undefined 반환
+
+      return matchingCategories.length > 0 ? matchingCategories : undefined;
     } catch (error) {
       console.error("setCategory 에러:", error);
       return undefined; // 에러 발생 시 undefined 반환
@@ -149,22 +147,36 @@ export class PlacesService {
           place_longitude
         );
       await this.checkQueryInResponsePlaces(response, place_name);
-      const createdPlace = await this.prisma.place.create({
-        data: {
-          place_name: place_name,
-          place_latitude: place_latitude,
-          place_longitude: place_longitude,
-          place_address: place_address,
-          place_category_map: {
-            create: {
+      const createData: any = {
+        place_name: place_name,
+        place_latitude: place_latitude,
+        place_longitude: place_longitude,
+        place_address: place_address,
+        place_category_map: {
+          create: [
+            {
               category: {
                 connect: {
-                  category_id: place_category || 1,
+                  category_id: 1, // 항상 1 부여
                 },
               },
             },
-          },
+            // 음식점인 경우에만 2 부여
+            place_category === 2
+              ? {
+                  category: {
+                    connect: {
+                      category_id: 2,
+                    },
+                  },
+                }
+              : null,
+          ].filter(Boolean), // 빈 객체 제거
         },
+      };
+
+      const createdPlace = await this.prisma.place.create({
+        data: createData,
         include: {
           place_category_map: true, // Include the created map entry
         },

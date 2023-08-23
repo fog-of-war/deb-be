@@ -21,11 +21,15 @@ export class PlacesController {
   @Get("/search")
   async getPlaceSearch(
     @Query("query") query: string,
+    @Query("x") xCoordinate: number,
+    @Query("y") yCoordinate: number,
     @Res() res
   ): Promise<void> {
     try {
-      const searchResult = await this.placesService.findManyPlacesFromKakao(
-        query
+      const searchResult = await this.placesService.findPlaceInfoFromKakao(
+        query,
+        xCoordinate,
+        yCoordinate
       );
       res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
