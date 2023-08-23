@@ -26,7 +26,7 @@ export class PlacesController {
     @Res() res
   ): Promise<void> {
     try {
-      const searchResult = await this.placesService.findPlaceInfoFromKakao(
+      const searchResult = await this.placesService.findPlacesInfoFromKakao(
         query,
         xCoordinate,
         yCoordinate

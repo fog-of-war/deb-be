@@ -11,13 +11,15 @@ export class PlacesService {
     this.clientID = this.config.get("KAKAO_CLIENT_ID");
   }
 
-  async findManyPlacesFromKakao(query: string): Promise<any> {
+  async findPlacesInfoFromKakao(query: string, x: any, y: any): Promise<any> {
     const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;
     const options = {
       headers: {
         Authorization: "KakaoAK " + this.clientID,
       },
       params: {
+        y: y,
+        x: x,
         query: query,
         radius: 100,
         size: 15,
@@ -25,9 +27,12 @@ export class PlacesService {
     };
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
-      return {
-        response: response.data,
-      };
+
+      console.log(
+        "🚀 ~ file: places.service.ts:34 ~ PlacesService ~ findPlacesInfoFromKakao ~ response.data:",
+        response.data.documents
+      );
+      return response.data.documents;
     } catch (error) {
       throw new Error(`findPlaceInfoFromKakao: 카카오에서 해당 장소 검색 실패`);
     }
@@ -94,6 +99,7 @@ export class PlacesService {
       throw new Error(errorMessage); // 에러 발생 시 에러를 내보냅니다.
     }
   }
+
   setCategory(payload: any): number[] | undefined {
     try {
       const categoryMappings = {
@@ -108,25 +114,28 @@ export class PlacesService {
       };
 
       let categoryNames = [];
-      if (typeof payload.category_name === "string") {
-        categoryNames.push(payload.category_name);
-      } else if (Array.isArray(payload.category_name)) {
-        categoryNames = payload.category_name;
+      if (typeof payload === "string") {
+        categoryNames.push(payload);
+      } else if (Array.isArray(payload)) {
+        categoryNames = payload;
+      } else if (payload.hasOwnProperty("category_name")) {
+        const categoryName = payload.category_name;
+        if (typeof categoryName === "string") {
+          categoryNames.push(categoryName);
+        } else if (Array.isArray(categoryName)) {
+          categoryNames = categoryName;
+        }
       }
-
       const matchingCategories = [];
-
       for (const categoryName of categoryNames) {
         if (categoryMappings.hasOwnProperty(categoryName)) {
           matchingCategories.push(categoryMappings[categoryName]);
         }
       }
-
       console.log(
         "🚀 ~ file: places.service.ts:106 ~ PlacesService ~ setCategory ~ matchingCategories:",
         matchingCategories
       );
-
       return matchingCategories.length > 0 ? matchingCategories : undefined;
     } catch (error) {
       console.error("setCategory 에러:", error);
