@@ -37,22 +37,6 @@ model UserActivities {
   activity_user       User?    @relation(fields: [activity_user_id], references: [user_id])
 }
 
-model Place {
-  place_id          Int          @id @default(autoincrement())
-  place_created_at  DateTime     @default(now())
-  place_updated_at  DateTime     @updatedAt
-  place_name        String       @unique
-  place_star_rating Float?
-  place_point       Int?
-  place_address     String?
-  place_latitude    Float?
-  place_longitude   Float?
-  place_visited_by  PlaceVisit[]
-  place_category    Category?    @relation(fields: [place_category_id], references: [category_id])
-  place_category_id Int
-  place_posts       Post[] // 연관된 게시물 필수 제약 조건 삭제
-}
-
 model Post {
   post_id          Int      @id @default(autoincrement())
   post_created_at  DateTime @default(now())
@@ -76,22 +60,40 @@ model PlaceVisit {
   visited_user_id  Int
 }
 
+model Place {
+  place_id           Int          @id @default(autoincrement())
+  place_created_at   DateTime     @default(now())
+  place_updated_at   DateTime     @updatedAt
+  place_name         String       @unique
+  place_star_rating  Float?
+  place_point        Int?
+  place_address      String?
+  place_latitude     Float?
+  place_longitude    Float?
+  place_visited_by   PlaceVisit[]
+  place_categories   Category[]   @relation("PlaceToCategories")
+  place_posts        Post[] // 연관된 게시물 필수 제약 조건 삭제
+  place_category_ids Int[] // 여러 개의 카테고리 ID를 저장하는 배열 필드
+}
+
 model Category {
   category_id         Int      @id @default(autoincrement())
   category_name       String   @unique
   category_score      Int?
   category_created_at DateTime @default(now())
   category_updated_at DateTime @updatedAt
-  category_places     Place[]
+  category_places     Place[]  @relation("PlaceToCategories")
+  Badge               Badge[]
 }
 
 model Badge {
-  badge_id       Int    @id @default(autoincrement())
-  badge_name     String
-  badge_category Int // 뱃지 카테고리 
-  badge_criteria Int // 조건 레벨이랑 똑같이 어떻게 구현할지 지피티 더 고문해보갰씁니다
-  badge_user     User?  @relation(fields: [badge_user_id], references: [user_id])
-  badge_user_id  Int?
+  badge_id          Int      @id @default(autoincrement())
+  badge_name        String
+  badge_category    Category @relation(fields: [badge_category_id], references: [category_id])
+  badge_category_id Int
+  badge_criteria    Int
+  badge_user        User?    @relation(fields: [badge_user_id], references: [user_id])
+  badge_user_id     Int?
 }
 
 model SearchHistory {

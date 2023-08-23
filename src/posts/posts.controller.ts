@@ -65,10 +65,6 @@ export class PostsController {
     try {
       //
       const result = await this.postService.createPost(userId, dto);
-      console.log(
-        "🚀 ~ file: posts.controller.ts:66 ~ PostsController ~ createPost ~ result:",
-        result
-      );
       return result;
     } catch (error) {
       throw new HttpException(
