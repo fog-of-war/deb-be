@@ -54,7 +54,6 @@ export class PrismaService extends PrismaClient {
         });
 
         console.log("Created place:", createdPlace);
-        console.log("Created place:", createdPlace);
         //  커밋용
       }
     }
