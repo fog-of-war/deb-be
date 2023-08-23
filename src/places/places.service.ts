@@ -11,7 +11,33 @@ export class PlacesService {
     this.clientID = this.config.get("KAKAO_CLIENT_ID");
   }
 
-  async findPlaceInfoFromKakao(query: any, x: any, y: any): Promise<any> {
+  async findManyPlacesFromKakao(query: string): Promise<any> {
+    const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;
+    const options = {
+      headers: {
+        Authorization: "KakaoAK " + this.clientID,
+      },
+      params: {
+        query: query,
+        radius: 100,
+        size: 15,
+      },
+    };
+    try {
+      const response: AxiosResponse<any> = await axios.get(api_url, options);
+      const place_address = this.addAddress(response.data.documents[0]);
+      const place_category = this.setCategory(response.data.documents[0]);
+      return {
+        response: response.data,
+        place_address: place_address,
+        place_category: place_category,
+      };
+    } catch (error) {
+      throw new Error(`findPlaceInfoFromKakao: 카카오에서 해당 장소 검색 실패`);
+    }
+  }
+
+  async findPlaceInfoFromKakao(query: string, x: any, y: any): Promise<any> {
     const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;
     const options = {
       headers: {

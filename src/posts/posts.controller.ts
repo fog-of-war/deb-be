@@ -16,8 +16,7 @@ import { JwtGuard } from "../auth/guard";
 import { PostsService } from "./posts.service";
 import { CreatePostDto, EditPostDto } from "./dto";
 import { GetUser } from "../auth/decorator";
-import { ApiTags } from "@nestjs/swagger";
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiTags("posts")
 @Controller("posts")
