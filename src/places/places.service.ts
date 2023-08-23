@@ -21,23 +21,13 @@ export class PlacesService {
         x: x,
         y: y,
         query: query,
-        radius: 20000,
-        size: 15,
-        sort: "distance",
+        // radius: 20000,
+        // size: 15,
+        // sort: "distance",
       },
     };
-    console.log(
-      "🚀 ~ file: places.service.ts:28 ~ PlacesService ~ findPlacesInfoFromKakao ~ options:",
-      options
-    );
-
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
-
-      console.log(
-        "🚀 ~ file: places.service.ts:34 ~ PlacesService ~ findPlacesInfoFromKakao ~ response.data:",
-        response.data.documents
-      );
       return response.data.documents;
     } catch (error) {
       throw new Error(`findPlaceInfoFromKakao: 카카오에서 해당 장소 검색 실패`);
