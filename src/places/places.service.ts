@@ -21,17 +21,38 @@ export class PlacesService {
         x: x,
         y: y,
         query: query,
-        // radius: 20000,
-        // size: 15,
-        // sort: "distance",
       },
     };
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
-      return response.data.documents;
+      const result = await this.areTheyExistInDB(response.data.documents);
+      console.log(
+        "🚀 ~ file: places.service.ts:29 ~ PlacesService ~ findPlacesInfoFromKakao ~ result:",
+        result
+      );
+      return result;
     } catch (error) {
-      throw new Error(`findPlaceInfoFromKakao: 카카오에서 해당 장소 검색 실패`);
+      throw new Error(
+        `findPlacesInfoFromKakao: 카카오에서 해당 장소 검색 실패`
+      );
     }
+  }
+
+  async areTheyExistInDB(payload: any) {
+    const promises = payload.map(async (data) => {
+      const result = await this.prisma.place.findFirst({
+        where: { place_name: data.place_name },
+        include: { place_posts: true },
+      });
+      if (result) {
+        data.place_posts = result.place_posts;
+        data.place_star_rating = result.place_star_rating;
+      }
+      return data; // 수정: 각 작업의 결과 반환
+    });
+
+    const results = await Promise.all(promises);
+    return results; // 모든 작업의 결과 반환
   }
 
   async findPlaceInfoFromKakao(query: string, x: any, y: any): Promise<any> {
@@ -41,8 +62,8 @@ export class PlacesService {
         Authorization: "KakaoAK " + this.clientID,
       },
       params: {
-        y: y,
         x: x,
+        y: y,
         query: query,
         radius: 100,
         size: 3,
@@ -52,10 +73,6 @@ export class PlacesService {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
       const place_address = this.addAddress(response.data.documents[0]);
       const place_category = this.setCategory(response.data.documents[0]);
-      console.log(
-        "🚀 ~ file: places.service.ts:54 ~ PlacesService ~ findPlaceInfoFromKakao ~ place_category:",
-        place_category
-      );
       return {
         response: response.data,
         place_address: place_address,
@@ -138,7 +155,6 @@ export class PlacesService {
       return undefined; // 에러 발생 시 undefined 반환
     }
   }
-
   async createPlace(
     place_name: string,
     place_latitude: number,
@@ -152,38 +168,38 @@ export class PlacesService {
           place_longitude
         );
       await this.checkQueryInResponsePlaces(response, place_name);
+
+      const categoryMappings: any[] = [];
+
+      // Define the category IDs and their corresponding conditions
+      const categoryIds = [2, 3, 4, 5, 6, 7];
+
+      for (const categoryId of categoryIds) {
+        if (place_category === categoryId) {
+          categoryMappings.push({
+            category: {
+              connect: {
+                category_id: categoryId,
+              },
+            },
+          });
+        }
+      }
+
       const createData: any = {
         place_name: place_name,
         place_latitude: place_latitude,
         place_longitude: place_longitude,
         place_address: place_address,
         place_category_map: {
-          create: [
-            {
-              category: {
-                connect: {
-                  category_id: 1, // 항상 1 부여
-                },
-              },
-            },
-            // 음식점인 경우에만 2 부여
-            place_category === 2
-              ? {
-                  category: {
-                    connect: {
-                      category_id: 2,
-                    },
-                  },
-                }
-              : null,
-          ].filter(Boolean), // 빈 객체 제거
+          create: categoryMappings,
         },
       };
 
       const createdPlace = await this.prisma.place.create({
         data: createData,
         include: {
-          place_category_map: true, // Include the created map entry
+          place_category_map: true,
         },
       });
 
@@ -192,15 +208,119 @@ export class PlacesService {
           `createPlace: 장소 생성 실패 - 데이터베이스에 새 장소가 생성되지 않았습니다.`
         );
       }
+
       console.log(
         "🚀 ~ file: places.service.ts:172 ~ PlacesService ~ createdPlace:",
         createdPlace
       );
+
       return createdPlace;
     } catch (error) {
       throw new Error(`createPlace: 장소 생성 실패 - ${error.message}`);
     }
   }
+
+  // async createPlace(
+  //   place_name: string,
+  //   place_latitude: number,
+  //   place_longitude: number
+  // ) {
+  //   try {
+  //     const { response, place_address, place_category } =
+  //       await this.findPlaceInfoFromKakao(
+  //         place_name,
+  //         place_latitude,
+  //         place_longitude
+  //       );
+  //     await this.checkQueryInResponsePlaces(response, place_name);
+  //     const createData: any = {
+  //       place_name: place_name,
+  //       place_latitude: place_latitude,
+  //       place_longitude: place_longitude,
+  //       place_address: place_address,
+  //       place_category_map: {
+  //         create: [
+  //           {
+  //             category: {
+  //               connect: {
+  //                 category_id: 1, // 항상 1 부여
+  //               },
+  //             },
+  //           },
+  //           // 음식점인 경우에만 2 부여
+  //           place_category === 3
+  //             ? {
+  //                 category: {
+  //                   connect: {
+  //                     category_id: 3,
+  //                   },
+  //                 },
+  //               }
+  //             : null,
+  //           // 음식점인 경우에만 2 부여
+  //           place_category === 4
+  //             ? {
+  //                 category: {
+  //                   connect: {
+  //                     category_id: 4,
+  //                   },
+  //                 },
+  //               }
+  //             : null,
+  //           // 음식점인 경우에만 2 부여
+  //           place_category === 5
+  //             ? {
+  //                 category: {
+  //                   connect: {
+  //                     category_id: 5,
+  //                   },
+  //                 },
+  //               }
+  //             : null,
+  //           // 음식점인 경우에만 2 부여
+  //           place_category === 6
+  //             ? {
+  //                 category: {
+  //                   connect: {
+  //                     category_id: 6,
+  //                   },
+  //                 },
+  //               }
+  //             : null,
+
+  //           // 음식점인 경우에만 2 부여
+  //           place_category === 7
+  //             ? {
+  //                 category: {
+  //                   connect: {
+  //                     category_id: 7,
+  //                   },
+  //                 },
+  //               }
+  //             : null,
+  //         ].filter(Boolean), // 빈 객체 제거
+  //       },
+  //     };
+  //     const createdPlace = await this.prisma.place.create({
+  //       data: createData,
+  //       include: {
+  //         place_category_map: true, // Include the created map entry
+  //       },
+  //     });
+  //     if (!createdPlace) {
+  //       throw new Error(
+  //         `createPlace: 장소 생성 실패 - 데이터베이스에 새 장소가 생성되지 않았습니다.`
+  //       );
+  //     }
+  //     console.log(
+  //       "🚀 ~ file: places.service.ts:172 ~ PlacesService ~ createdPlace:",
+  //       createdPlace
+  //     );
+  //     return createdPlace;
+  //   } catch (error) {
+  //     throw new Error(`createPlace: 장소 생성 실패 - ${error.message}`);
+  //   }
+  // }
 
   async getAll() {
     const result = await this.prisma.place.findMany({});
