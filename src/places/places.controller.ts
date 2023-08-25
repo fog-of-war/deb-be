@@ -17,11 +17,7 @@ import {
   ApiResponse,
 } from "@nestjs/swagger";
 import { PlacesService } from "./places.service"; // PlacesService의 경로로 수정해야 합니다.
-import {
-  SearchResponsesArray,
-  SearchResponse,
-  PlaceCategory,
-} from "./responses"; // 'your-models'는 실제 모델 파일의 경로에 맞게 변경해주세요.
+import { SearchResponse, PlaceCategory } from "./responses"; // 'your-models'는 실제 모델 파일의 경로에 맞게 변경해주세요.
 
 @ApiTags("places")
 @Controller("places")
@@ -32,7 +28,7 @@ export class PlacesController {
   @ApiResponse({
     status: 200,
     description: "",
-    type: SearchResponsesArray, // 반환 모델을 지정
+    type: SearchResponse, // 반환 모델을 지정
   })
   @ApiResponse({ status: 404, description: "해당 장소 검색 실패" })
   async getPlaceSearch(

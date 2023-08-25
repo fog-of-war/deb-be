@@ -8,13 +8,7 @@ export class PlaceCategory {
   categoryId: string;
 
   @ApiProperty()
-  category: {
-    category_id: string;
-    category_name: string;
-    category_points: string;
-    category_created_at: string;
-    category_updated_at: string;
-  };
+  category: any; // 여기에 원하시는 형식의 객체를 정의하십시오.
 }
 
 export class SearchResponse {
@@ -60,11 +54,6 @@ export class SearchResponse {
   @ApiProperty()
   place_star_rating: string;
 
-  @ApiProperty({ type: [PlaceCategory] })
+  @ApiProperty({ type: PlaceCategory, isArray: true })
   place_category_map: PlaceCategory[];
-}
-
-export class SearchResponsesArray {
-  @ApiProperty({ type: [SearchResponse] })
-  responses: SearchResponse[];
 }
