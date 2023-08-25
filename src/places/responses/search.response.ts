@@ -1,16 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-
-export class PlaceCategory {
-  @ApiProperty()
-  placeId: string;
-
-  @ApiProperty()
-  categoryId: string;
-
-  @ApiProperty()
-  category: any; // 여기에 원하시는 형식의 객체를 정의하십시오.
-}
-
+import { PlaceCategory } from "./place.category";
 export class SearchResponse {
   @ApiProperty()
   address_name: string;
@@ -25,7 +14,7 @@ export class SearchResponse {
   category_name: string;
 
   @ApiProperty()
-  distance: string;
+  distance: number;
 
   @ApiProperty()
   id: string;
@@ -43,16 +32,17 @@ export class SearchResponse {
   road_address_name: string;
 
   @ApiProperty()
-  x: string;
+  x: number;
 
   @ApiProperty()
-  y: string;
+  y: number;
 
   @ApiProperty()
-  place_posts: string[];
-
+  place_posts: any[];
   @ApiProperty()
-  place_star_rating: string;
+  place_posts_id: any[];
+  @ApiProperty()
+  place_star_rating: number;
 
   @ApiProperty({ type: PlaceCategory, isArray: true })
   place_category_map: PlaceCategory[];
