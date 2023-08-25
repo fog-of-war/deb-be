@@ -163,13 +163,11 @@ export class PlacesService {
 
       const createdPlaceId = createdPlace.place_id; // 새로 생성된 장소의 ID
       const placeCategoryMapData = place_category.map((category) => {
-        console.log(category.categoryId);
         return {
           placeId: createdPlaceId,
           categoryId: category.categoryId,
         };
       });
-      console.log(placeCategoryMapData);
       try {
         const createManyResult = await this.prisma.mapPlaceCategory.createMany({
           data: placeCategoryMapData,
@@ -187,7 +185,6 @@ export class PlacesService {
 
   async getAll() {
     const result = await this.prisma.place.findMany({});
-    // console.log(result);
     return result;
   }
   async getOne(placeId: number) {

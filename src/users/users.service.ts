@@ -17,7 +17,7 @@ export class UsersService {
       select: {
         user_nickname: true,
         user_image_url: true,
-        user_point: true,
+        user_points: true,
         user_level: true,
         user_is_admin: true,
       },

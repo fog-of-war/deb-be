@@ -3,13 +3,15 @@ import { CreatePostDto, EditPostDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { PlacesService } from "src/places/places.service";
 import { BadgesService } from "src/badges/badges.service";
+import { PointsService } from "src/points/points.service";
 
 @Injectable()
 export class PostsService {
   constructor(
     private prisma: PrismaService,
     private readonly placesService: PlacesService,
-    private readonly badgesService: BadgesService
+    private readonly badgesService: BadgesService,
+    private readonly pointsService: PointsService
   ) {}
   /** 여러 개의 게시물 가져오기 */
   async getPosts() {
@@ -54,61 +56,30 @@ export class PostsService {
   async createPost(userId: number, dto: CreatePostDto): Promise<any> {
     const existingPlace = await this.findPlaceByCoordinates(dto.place_name);
     let post;
+    let placeId;
+
     if (existingPlace) {
       post = await this.createPostWithExistingPlace(existingPlace, userId, dto);
+      placeId = existingPlace.place_id;
     } else {
       const { place_name, place_latitude, place_longitude } = dto;
-
       const newPlace = await this.placesService.createPlace(
         place_name,
         place_latitude,
         place_longitude
       );
-      console.log(
-        "🚀 ~ file: posts.service.ts:71 ~ PostsService ~ createPost ~ newPlace:",
-        newPlace
-      );
       post = await this.createPostWithNewPlace(newPlace, userId, dto);
-      return post;
-      // await this.badgesService.checkAndAssignBadge(
-      //   userId,
-      //   newPlace.place_category_id
-      // );
+      placeId = newPlace.place_id;
     }
-    return post;
+
+    await this.pointsService.assignPoints(userId, placeId);
+    const result = await this.badgesService.checkAndAssignBadge(
+      userId,
+      placeId
+    );
+
+    return result;
   }
-  // /** 게시물 생성하기 */
-  // async createPost(userId: number, dto: CreatePostDto): Promise<any> {
-  //   console.log(
-  //     "🚀 ~ file: posts.service.ts:56 ~ PostsService ~ createPost ~ dto:",
-  //     dto
-  //   );
-  //   const existingPlace = await this.findPlaceByCoordinates(dto.place_name);
-  //   let post;
-  //   if (existingPlace) {
-  //     post = await this.createPostWithExistingPlace(existingPlace, userId, dto);
-  //   } else {
-  //     const { place_name, place_latitude, place_longitude } = dto;
-
-  //     const newPlace = await this.placesService.createPlace(
-  //       place_name,
-  //       place_latitude,
-  //       place_longitude
-  //     );
-  //     post = await this.createPostWithNewPlace(newPlace, userId, dto);
-  //     console.log(
-  //       "🚀 ~ file: posts.service.ts:69 ~ PostsService ~ createPost ~ post:",
-  //       post
-  //     );
-  //     return post;
-  //     // await this.badgesService.checkAndAssignBadge(
-  //     //   userId,
-  //     //   newPlace.place_category_id
-  //     // );
-  //   }
-  //   return post;
-  // }
-
   private async findPlaceByCoordinates(place_name) {
     return this.prisma.place.findFirst({
       where: {

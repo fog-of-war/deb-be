@@ -9,6 +9,7 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
 import { CategoriesModule } from "./categories/categories.module";
+import { PointsModule } from './points/points.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -21,6 +22,7 @@ import { CategoriesModule } from "./categories/categories.module";
     PrismaModule,
     JwtModule,
     CategoriesModule,
+    PointsModule,
   ],
   controllers: [],
   providers: [],

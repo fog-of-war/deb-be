@@ -61,18 +61,9 @@ export class PostsController {
     @GetUser("user_id") userId: number,
     @Body() dto: CreatePostDto
   ) {
-    console.log(
-      "🚀 ~ file: posts.controller.ts:64 ~ PostsController ~ dto:",
-      dto
-    );
     try {
       //
       const result = await this.postService.createPost(userId, dto);
-      console.log(
-        "🚀 ~ file: posts.controller.ts:67 ~ PostsController ~ result:",
-        result
-      );
-
       return result;
     } catch (error) {
       throw new HttpException(
