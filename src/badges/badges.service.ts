@@ -31,52 +31,78 @@ export class BadgesService {
     // 1. 유저 정보 가져오기
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId },
+      include: { user_badges: true, user_visited_places: true },
     });
 
-    // 2. 포스트의 장소 정보 가져오기
-    const place = await this.prisma.place.findUnique({
-      where: { place_id: postPlaceId },
-      include: { place_category_map: { include: { category: true } } },
+    // 배열에서 방문한 장소 아이디 추출
+    const 장소아이디배열 = user.user_visited_places.map((item) => {
+      return item.visited_place_id;
     });
 
-    if (!user || !place) {
-      throw new Error("User or place not found");
+    // 장소 아이디 배열을 사용하여 장소 정보 조회
+    const 장소 = await this.prisma.mapPlaceCategory.findMany({
+      where: {
+        placeId: { in: 장소아이디배열 },
+      },
+    });
+
+    // categoryId별로 갯수를 세기 위한 객체 생성
+    const categoryIdCounts = {};
+
+    // 각 장소의 categoryId를 기반으로 카운트 증가
+    for (const placeInfo of 장소) {
+      const categoryId = placeInfo.categoryId;
+      if (categoryIdCounts[categoryId]) {
+        categoryIdCounts[categoryId]++;
+      } else {
+        categoryIdCounts[categoryId] = 1;
+      }
     }
+
+    console.log("categoryIdCounts:", categoryIdCounts);
+
     // 3. 장소의 카테고리와 관련된 뱃지 정보 가져오기
-    if (place) {
-      const badgesToAssign = [];
-      for (const categoryMap of place.place_category_map) {
-        const categoryId = categoryMap.categoryId;
-        const categoryBadges = await this.getBadgesByCategoryId(categoryId);
-        badgesToAssign.push(...categoryBadges);
-      }
-      // 4. 유저가 해당 뱃지를 이미 보유하고 있는지 확인
-      for (const badge of badgesToAssign) {
-        const existingBadge = await this.prisma.badge.findFirst({
-          where: {
-            badge_id: badge.badge_id,
-            badge_user_id: userId,
-          },
-        });
+    const badgeIdsByCategoryId = {};
 
-        let result;
-
-        // 5. 조건을 충족할 경우 뱃지 부여
-        if (!existingBadge && user.user_points >= badge.badge_criteria) {
-          result = await this.prisma.user.update({
-            where: { user_id: userId },
-            data: {
-              user_badges: {
-                connect: [{ badge_id: badge.badge_id }],
-              },
-            },
-          });
-        }
-        console.log(
-          "🚀 ~ file: badges.service.ts:63 ~ BadgesService ~ checkAndAssignBadge ~ result:",
-          result
-        );
+    // 각 categoryId에 대해 badge_id 가져오기
+    for (const placeInfo of 장소) {
+      const categoryId = placeInfo.categoryId;
+      if (categoryIdCounts[categoryId]) {
+        const badgeIds = await this.getBadgeIdByCategoryId(Number(categoryId));
+        badgeIdsByCategoryId[categoryId] = badgeIds;
       }
     }
+    // 4. 유저가 해당 뱃지를 이미 보유하고 있는지 확인
+    const userBadgeIds = user.user_badges.map((badge) => badge.badge_id);
+    // 5. 조건을 충족할 경우 뱃지 부여
+    for (const categoryId in badgeIdsByCategoryId) {
+      if (badgeIdsByCategoryId.hasOwnProperty(categoryId)) {
+        const badgeIds = badgeIdsByCategoryId[categoryId];
+        for (const badgeId of badgeIds) {
+          const badge = await this.prisma.badge.findUnique({
+            where: { badge_id: badgeId },
+          });
+
+          if (
+            badge.badge_category_id === Number(categoryId) &&
+            badgeIdsByCategoryId[categoryId] >= badge.badge_criteria &&
+            !userBadgeIds.includes(badgeId)
+          ) {
+            // 조건을 충족하고 뱃지를 보유하지 않은 경우
+            // 뱃지 부여 로직 추가
+            await this.assignBadgeToUser(userId, badgeId);
+            console.log(`User ${userId} is awarded badge ${badgeId}`);
+          }
+        }
+      }
+    }
+  }
+
+  // 각 categoryId에 해당하는 badge_id를 가져오는 함수
+  async getBadgeIdByCategoryId(categoryId: number) {
+    const categoryBadges = await this.prisma.badge.findMany({
+      where: { badge_category_id: categoryId },
+    });
+    return categoryBadges.map((badge) => badge.badge_id);
   }
 }

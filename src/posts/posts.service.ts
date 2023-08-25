@@ -71,7 +71,8 @@ export class PostsService {
       post = await this.createPostWithNewPlace(newPlace, userId, dto);
       placeId = newPlace.place_id;
     }
-
+    // Create PlaceVisit
+    await this.placesService.createPlaceVisit(userId, placeId);
     await this.pointsService.assignPoints(userId, placeId);
     const result = await this.badgesService.checkAndAssignBadge(
       userId,

@@ -6,7 +6,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 @Injectable()
 export class PointsService {
   constructor(private prisma: PrismaService) {}
-  async assignPoints(userId: number, placeId: number) {
+  async assignPoints(userId: number, placeId: number): Promise<void> {
     const points = [];
     const place = await this.prisma.place.findUnique({
       where: { place_id: placeId },

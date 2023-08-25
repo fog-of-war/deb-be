@@ -202,4 +202,13 @@ export class PlacesService {
     });
     return result;
   }
+
+  async createPlaceVisit(userId: number, placeId: number) {
+    await this.prisma.placeVisit.create({
+      data: {
+        visited_user: { connect: { user_id: userId } },
+        visited_place: { connect: { place_id: placeId } },
+      },
+    });
+  }
 }
