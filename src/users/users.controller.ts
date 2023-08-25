@@ -17,7 +17,7 @@ import { UsersService } from "./users.service";
 import { EditUserDto } from "./dto";
 import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { validate } from "class-validator";
-import { GetUserResponse } from "./responses";
+import { EditUserResponse, GetUserResponse } from "./responses";
 
 @ApiTags("users")
 @UseGuards(JwtGuard)
@@ -40,6 +40,11 @@ export class UsersController {
   @Patch("me")
   @ApiBearerAuth("access_token")
   @HttpCode(201)
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: EditUserResponse, // 이 부분 수정
+  })
   async editUser(@GetUser("user_id") userId: number, @Body() dto: EditUserDto) {
     // 유효성 검사 수행
     const errors = await validate(dto);
