@@ -59,7 +59,7 @@ export class UsersController {
       throw new UnprocessableEntityException(errorResponse);
     }
     try {
-      const result = await this.userService.editUser(userId, dto);
+      await this.userService.editUser(userId, dto);
       return { message: "유저 정보 변경에 성공했습니다" };
     } catch (error) {
       if (error instanceof NotFoundException) {

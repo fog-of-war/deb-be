@@ -25,7 +25,7 @@ class VisitedPlace {
   visited_id: number;
 
   @ApiProperty()
-  visited_date: string;
+  visited_date: Date;
 
   @ApiProperty()
   visited_place_id: number;
@@ -39,10 +39,10 @@ class AuthoredPost {
   post_id: number;
 
   @ApiProperty()
-  post_created_at: string;
+  post_created_at: Date;
 
   @ApiProperty()
-  post_updated_at: string;
+  post_updated_at: Date;
 
   @ApiProperty()
   post_description: string;
