@@ -78,7 +78,7 @@ model Place {
 model Category {
   category_id           Int                @id @default(autoincrement())
   category_name         String             @unique
-  category_score        Int?
+  category_point        Int?
   category_created_at   DateTime           @default(now())
   category_updated_at   DateTime           @updatedAt
   category_badges       Badge[]
@@ -100,6 +100,7 @@ model Badge {
   badge_category    Category @relation(fields: [badge_category_id], references: [category_id])
   badge_category_id Int
   badge_criteria    Int
+  badge_point       Int?     @default(100)
   badge_user        User?    @relation(fields: [badge_user_id], references: [user_id])
   badge_user_id     Int?
 }
@@ -113,12 +114,12 @@ model SearchHistory {
 }
 
 model Level {
-  level_id         Int      @id @default(autoincrement())
-  level_number     Int      @unique
-  level_name       String
-  level_min_score  Int // 499 짱탐험가, 500 짱짱탐험가 // 범위로 안하고 해도 되는지 지피티 짱 고문하기
-  level_created_at DateTime @default(now())
-  level_updated_at DateTime @updatedAt
+  level_id          Int      @id @default(autoincrement())
+  level_level       Int      @unique
+  level_points      Int
+  level_description String
+  level_created_at  DateTime @default(now())
+  level_updated_at  DateTime @updatedAt
 }
 
 enum Role {

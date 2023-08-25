@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import * as placesData from "./landmarks.json";
 import * as badges from "./badges.json";
 import * as categories from "./categories.json";
+import * as levels from "./levels.json";
 @Injectable()
 export class PrismaService extends PrismaClient {
   constructor(config: ConfigService) {
@@ -17,15 +18,27 @@ export class PrismaService extends PrismaClient {
   }
 
   async cleanDb() {
-    // 데이터베이스를 초기화
+    try {
+      await this.$transaction(async () => {
+        // 카테고리 생성 작업
+        await this.category.createMany({
+          data: categories,
+          skipDuplicates: true,
+        });
 
-    await this.category.createMany({
-      data: categories,
-      skipDuplicates: true,
-    });
-    await this.insertPlaces();
-    await this.insertBadges();
-    return this.$transaction([]);
+        // 장소 삽입 작업
+        await this.insertPlaces();
+
+        // 뱃지 삽입 작업
+        await this.insertBadges();
+
+        // 레벨 삽입 작업
+        await this.insertLevels();
+      });
+    } catch (error) {
+      // 트랜잭션 내에서 오류가 발생한 경우 처리
+      console.error("An error occurred during database cleanup:", error);
+    }
   }
 
   async insertPlaces() {
@@ -52,9 +65,7 @@ export class PrismaService extends PrismaClient {
             },
           },
         });
-
         console.log("Created place:", createdPlace);
-        //  커밋용
       }
     }
   }
@@ -73,6 +84,26 @@ export class PrismaService extends PrismaClient {
             badge_name: badge.badge_name,
             badge_criteria: badge.badge_criteria,
             badge_category_id: badge.badge_category_id,
+          },
+        });
+      }
+    }
+  }
+
+  async insertLevels() {
+    const levelData = levels as Array<any>; // JSON 파일을 배열로 변환
+    for (const level of levelData) {
+      // 데이터베이스에 해당 뱃지 이름이 있는지 확인
+      const existinglevel = await this.level.findFirst({
+        where: { level_level: level.level_level },
+      });
+
+      if (!existinglevel) {
+        await this.level.create({
+          data: {
+            level_level: level.level_level,
+            level_points: level.level_points,
+            level_description: level.level_description,
           },
         });
       }
