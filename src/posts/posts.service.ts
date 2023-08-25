@@ -74,10 +74,7 @@ export class PostsService {
     // Create PlaceVisit
     await this.placesService.createPlaceVisit(userId, placeId);
     await this.pointsService.assignPoints(userId, placeId);
-    const result = await this.badgesService.checkAndAssignBadge(
-      userId,
-      placeId
-    );
+    const result = await this.badgesService.checkAndAssignBadge(userId);
 
     return result;
   }

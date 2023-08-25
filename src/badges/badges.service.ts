@@ -27,7 +27,7 @@ export class BadgesService {
     return categoryBadges;
   }
 
-  async checkAndAssignBadge(userId: number, postPlaceId: number) {
+  async checkAndAssignBadge(userId: number) {
     // 1. 유저 정보 가져오기
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId },
