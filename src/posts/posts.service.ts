@@ -4,6 +4,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { PlacesService } from "src/places/places.service";
 import { BadgesService } from "src/badges/badges.service";
 import { PointsService } from "src/points/points.service";
+import { LevelsService } from "src/levels/levels.service";
 
 @Injectable()
 export class PostsService {
@@ -11,7 +12,8 @@ export class PostsService {
     private prisma: PrismaService,
     private readonly placesService: PlacesService,
     private readonly badgesService: BadgesService,
-    private readonly pointsService: PointsService
+    private readonly pointsService: PointsService,
+    private readonly levelsService: LevelsService
   ) {}
   /** 여러 개의 게시물 가져오기 */
   async getPosts() {
@@ -74,6 +76,7 @@ export class PostsService {
     // Create PlaceVisit
     await this.placesService.createPlaceVisit(userId, placeId);
     await this.pointsService.assignPoints(userId, placeId);
+    await this.levelsService.updateLevel(userId);
     const result = await this.badgesService.checkAndAssignBadge(userId);
 
     return result;

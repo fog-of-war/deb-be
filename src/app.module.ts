@@ -10,6 +10,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
 import { CategoriesModule } from "./categories/categories.module";
 import { PointsModule } from './points/points.module';
+import { LevelsModule } from './levels/levels.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -23,6 +24,7 @@ import { PointsModule } from './points/points.module';
     JwtModule,
     CategoriesModule,
     PointsModule,
+    LevelsModule,
   ],
   controllers: [],
   providers: [],
