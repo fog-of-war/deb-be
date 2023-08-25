@@ -10,7 +10,12 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth, ApiCreatedResponse } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiResponse,
+} from "@nestjs/swagger";
 import { PlacesService } from "./places.service"; // PlacesService의 경로로 수정해야 합니다.
 
 @ApiTags("places")
@@ -19,6 +24,11 @@ export class PlacesController {
   constructor(private readonly placesService: PlacesService) {}
 
   @Get("/search")
+  @ApiResponse({
+    status: 200,
+    description: "The record has been successfully created.",
+  })
+  @ApiResponse({ status: 404, description: "해당 장소 검색 실패" })
   async getPlaceSearch(
     @Query("query") query: string,
     @Query("x") xCoordinate: number,
