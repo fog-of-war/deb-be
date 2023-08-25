@@ -49,11 +49,7 @@ export class PlacesController {
           yCoordinate
         );
 
-      const responsesArray: SearchResponsesArray = {
-        responses: searchResult,
-      };
-
-      res.status(HttpStatus.OK).json(responsesArray);
+      res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
