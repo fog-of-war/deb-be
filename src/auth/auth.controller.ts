@@ -21,6 +21,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get("google")
+  @ApiOAuth2(["profile"])
   // @ApiOAuth2()
   @UseGuards(GoogleAuthGuard)
   async googleAuth(@Req() req) {}

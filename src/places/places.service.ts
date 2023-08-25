@@ -26,10 +26,6 @@ export class PlacesService {
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
       const result = await this.areTheyExistInDB(response.data.documents);
-      console.log(
-        "🚀 ~ file: places.service.ts:29 ~ PlacesService ~ findPlacesInfoFromKakao ~ result:",
-        result
-      );
       return result;
     } catch (error) {
       throw new Error(
@@ -113,48 +109,32 @@ export class PlacesService {
     }
   }
 
-  setCategory(payload: any): number[] | undefined {
-    try {
-      const categoryMappings = {
-        음식점: 2,
-        "스포츠,레저": 3,
-        미술관: 4,
-        문화유적: 5,
-        기념관: 5,
-        전시관: 5,
-        카페: 6,
-        // ... 여기에 추가적인 카테고리와 매핑을 추가할 수 있습니다.
-      };
+  setCategory(payload: any): any | undefined {
+    const categoryArray = [{ categoryId: 1 }];
+    const categoryMappings = {
+      음식점: 2,
+      "스포츠,레저": 3,
+      미술관: 4,
+      문화유적: 5,
+      기념관: 5,
+      전시관: 5,
+      카페: 6,
+      // ... 여기에 추가적인 카테고리와 매핑을 추가할 수 있습니다.
+    };
 
-      let categoryNames = [];
-      if (typeof payload === "string") {
-        categoryNames.push(payload);
-      } else if (Array.isArray(payload)) {
-        categoryNames = payload;
-      } else if (payload.hasOwnProperty("category_name")) {
-        const categoryName = payload.category_name;
-        if (typeof categoryName === "string") {
-          categoryNames.push(categoryName);
-        } else if (Array.isArray(categoryName)) {
-          categoryNames = categoryName;
-        }
+    for (const category of Object.keys(categoryMappings)) {
+      if (payload.category_name.includes(category)) {
+        categoryArray.push({ categoryId: categoryMappings[category] });
       }
-      const matchingCategories = [];
-      for (const categoryName of categoryNames) {
-        if (categoryMappings.hasOwnProperty(categoryName)) {
-          matchingCategories.push(categoryMappings[categoryName]);
-        }
-      }
-      console.log(
-        "🚀 ~ file: places.service.ts:106 ~ PlacesService ~ setCategory ~ matchingCategories:",
-        matchingCategories
-      );
-      return matchingCategories.length > 0 ? matchingCategories : undefined;
-    } catch (error) {
-      console.error("setCategory 에러:", error);
-      return undefined; // 에러 발생 시 undefined 반환
     }
+    console.log(
+      "🚀 ~ file: places.service.ts:136 ~ PlacesService ~ setCategory ~ categoryArray:",
+      categoryArray
+    );
+
+    return categoryArray; // 매핑이 없는 경우 undefined 반환
   }
+
   async createPlace(
     place_name: string,
     place_latitude: number,
@@ -167,160 +147,45 @@ export class PlacesService {
           place_latitude,
           place_longitude
         );
+
       await this.checkQueryInResponsePlaces(response, place_name);
 
-      const categoryMappings: any[] = [];
-
-      // Define the category IDs and their corresponding conditions
-      const categoryIds = [2, 3, 4, 5, 6, 7];
-
-      for (const categoryId of categoryIds) {
-        if (place_category === categoryId) {
-          categoryMappings.push({
-            category: {
-              connect: {
-                category_id: categoryId,
-              },
-            },
-          });
-        }
-      }
-
-      const createData: any = {
-        place_name: place_name,
-        place_latitude: place_latitude,
-        place_longitude: place_longitude,
-        place_address: place_address,
-        place_category_map: {
-          create: categoryMappings,
-        },
-      };
-
       const createdPlace = await this.prisma.place.create({
-        data: createData,
-        include: {
-          place_category_map: true,
+        data: {
+          place_name: place_name,
+          place_latitude: place_latitude,
+          place_longitude: place_longitude,
+          place_address: place_address,
         },
       });
 
-      if (!createdPlace) {
-        throw new Error(
-          `createPlace: 장소 생성 실패 - 데이터베이스에 새 장소가 생성되지 않았습니다.`
-        );
-      }
-
+      const createdPlaceId = createdPlace.place_id; // 새로 생성된 장소의 ID
       console.log(
-        "🚀 ~ file: places.service.ts:172 ~ PlacesService ~ createdPlace:",
-        createdPlace
+        "🚀 ~ file: places.service.ts:172 ~ PlacesService ~ place_category:",
+        place_category[0]
       );
+      const placeCategoryMapData = place_category.map((category) => {
+        console.log(category.categoryId);
+        return {
+          placeId: createdPlaceId,
+          categoryId: category.categoryId,
+        };
+      });
+      console.log(placeCategoryMapData);
+      try {
+        const createManyResult = await this.prisma.mapPlaceCategory.createMany({
+          data: placeCategoryMapData,
+        });
+        console.log("createManyResult:", createManyResult);
+      } catch (error) {
+        console.error("createManyError:", error);
+      }
 
       return createdPlace;
     } catch (error) {
       throw new Error(`createPlace: 장소 생성 실패 - ${error.message}`);
     }
   }
-
-  // async createPlace(
-  //   place_name: string,
-  //   place_latitude: number,
-  //   place_longitude: number
-  // ) {
-  //   try {
-  //     const { response, place_address, place_category } =
-  //       await this.findPlaceInfoFromKakao(
-  //         place_name,
-  //         place_latitude,
-  //         place_longitude
-  //       );
-  //     await this.checkQueryInResponsePlaces(response, place_name);
-  //     const createData: any = {
-  //       place_name: place_name,
-  //       place_latitude: place_latitude,
-  //       place_longitude: place_longitude,
-  //       place_address: place_address,
-  //       place_category_map: {
-  //         create: [
-  //           {
-  //             category: {
-  //               connect: {
-  //                 category_id: 1, // 항상 1 부여
-  //               },
-  //             },
-  //           },
-  //           // 음식점인 경우에만 2 부여
-  //           place_category === 3
-  //             ? {
-  //                 category: {
-  //                   connect: {
-  //                     category_id: 3,
-  //                   },
-  //                 },
-  //               }
-  //             : null,
-  //           // 음식점인 경우에만 2 부여
-  //           place_category === 4
-  //             ? {
-  //                 category: {
-  //                   connect: {
-  //                     category_id: 4,
-  //                   },
-  //                 },
-  //               }
-  //             : null,
-  //           // 음식점인 경우에만 2 부여
-  //           place_category === 5
-  //             ? {
-  //                 category: {
-  //                   connect: {
-  //                     category_id: 5,
-  //                   },
-  //                 },
-  //               }
-  //             : null,
-  //           // 음식점인 경우에만 2 부여
-  //           place_category === 6
-  //             ? {
-  //                 category: {
-  //                   connect: {
-  //                     category_id: 6,
-  //                   },
-  //                 },
-  //               }
-  //             : null,
-
-  //           // 음식점인 경우에만 2 부여
-  //           place_category === 7
-  //             ? {
-  //                 category: {
-  //                   connect: {
-  //                     category_id: 7,
-  //                   },
-  //                 },
-  //               }
-  //             : null,
-  //         ].filter(Boolean), // 빈 객체 제거
-  //       },
-  //     };
-  //     const createdPlace = await this.prisma.place.create({
-  //       data: createData,
-  //       include: {
-  //         place_category_map: true, // Include the created map entry
-  //       },
-  //     });
-  //     if (!createdPlace) {
-  //       throw new Error(
-  //         `createPlace: 장소 생성 실패 - 데이터베이스에 새 장소가 생성되지 않았습니다.`
-  //       );
-  //     }
-  //     console.log(
-  //       "🚀 ~ file: places.service.ts:172 ~ PlacesService ~ createdPlace:",
-  //       createdPlace
-  //     );
-  //     return createdPlace;
-  //   } catch (error) {
-  //     throw new Error(`createPlace: 장소 생성 실패 - ${error.message}`);
-  //   }
-  // }
 
   async getAll() {
     const result = await this.prisma.place.findMany({});

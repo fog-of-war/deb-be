@@ -52,10 +52,6 @@ export class PostsService {
   }
   /** 게시물 생성하기 */
   async createPost(userId: number, dto: CreatePostDto): Promise<any> {
-    console.log(
-      "🚀 ~ file: posts.service.ts:56 ~ PostsService ~ createPost ~ dto:",
-      dto
-    );
     const existingPlace = await this.findPlaceByCoordinates(dto.place_name);
     let post;
     if (existingPlace) {
@@ -73,10 +69,6 @@ export class PostsService {
         newPlace
       );
       post = await this.createPostWithNewPlace(newPlace, userId, dto);
-      console.log(
-        "🚀 ~ file: posts.service.ts:69 ~ PostsService ~ createPost ~ post:",
-        post
-      );
       return post;
       // await this.badgesService.checkAndAssignBadge(
       //   userId,
