@@ -15,8 +15,10 @@ import { GetUser } from "../auth/decorator";
 import { JwtGuard } from "../auth/guard";
 import { UsersService } from "./users.service";
 import { EditUserDto } from "./dto";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { validate } from "class-validator";
+import { GetUserResponse } from "./responses";
+
 @ApiTags("users")
 @UseGuards(JwtGuard)
 @Controller("users")
@@ -25,6 +27,11 @@ export class UsersController {
 
   @Get("me")
   @ApiBearerAuth("access_token")
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: GetUserResponse, // 반환 모델을 지정
+  })
   async getMe(@GetUser() user: User) {
     const result = await this.userService.leanUserInfo(user);
     return result;

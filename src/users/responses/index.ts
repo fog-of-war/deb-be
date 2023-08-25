@@ -1,1 +1,1 @@
-export * from "./search.response";
+export * from "./get.user.response";
