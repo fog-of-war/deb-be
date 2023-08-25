@@ -6,6 +6,7 @@ import { PlacesService } from "src/places/places.service";
 import { BadgesService } from "src/badges/badges.service";
 import { PointsService } from "src/points/points.service";
 import { LevelsService } from "src/levels/levels.service";
+import { UsersService } from "src/users/users.service";
 
 @Module({
   imports: [PrismaModule],
@@ -16,6 +17,7 @@ import { LevelsService } from "src/levels/levels.service";
     BadgesService,
     PointsService,
     LevelsService,
+    UsersService,
   ],
 })
 export class PostsModule {}

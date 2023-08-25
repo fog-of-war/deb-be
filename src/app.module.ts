@@ -9,8 +9,10 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule } from "@nestjs/config";
 import { CategoriesModule } from "./categories/categories.module";
-import { PointsModule } from './points/points.module';
-import { LevelsModule } from './levels/levels.module';
+import { PointsModule } from "./points/points.module";
+import { LevelsModule } from "./levels/levels.module";
+import { EventEmitterModule } from "@nestjs/event-emitter";
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -25,6 +27,7 @@ import { LevelsModule } from './levels/levels.module';
     CategoriesModule,
     PointsModule,
     LevelsModule,
+    EventEmitterModule.forRoot(),
   ],
   controllers: [],
   providers: [],

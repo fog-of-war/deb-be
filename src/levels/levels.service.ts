@@ -1,16 +1,23 @@
 import { Injectable } from "@nestjs/common";
+import { OnEvent } from "@nestjs/event-emitter";
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class LevelsService {
   constructor(private prisma: PrismaService) {}
-  async updateLevel(userId: number) {
+
+  @OnEvent("user_levelup")
+  async updateLevel(userId: number): Promise<any> {
+    // console.log(
+    //   "🚀 ~ file: levels.service.ts:11 ~ LevelsService ~ updateLevel ~ userId:",
+    //   userId
+    // );
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId },
     });
 
     const levels = await this.prisma.level.findMany({});
-
+    let result;
     // 레벨을 조건을 만족할 때까지 확인하여 업데이트
     for (const level of levels) {
       if (user.user_points < level.level_points) {
@@ -18,12 +25,13 @@ export class LevelsService {
       }
 
       // 사용자의 레벨을 업데이트
-      await this.prisma.user.update({
+      result = await this.prisma.user.update({
         where: { user_id: userId },
         data: { user_level: level.level_level },
       });
 
-      console.log(`User ${user.user_id} level updated to ${level.level_level}`);
+      // console.log(`User ${user.user_id} level updated to ${level.level_level}`);
     }
+    return result;
   }
 }

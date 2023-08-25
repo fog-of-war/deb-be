@@ -24,7 +24,14 @@ export class UsersService {
     });
     return user;
   }
-
+  async findUserById(id: number): Promise<User | null> {
+    return this.prisma.user.findFirst({
+      where: {
+        user_id: id,
+      },
+      include: { user_badges: true },
+    });
+  }
   async findUserByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findFirst({
       where: {
@@ -44,10 +51,7 @@ export class UsersService {
       createdUser.user_id,
       badgeIdToAssign
     );
-    console.log(
-      "🚀 ~ file: users.service.ts:48 ~ UsersService ~ createUser ~ userWithBadge:",
-      userWithBadge
-    );
+
     return userWithBadge;
   }
 

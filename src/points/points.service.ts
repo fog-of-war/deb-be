@@ -21,10 +21,10 @@ export class PointsService {
       points.push(item.category.category_points);
     });
 
-    console.log(
-      "🚀 ~ file: points.service.ts:13 ~ PointsService ~ assginPoints ~ place:",
-      points
-    );
+    // console.log(
+    //   "🚀 ~ file: points.service.ts:13 ~ PointsService ~ assginPoints ~ place:",
+    //   points
+    // );
 
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId },
@@ -39,9 +39,9 @@ export class PointsService {
       where: { user_id: userId },
       data: { user_points: user.user_points + totalPoints },
     });
-    console.log(
-      "🚀 ~ file: points.service.ts:42 ~ PointsService ~ assignPoints ~ updatedUser:",
-      updatedUser
-    );
+    // console.log(
+    //   "🚀 ~ file: points.service.ts:42 ~ PointsService ~ assignPoints ~ updatedUser:",
+    //   updatedUser
+    // );
   }
 }
