@@ -38,11 +38,19 @@ export class PlacesService {
     const promises = payload.map(async (data) => {
       const result = await this.prisma.place.findFirst({
         where: { place_name: data.place_name },
-        include: { place_posts: true },
+        include: {
+          place_posts: true,
+          place_category_map: {
+            include: {
+              category: true, // Include related category with its name
+            },
+          },
+        },
       });
       if (result) {
         data.place_posts = result.place_posts;
         data.place_star_rating = result.place_star_rating;
+        data.place_category_map = result.place_category_map;
       }
       return data; // 수정: 각 작업의 결과 반환
     });
@@ -121,17 +129,11 @@ export class PlacesService {
       카페: 6,
       // ... 여기에 추가적인 카테고리와 매핑을 추가할 수 있습니다.
     };
-
     for (const category of Object.keys(categoryMappings)) {
       if (payload.category_name.includes(category)) {
         categoryArray.push({ categoryId: categoryMappings[category] });
       }
     }
-    console.log(
-      "🚀 ~ file: places.service.ts:136 ~ PlacesService ~ setCategory ~ categoryArray:",
-      categoryArray
-    );
-
     return categoryArray; // 매핑이 없는 경우 undefined 반환
   }
 
@@ -160,10 +162,6 @@ export class PlacesService {
       });
 
       const createdPlaceId = createdPlace.place_id; // 새로 생성된 장소의 ID
-      console.log(
-        "🚀 ~ file: places.service.ts:172 ~ PlacesService ~ place_category:",
-        place_category[0]
-      );
       const placeCategoryMapData = place_category.map((category) => {
         console.log(category.categoryId);
         return {
