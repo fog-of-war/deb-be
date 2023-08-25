@@ -20,12 +20,25 @@ export class PlacesService {
       params: {
         x: x,
         y: y,
+        radius: 3000,
         query: query,
       },
     };
+
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
-      const result = await this.areTheyExistInDB(response.data.documents);
+
+      // Filter out results with "커피" as the place name only when the query includes "맛집"
+      const filteredResults = response.data.documents.filter(
+        (document: any) => {
+          if (query.includes("맛집")) {
+            return document.place_name !== "커피";
+          }
+          return true;
+        }
+      );
+
+      const result = await this.areTheyExistInDB(filteredResults);
       return result;
     } catch (error) {
       throw new Error(
