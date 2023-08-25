@@ -9,6 +9,7 @@ import { PlacesService } from "src/places/places.service";
 import { BadgesService } from "src/badges/badges.service";
 import { PointsService } from "src/points/points.service";
 import { LevelsService } from "src/levels/levels.service";
+import { UsersService } from "src/users/users.service";
 
 @Injectable()
 export class PostsService {
@@ -17,7 +18,8 @@ export class PostsService {
     private readonly placesService: PlacesService,
     private readonly badgesService: BadgesService,
     private readonly pointsService: PointsService,
-    private readonly levelsService: LevelsService
+    private readonly levelsService: LevelsService,
+    private readonly usersService: UsersService
   ) {}
   /** 여러 개의 게시물 가져오기 */
   async getPosts() {
@@ -79,6 +81,7 @@ export class PostsService {
 
   /** 게시물 생성하기 */
   async createPost(userId: number, dto: CreatePostDto): Promise<any> {
+    const userStateBefore = await this.usersService.findUserById(userId);
     const existingPlace = await this.findPlaceByCoordinates(dto.place_name);
     let post;
     let placeId;
@@ -97,9 +100,51 @@ export class PostsService {
       placeId = newPlace.place_id;
     }
     // Create PlaceVisit
-    const result = await this.createPostActions(userId, placeId);
+    await this.createPostActions(userId, placeId);
+
+    const result = await this.compareUserStates(userId, userStateBefore);
+    console.log(
+      "🚀 ~ file: posts.service.ts:101 ~ PostsService ~ createPost ~ result:",
+      result
+    );
 
     return result;
+  }
+  private async compareUserStates(
+    userId: number,
+    userStateBefore: any
+  ): Promise<any> {
+    try {
+      const userStateAfter = await this.usersService.findUserById(userId);
+      console.log(
+        "🚀 ~ file: posts.service.ts:147 ~ userStateBefore:",
+        userStateBefore
+      );
+
+      console.log(
+        "🚀 ~ file: posts.service.ts:147 ~ userStateBefore:",
+        userStateAfter
+      );
+      const state = { new_level: undefined, new_badges: undefined };
+
+      if (userStateAfter.user_level !== userStateBefore.user_level) {
+        state.new_level = userStateAfter.user_level;
+      }
+
+      state.new_badges = userStateAfter["user_badges"].filter(
+        (badgeAfter) =>
+          !userStateBefore.user_badges.some(
+            (badgeBefore) => badgeBefore.badge_id === badgeAfter.badge_id
+          )
+      );
+      return { state };
+    } catch (error) {
+      console.error("Error in compareUserStates:", error);
+      throw new InternalServerErrorException(
+        "Failed to compare user states.",
+        error
+      );
+    }
   }
   private async findPlaceByCoordinates(place_name) {
     return this.prisma.place.findFirst({

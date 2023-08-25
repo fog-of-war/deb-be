@@ -16,7 +16,8 @@ import { JwtGuard } from "../auth/guard";
 import { PostsService } from "./posts.service";
 import { CreatePostDto, EditPostDto } from "./dto";
 import { GetUser } from "../auth/decorator";
-import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
+import { GetPostResponse, PostPostsResponse } from "./responses";
 
 @ApiTags("posts")
 @Controller("posts")
@@ -24,6 +25,11 @@ export class PostsController {
   constructor(private postService: PostsService) {}
 
   @Get()
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: [GetPostResponse], // 반환 모델을 지정
+  })
   async getPosts() {
     const result = await this.postService.getPosts();
     console.log(
@@ -34,6 +40,11 @@ export class PostsController {
   }
 
   @Get("me")
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: [GetPostResponse], // 반환 모델을 지정
+  })
   @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
   async getPostsByUserId(@GetUser("user_id") userId: number) {
@@ -46,6 +57,11 @@ export class PostsController {
   }
 
   @Get(":id")
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: GetPostResponse, // 반환 모델을 지정
+  })
   getPostById(
     @GetUser("user_id") userId: number,
     @Param("id", ParseIntPipe) postId: number
@@ -57,6 +73,11 @@ export class PostsController {
   @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
   @HttpCode(201)
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: PostPostsResponse, // 반환 모델을 지정
+  })
   async createPost(
     @GetUser("user_id") userId: number,
     @Body() dto: CreatePostDto
