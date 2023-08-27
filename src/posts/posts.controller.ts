@@ -32,10 +32,6 @@ export class PostsController {
   })
   async getPosts() {
     const result = await this.postService.getPosts();
-    console.log(
-      "🚀 ~ file: posts.controller.ts:30 ~ PostsController ~ getPosts ~ result:",
-      result
-    );
     return result;
   }
 
@@ -48,10 +44,6 @@ export class PostsController {
   @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
   async getPostsByUserId(@GetUser("user_id") userId: number) {
-    console.log(
-      "🚀 ~ file: posts.controller.ts:39 ~ PostsController ~ getPostsByUserId ~ user_id:",
-      userId
-    );
     const result = await this.postService.getPostsByUserId(userId);
     return result;
   }
@@ -129,6 +121,7 @@ export class PostsController {
 
   @Delete(":id")
   @HttpCode(204)
+  @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
   deletePost(
     @GetUser("user_id") userId: number,
