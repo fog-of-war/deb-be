@@ -63,16 +63,3 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
   }
 }
 
-// {
-//   resultcode: '00',
-//   message: 'success',
-//   response: {
-//     id: 'S-2BUO-alQrN7L6qi44J1IKLYOiMtq3OCiUoMc_5wRo',
-//     nickname: '신유빈',
-//     profile_image: 'https://ssl.pstatic.net/static/pwe/address/img_profile.png',
-//     email: 'yshinb98@naver.com',
-//     mobile: '010-2030-8968',
-//     mobile_e164: '+821020308968',
-//     name: '신유빈'
-//   }
-// }
