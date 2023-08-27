@@ -4,7 +4,7 @@ import { CreateRankDto } from './dto/create-rank.dto';
 import { UpdateRankDto } from './dto/update-rank.dto';
 import { GetUser } from "../auth/decorator";
 import { JwtGuard } from 'src/auth/guard';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetOneRankResponse,GetManyRanksResponse } from './responses';
 
 @ApiTags("ranks")
@@ -29,6 +29,7 @@ export class RanksController {
     description: "",
     type: GetOneRankResponse, // 반환 모델을 지정
   })
+  @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
   async getRankByUserId(@GetUser("user_id") userId: number) {
     const result = await this.ranksService.getUserRank(userId);
