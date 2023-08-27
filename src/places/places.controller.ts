@@ -15,6 +15,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiResponse,
+  ApiOperation,
 } from "@nestjs/swagger";
 import { PlacesService } from "./places.service"; // PlacesService의 경로로 수정해야 합니다.
 import { SearchResponse, GetPlaceById } from "./responses"; // 'your-models'는 실제 모델 파일의 경로에 맞게 변경해주세요.
@@ -25,6 +26,7 @@ export class PlacesController {
   constructor(private readonly placesService: PlacesService) {}
 
   @Get("/search")
+  @ApiOperation({ summary: '장소검색하기/ X,Y,query 필요, 현재 주변 3km 검색 가능' })
   @ApiResponse({
     status: 200,
     description: "",
@@ -54,6 +56,7 @@ export class PlacesController {
   }
 
   @Get("/all")
+  @ApiOperation({ summary: '데이터베이스에 있는 모든 장소 가져오기(랜드마크, 게시장소 포함)' })
   @ApiCreatedResponse({
     status: 200,
   })
@@ -63,6 +66,7 @@ export class PlacesController {
   }
 
   @Get("/:id")
+  @ApiOperation({ summary: '특정 id 를 가진 장소 가져오기' })
   @ApiResponse({
     status: 200,
     description: "",

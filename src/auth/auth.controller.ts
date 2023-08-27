@@ -6,6 +6,7 @@ import {
   ApiCreatedResponse,
   ApiTags,
   ApiOAuth2,
+  ApiOperation,
 } from "@nestjs/swagger";
 import { Response } from "express";
 import { GoogleAuthGuard, LoginGuard } from "./guard/auth.guard";
@@ -22,11 +23,12 @@ export class AuthController {
 
   @Get("google")
   @ApiOAuth2(["profile"])
-  // @ApiOAuth2()
+  @ApiOperation({ summary: '구글 oauth' })
   @UseGuards(GoogleAuthGuard)
   async googleAuth(@Req() req) {}
 
   @Post("google/oauth")
+  @ApiOperation({ summary: '구글 oauth 로그인 & 가입' })
   @ApiCreatedResponse({
     status: 201,
     description: "success",
@@ -47,9 +49,11 @@ export class AuthController {
 
   @Get("naver")
   @UseGuards(AuthGuard("naver"))
+  @ApiOperation({ summary: '네이버 oauth' })
   async naverAuth(@Req() req) {}
 
   @Post("naver/oauth")
+  @ApiOperation({ summary: '네이버 oauth 로그인 & 가입' })
   @ApiCreatedResponse({
     status: 201,
     description: "success",
@@ -66,10 +70,12 @@ export class AuthController {
   }
 
   @Get("kakao")
+  @ApiOperation({ summary: '[승인전 사용불가]카카오 oauth' })
   @UseGuards(AuthGuard("kakao"))
   async kakaoAuth(@Req() req) {}
 
   @Post("kakao/oauth")
+  @ApiOperation({ summary: '[승인전 사용불가]카카오 oauth 로그인 & 가입' })
   @ApiCreatedResponse({
     status: 201,
     description: "success",

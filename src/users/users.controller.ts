@@ -15,7 +15,7 @@ import { GetUser } from "../auth/decorator";
 import { JwtGuard } from "../auth/guard";
 import { UsersService } from "./users.service";
 import { EditUserDto } from "./dto";
-import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiResponse, ApiTags, ApiOperation } from "@nestjs/swagger";
 import { validate } from "class-validator";
 import { EditUserResponse, GetUserResponse } from "./responses";
 
@@ -26,6 +26,7 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @Get("me")
+  @ApiOperation({ summary: '나의 정보 가져오기/ 마이페이지, 메인페이지 사용' })
   @ApiBearerAuth("access_token")
   @ApiResponse({
     status: 200,
@@ -38,6 +39,7 @@ export class UsersController {
   }
 
   @Patch("me")
+  @ApiOperation({ summary: '나의 정보 수정하기 / 프로필이미지, 닉네임, 변경 가능 (칭호 변경 기능 개발중)' })
   @ApiBearerAuth("access_token")
   @HttpCode(201)
   @ApiResponse({

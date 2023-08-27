@@ -4,7 +4,7 @@ import { CreateRankDto } from './dto/create-rank.dto';
 import { UpdateRankDto } from './dto/update-rank.dto';
 import { GetUser } from "../auth/decorator";
 import { JwtGuard } from 'src/auth/guard';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags,ApiOperation } from '@nestjs/swagger';
 import { GetOneRankResponse,GetManyRanksResponse } from './responses';
 
 @ApiTags("ranks")
@@ -13,6 +13,7 @@ export class RanksController {
   constructor(private readonly ranksService: RanksService) {}
 
   @Get()
+  @ApiOperation({ summary: '전체 랭킹 가져오기' })
   @ApiResponse({
     status: 200,
     description: "",
@@ -24,6 +25,7 @@ export class RanksController {
   }
 
   @Get("me")  
+  @ApiOperation({ summary: '나의 랭킹 가져오기' })
   @ApiResponse({
     status: 200,
     description: "",

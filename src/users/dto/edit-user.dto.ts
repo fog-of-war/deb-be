@@ -17,4 +17,9 @@ export class EditUserDto {
   @IsOptional()
   @ApiProperty()
   user_image_url?: string;
+
+  // @IsString()
+  // @IsOptional()
+  // @ApiProperty()
+  // user_image_url?: string;
 }

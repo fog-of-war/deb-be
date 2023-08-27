@@ -87,23 +87,4 @@ export class RanksService {
       return null; // 사용자가 랭킹에 없을 경우
     }
   }
-
-//   async updateRankByUser(user: User) {
-//     const users = await this.prisma.user.findMany({
-//       orderBy: {
-//         user_points: 'desc',
-//       },
-//     });
-
-//     for (const [rank, u] of users.entries()) {
-//       if (u.user_id === user.user_id) {
-//         await this.prisma.user.update({
-//           where: { user_id: u.user_id },
-//           data: { user_rank: rank + 1 }, // +1을 해서 1부터 시작하는 랭킹으로 설정
-//         });
-//         break; // 해당 사용자를 찾았으면 더 이상 반복하지 않음
-//       }
-//     }
-//   }
-// }
 }
