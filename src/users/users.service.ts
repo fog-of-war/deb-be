@@ -3,12 +3,14 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateUserDto, EditUserDto, InitUserDto } from "./dto";
 import { BadgesService } from "../badges/badges.service";
 import { User } from "@prisma/client";
+import { RanksService } from "src/ranks/ranks.service";
 
 @Injectable()
 export class UsersService {
   constructor(
-    private prisma: PrismaService,
-    private badgesService: BadgesService
+    private readonly prisma: PrismaService,
+    private readonly badgesService: BadgesService,
+    private readonly ranksService: RanksService
   ) {}
   async editUser(userId: number, dto: EditUserDto) {
     const user = await this.prisma.user.update({
@@ -63,7 +65,8 @@ export class UsersService {
     });
   }
 
-  leanUserInfo(user: any) {
+ async leanUserInfo(user: any) {
+    console.log(user)
     const selectedFields = [
       "user_image_url",
       "user_nickname",
@@ -80,10 +83,10 @@ export class UsersService {
 
     selectedFields.forEach((field) => {
       leanUser[field] = user[field];
-      console.log(
-        "🚀 ~ file: users.service.ts:83 ~ UsersService ~ selectedFields.forEach ~ leanUser:",
-        leanUser
-      );
+      // console.log(
+      //   "🚀 ~ file: users.service.ts:83 ~ UsersService ~ selectedFields.forEach ~ leanUser:",
+      //   leanUser
+      // );
     });
 
     return leanUser;

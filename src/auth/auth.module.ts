@@ -8,6 +8,7 @@ import { UsersModule } from "src/users/users.module";
 import { HttpModule } from "@nestjs/axios";
 import { PassportModule } from "@nestjs/passport";
 import { SessionSerializer } from "./serializer";
+import { RanksModule } from "src/ranks/ranks.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SessionSerializer } from "./serializer";
     UsersModule,
     HttpModule,
     PassportModule,
+    RanksModule
   ],
   providers: [
     AuthService,

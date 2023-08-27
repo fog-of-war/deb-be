@@ -28,6 +28,13 @@ model User {
   user_refresh_token  String?
 }
 
+model UserRanking {
+  user_id      Int @id
+  user_points  Int
+  rank         Int
+}
+
+
 model UserActivities {
   activity_id         Int      @id @default(autoincrement())
   activity_user_id    Int?

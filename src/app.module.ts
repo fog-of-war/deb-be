@@ -11,6 +11,8 @@ import { CategoriesModule } from "./categories/categories.module";
 import { PointsModule } from "./points/points.module";
 import { LevelsModule } from "./levels/levels.module";
 import { EventEmitterModule } from "@nestjs/event-emitter";
+import { RanksModule } from './ranks/ranks.module';
+
 
 @Module({
   imports: [
@@ -26,6 +28,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
     PointsModule,
     LevelsModule,
     EventEmitterModule.forRoot(),
+    RanksModule,
   ],
   controllers: [],
   providers: [],

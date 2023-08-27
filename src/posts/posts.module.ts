@@ -7,9 +7,10 @@ import { BadgesService } from "src/badges/badges.service";
 import { PointsService } from "src/points/points.service";
 import { LevelsService } from "src/levels/levels.service";
 import { UsersService } from "src/users/users.service";
+import { RanksModule } from "src/ranks/ranks.module";
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule,RanksModule],
   controllers: [PostsController],
   providers: [
     PostsService,
