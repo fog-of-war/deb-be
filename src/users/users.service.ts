@@ -67,7 +67,7 @@ export class UsersService {
     const selectedFields = [
       "user_image_url",
       "user_nickname",
-      "user_point",
+      "user_points",
       "user_level",
       "user_is_admin",
       "user_is_deleted",
