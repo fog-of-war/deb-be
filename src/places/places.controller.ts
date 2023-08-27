@@ -26,7 +26,7 @@ export class PlacesController {
   constructor(private readonly placesService: PlacesService) {}
 
   @Get("/search")
-  @ApiOperation({ summary: '장소검색하기/ X,Y,query 필요, 현재 주변 3km 검색 가능' })
+  @ApiOperation({ summary: '장소검색하기/ x,y,query 필요, 현재 주변 3km 검색 가능' })
   @ApiResponse({
     status: 200,
     description: "",
