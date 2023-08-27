@@ -104,13 +104,7 @@ export class PostsService {
     }
     // Create PlaceVisit
     await this.createPostActions(userId, placeId);
-
     const result = await this.compareUserStates(userId, userStateBefore);
-    console.log(
-      "🚀 ~ file: posts.service.ts:101 ~ PostsService ~ createPost ~ result:",
-      result
-    );
-
     return result;
   }
   private async compareUserStates(
@@ -119,15 +113,6 @@ export class PostsService {
   ): Promise<any> {
     try {
       const userStateAfter = await this.usersService.findUserById(userId);
-      console.log(
-        "🚀 ~ file: posts.service.ts:147 ~ userStateBefore:",
-        userStateBefore
-      );
-
-      console.log(
-        "🚀 ~ file: posts.service.ts:147 ~ userStateBefore:",
-        userStateAfter
-      );
       const state = { new_level: undefined, new_badges: undefined };
 
       if (userStateAfter.user_level !== userStateBefore.user_level) {

@@ -66,7 +66,6 @@ export class UsersService {
   }
 
  async leanUserInfo(user: any) {
-    console.log(user)
     const selectedFields = [
       "user_image_url",
       "user_nickname",
@@ -83,10 +82,6 @@ export class UsersService {
 
     selectedFields.forEach((field) => {
       leanUser[field] = user[field];
-      // console.log(
-      //   "🚀 ~ file: users.service.ts:83 ~ UsersService ~ selectedFields.forEach ~ leanUser:",
-      //   leanUser
-      // );
     });
 
     return leanUser;

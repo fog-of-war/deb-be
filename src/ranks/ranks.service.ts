@@ -81,8 +81,6 @@ export class RanksService {
         user_points: 'desc'
       }
     });
-    console.log("🚀 ~ file: ranks.service.ts:44 ~ RanksService ~ getUserRank ~ userRank:", userRank)
-
     if (userRank) {
       return userRank; // Return the user's rank
     } else {
