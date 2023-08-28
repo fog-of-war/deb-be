@@ -8,10 +8,6 @@ export class LevelsService {
 
   @OnEvent("user_levelup")
   async updateLevel(userId: number): Promise<any> {
-    // console.log(
-    //   "🚀 ~ file: levels.service.ts:11 ~ LevelsService ~ updateLevel ~ userId:",
-    //   userId
-    // );
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId },
     });
@@ -29,8 +25,6 @@ export class LevelsService {
         where: { user_id: userId },
         data: { user_level: level.level_level },
       });
-
-      // console.log(`User ${user.user_id} level updated to ${level.level_level}`);
     }
     return result;
   }

@@ -10,6 +10,10 @@ export class PlacesService {
   constructor(private config: ConfigService, private prisma: PrismaService) {
     this.clientID = this.config.get("KAKAO_CLIENT_ID");
   }
+  /**
+   *
+   *
+   */
   async findPlacesInfoForJH(query: string): Promise<any> {
     const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;
     const options = {
@@ -21,10 +25,8 @@ export class PlacesService {
         query: query,
       },
     };
-
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
-
       // Filter out results with "커피" as the place name only when the query includes "맛집"
       const filteredResults = response.data.documents.filter(
         (document: any) => {
@@ -34,7 +36,6 @@ export class PlacesService {
           return true;
         }
       );
-
       const result = await this.areTheyExistInDB(filteredResults);
       return result;
     } catch (error) {
@@ -43,24 +44,25 @@ export class PlacesService {
       );
     }
   }
-
-  async findPlacesInfoFromKakao(query: string, x: any, y: any): Promise<any> {
+  /**
+   *
+   *
+   */
+  async findPlacesInfoFromKakao(x: any, y: any, query: string): Promise<any> {
     const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;
     const options = {
       headers: {
         Authorization: "KakaoAK " + this.clientID,
       },
       params: {
-        x: x,
-        y: y,
+        x: x, //longitude
+        y: y, //latitude
         radius: 3000,
         query: query,
       },
     };
-
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
-
       // Filter out results with "커피" as the place name only when the query includes "맛집"
       const filteredResults = response.data.documents.filter(
         (document: any) => {
@@ -70,7 +72,6 @@ export class PlacesService {
           return true;
         }
       );
-
       const result = await this.areTheyExistInDB(filteredResults);
       return result;
     } catch (error) {
@@ -132,7 +133,10 @@ export class PlacesService {
       throw new Error(`findPlaceInfoFromKakao: 카카오에서 해당 장소 검색 실패`);
     }
   }
-
+  /**
+   *
+   *
+   */
   checkQueryInResponsePlaces(response: any, query: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const isQueryIncluded = response.documents.some((doc) =>
@@ -152,6 +156,10 @@ export class PlacesService {
       }
     });
   }
+  /**
+   *
+   *
+   */
   extractGu(place_address: string) {
     const array = place_address.split(" ");
 
@@ -162,7 +170,10 @@ export class PlacesService {
     // 추출 실패 시 에러 메시지 반환
     throw new Error("구 이름을 추출할 수 없습니다.");
   }
-
+  /**
+   *
+   *
+   */
   addAddress(payload: any): string {
     try {
       return payload.road_address_name || payload.address_name || "";
@@ -172,7 +183,10 @@ export class PlacesService {
       throw new Error(errorMessage); // 에러 발생 시 에러를 내보냅니다.
     }
   }
-
+  /**
+   *
+   *
+   */
   setCategory(payload: any): any | undefined {
     const categoryArray = [{ categoryId: 1 }];
     const categoryMappings = {
@@ -192,7 +206,10 @@ export class PlacesService {
     }
     return categoryArray; // 매핑이 없는 경우 undefined 반환
   }
-
+  /**
+   *
+   *
+   */
   async createPlace(
     place_name: string,
     place_latitude: number,
@@ -202,8 +219,8 @@ export class PlacesService {
       const { response, place_address, place_category } =
         await this.findPlaceInfoFromKakao(
           place_name,
-          place_latitude,
-          place_longitude
+          place_latitude, // 위도 y
+          place_longitude // 위도 x
         );
 
       await this.checkQueryInResponsePlaces(response, place_name);
@@ -244,11 +261,18 @@ export class PlacesService {
       throw new Error(`createPlace: 장소 생성 실패 - ${error.message}`);
     }
   }
-
+  /**
+   *
+   *
+   */
   async getAll() {
     const result = await this.prisma.place.findMany({});
     return result;
   }
+  /**
+   *
+   *
+   */
   async getOne(placeId: number) {
     const result = await this.prisma.place.findFirst({
       where: { place_id: placeId },
@@ -265,7 +289,10 @@ export class PlacesService {
     });
     return result;
   }
-
+  /**
+   *
+   *
+   */
   async createPlaceVisit(userId: number, placeId: number) {
     await this.prisma.placeVisit.create({
       data: {
@@ -274,7 +301,10 @@ export class PlacesService {
       },
     });
   }
-
+  /**
+   *
+   *
+   */
   async getPlacePosts(placeId: number) {
     const place = await this.prisma.place.findFirst({
       where: { place_id: placeId },
@@ -314,5 +344,33 @@ export class PlacesService {
 
     const newPlace = { ...place, place_posts: postsWithUserInfo };
     return newPlace; // 반환 타입 수정
+  }
+  /**
+   *
+   *
+   */
+  async getLandmarks() {
+    const places = await this.prisma.mapPlaceCategory.findMany({
+      where: {
+        categoryId: 7,
+      },
+    });
+    // console.log(
+    //   "🚀 ~ file: places.service.ts:325 ~ PlacesService ~ getLandmarks ~ places:",
+    //   places
+    // );
+    const result = await places.map((place) => {
+      this.prisma.place.findFirst({
+        where: {
+          place_id: place.placeId,
+        },
+      });
+    });
+    console.log(
+      "🚀 ~ file: places.service.ts:336 ~ PlacesService ~ result ~ result:",
+      result
+    );
+
+    return result; // 결과를 반환해야 합니다.
   }
 }

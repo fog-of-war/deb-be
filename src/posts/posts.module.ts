@@ -10,7 +10,7 @@ import { UsersService } from "src/users/users.service";
 import { RanksModule } from "src/ranks/ranks.module";
 
 @Module({
-  imports: [PrismaModule,RanksModule],
+  imports: [PrismaModule, RanksModule],
   controllers: [PostsController],
   providers: [
     PostsService,

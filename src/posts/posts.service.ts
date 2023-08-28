@@ -107,6 +107,7 @@ export class PostsService {
     const result = await this.compareUserStates(userId, userStateBefore);
     return result;
   }
+
   private async compareUserStates(
     userId: number,
     userStateBefore: any
@@ -207,9 +208,9 @@ export class PostsService {
         post_description: dto.post_description,
       },
     });
-
     return updatedPost;
   }
+
   /** 게시물 삭제하기 */
   async deletePostById(userId: number, postId: number) {
     return this.prisma.post.delete({

@@ -27,8 +27,30 @@ import {
 @ApiTags("places")
 @Controller("places")
 export class PlacesController {
+  /**
+   *
+   *
+   */
   constructor(private readonly placesService: PlacesService) {}
-
+  /**
+   *
+   *
+   */
+  @Get("/landmarks")
+  @ApiOperation({ summary: "특정 id 를 가진 장소의 리뷰를 가져오기" })
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: PlaceWithPostsResponse,
+  })
+  async getLandmarks() {
+    const result = await this.placesService.getLandmarks();
+    return result;
+  }
+  /**
+   *
+   *
+   */
   @Get("/forjh")
   @ApiOperation({
     summary: "정훈님에게 선물 장소검색하기/ query 필요",
@@ -52,8 +74,11 @@ export class PlacesController {
         .json({ message: "Error occurred during search." });
     }
   }
+  /**
+   *
+   *
+   */
 
-  @Get("/search")
   @ApiOperation({
     summary: "장소검색하기/ x,y,query 필요, 현재 주변 3km 검색 가능",
   })
@@ -63,6 +88,7 @@ export class PlacesController {
     type: SearchResponse, // 반환 모델을 지정
   })
   @ApiResponse({ status: 404, description: "해당 장소 검색 실패" })
+  @Get("/search")
   async getPlaceSearch(
     @Query("query") query: string,
     @Query("x") xCoordinate: number,
@@ -70,11 +96,12 @@ export class PlacesController {
     @Res() res
   ): Promise<void> {
     try {
+      //http://localhost:5000/v1/places/search?x=126.975278&y=37.559722&query=숭례문
       const searchResult: SearchResponse[] =
         await this.placesService.findPlacesInfoFromKakao(
-          query,
           xCoordinate,
-          yCoordinate
+          yCoordinate,
+          query
         );
 
       res.status(HttpStatus.OK).json(searchResult);
@@ -84,7 +111,10 @@ export class PlacesController {
         .json({ message: "Error occurred during search." });
     }
   }
-
+  /**
+   *
+   *
+   */
   @Get("/all")
   @ApiOperation({
     summary: "데이터베이스에 있는 모든 장소 가져오기(랜드마크, 게시장소 포함)",
@@ -96,7 +126,10 @@ export class PlacesController {
     const result = await this.placesService.getAll();
     return result;
   }
-
+  /**
+   *
+   *
+   */
   @Get("/:id")
   @ApiOperation({ summary: "특정 id 를 가진 장소 가져오기" })
   @ApiResponse({
@@ -108,7 +141,10 @@ export class PlacesController {
     const result: GetPlaceById = await this.placesService.getOne(placeId);
     return result;
   }
-
+  /**
+   *
+   *
+   */
   @Get("/:id/posts")
   @ApiOperation({ summary: "특정 id 를 가진 장소의 리뷰를 가져오기" })
   @ApiResponse({
