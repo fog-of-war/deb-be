@@ -355,22 +355,20 @@ export class PlacesService {
         categoryId: 7,
       },
     });
-    // console.log(
-    //   "🚀 ~ file: places.service.ts:325 ~ PlacesService ~ getLandmarks ~ places:",
-    //   places
-    // );
-    const result = await places.map((place) => {
-      this.prisma.place.findFirst({
-        where: {
-          place_id: place.placeId,
-        },
-      });
-    });
-    console.log(
-      "🚀 ~ file: places.service.ts:336 ~ PlacesService ~ result ~ result:",
-      result
+
+    const result = await Promise.all(
+      places.map(async (place) => {
+        const foundPlace = await this.prisma.place.findFirst({
+          where: {
+            place_id: place.placeId,
+          },
+        });
+        return foundPlace;
+      })
     );
 
-    return result; // 결과를 반환해야 합니다.
+    console.log("Result:", result);
+
+    return result;
   }
 }

@@ -37,7 +37,7 @@ export class PlacesController {
    *
    */
   @Get("/landmarks")
-  @ApiOperation({ summary: "특정 id 를 가진 장소의 리뷰를 가져오기" })
+  @ApiOperation({ summary: "랜드마크 가져오기/ 탐험 추천 장소" })
   @ApiResponse({
     status: 200,
     description: "",
