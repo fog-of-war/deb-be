@@ -10,6 +10,39 @@ export class PlacesService {
   constructor(private config: ConfigService, private prisma: PrismaService) {
     this.clientID = this.config.get("KAKAO_CLIENT_ID");
   }
+  async findPlacesInfoForJH(query: string): Promise<any> {
+    const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;
+    const options = {
+      headers: {
+        Authorization: "KakaoAK " + this.clientID,
+      },
+      params: {
+        radius: 3000,
+        query: query,
+      },
+    };
+
+    try {
+      const response: AxiosResponse<any> = await axios.get(api_url, options);
+
+      // Filter out results with "커피" as the place name only when the query includes "맛집"
+      const filteredResults = response.data.documents.filter(
+        (document: any) => {
+          if (query.includes("맛집")) {
+            return document.place_name !== "커피";
+          }
+          return true;
+        }
+      );
+
+      const result = await this.areTheyExistInDB(filteredResults);
+      return result;
+    } catch (error) {
+      throw new Error(
+        `findPlacesInfoFromKakao: 카카오에서 해당 장소 검색 실패`
+      );
+    }
+  }
 
   async findPlacesInfoFromKakao(query: string, x: any, y: any): Promise<any> {
     const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;

@@ -24,9 +24,35 @@ import { SearchResponse, GetPlaceById } from "./responses"; // 'your-models'는 
 @Controller("places")
 export class PlacesController {
   constructor(private readonly placesService: PlacesService) {}
+  @Get("/forjh")
+  @ApiOperation({
+    summary: "정훈님에게 선물 장소검색하기/ query 필요",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: SearchResponse, // 반환 모델을 지정
+  })
+  @ApiResponse({ status: 404, description: "해당 장소 검색 실패" })
+  async jhPlaceSearch(
+    @Query("query") query: string,
+    @Res() res
+  ): Promise<void> {
+    try {
+      const searchResult: SearchResponse[] =
+        await this.placesService.findPlacesInfoForJH(query);
+      res.status(HttpStatus.OK).json(searchResult);
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: "Error occurred during search." });
+    }
+  }
 
   @Get("/search")
-  @ApiOperation({ summary: '장소검색하기/ x,y,query 필요, 현재 주변 3km 검색 가능' })
+  @ApiOperation({
+    summary: "장소검색하기/ x,y,query 필요, 현재 주변 3km 검색 가능",
+  })
   @ApiResponse({
     status: 200,
     description: "",
@@ -56,7 +82,9 @@ export class PlacesController {
   }
 
   @Get("/all")
-  @ApiOperation({ summary: '데이터베이스에 있는 모든 장소 가져오기(랜드마크, 게시장소 포함)' })
+  @ApiOperation({
+    summary: "데이터베이스에 있는 모든 장소 가져오기(랜드마크, 게시장소 포함)",
+  })
   @ApiCreatedResponse({
     status: 200,
   })
@@ -66,7 +94,7 @@ export class PlacesController {
   }
 
   @Get("/:id")
-  @ApiOperation({ summary: '특정 id 를 가진 장소 가져오기' })
+  @ApiOperation({ summary: "특정 id 를 가진 장소 가져오기" })
   @ApiResponse({
     status: 200,
     description: "",
