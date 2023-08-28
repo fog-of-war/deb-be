@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateUserDto, EditUserDto, InitUserDto } from "./dto";
 import { BadgesService } from "../badges/badges.service";
-import { User } from "@prisma/client";
+// import { User } from "@prisma/client";
 import { RanksService } from "src/ranks/ranks.service";
 
 @Injectable()
@@ -26,7 +26,7 @@ export class UsersService {
     });
     return user;
   }
-  async findUserById(id: number): Promise<User | null> {
+  async findUserById(id: number): Promise<any | null> {
     return this.prisma.user.findFirst({
       where: {
         user_id: id,
@@ -34,7 +34,7 @@ export class UsersService {
       include: { user_badges: true },
     });
   }
-  async findUserByEmail(email: string): Promise<User | null> {
+  async findUserByEmail(email: string): Promise<any | null> {
     return this.prisma.user.findFirst({
       where: {
         user_email: email,
@@ -65,7 +65,7 @@ export class UsersService {
     });
   }
 
- async leanUserInfo(user: any) {
+  async leanUserInfo(user: any) {
     const selectedFields = [
       "user_image_url",
       "user_nickname",
