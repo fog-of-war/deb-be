@@ -274,4 +274,39 @@ export class PlacesService {
       },
     });
   }
+
+  async getPlacePosts(placeId: number) {
+    const posts = await this.prisma.post.findMany({
+      where: { post_place_id: placeId },
+      select: {
+        post_id: true,
+        post_created_at: true,
+        post_updated_at: true,
+        post_description: true,
+        post_image_url: true,
+        post_author_id: true,
+        post_star_rating: true,
+      },
+    });
+
+    const postsWithUserInfo = [];
+
+    for (const post of posts) {
+      const user = await this.prisma.user.findUnique({
+        where: { user_id: post.post_author_id },
+        select: {
+          user_id: true,
+          user_nickname: true,
+          user_image_url: true,
+        },
+      });
+
+      postsWithUserInfo.push({
+        ...post,
+        post_author: user,
+      });
+    }
+
+    return postsWithUserInfo;
+  }
 }

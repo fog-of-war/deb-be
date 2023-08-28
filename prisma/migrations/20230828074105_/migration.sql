@@ -20,6 +20,15 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "UserRanking" (
+    "user_id" INTEGER NOT NULL,
+    "user_points" INTEGER NOT NULL,
+    "rank" INTEGER NOT NULL,
+
+    CONSTRAINT "UserRanking_pkey" PRIMARY KEY ("user_id")
+);
+
+-- CreateTable
 CREATE TABLE "UserActivities" (
     "activity_id" SERIAL NOT NULL,
     "activity_user_id" INTEGER,
@@ -64,10 +73,19 @@ CREATE TABLE "Place" (
     "place_star_rating" DOUBLE PRECISION,
     "place_points" INTEGER,
     "place_address" TEXT,
+    "place_region_id" INTEGER,
     "place_latitude" DOUBLE PRECISION,
     "place_longitude" DOUBLE PRECISION,
 
     CONSTRAINT "Place_pkey" PRIMARY KEY ("place_id")
+);
+
+-- CreateTable
+CREATE TABLE "Region" (
+    "region_id" SERIAL NOT NULL,
+    "region_name" TEXT NOT NULL,
+
+    CONSTRAINT "Region_pkey" PRIMARY KEY ("region_id")
 );
 
 -- CreateTable
@@ -149,6 +167,9 @@ ALTER TABLE "PlaceVisit" ADD CONSTRAINT "PlaceVisit_visited_place_id_fkey" FOREI
 
 -- AddForeignKey
 ALTER TABLE "PlaceVisit" ADD CONSTRAINT "PlaceVisit_visited_user_id_fkey" FOREIGN KEY ("visited_user_id") REFERENCES "User"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Place" ADD CONSTRAINT "Place_place_region_id_fkey" FOREIGN KEY ("place_region_id") REFERENCES "Region"("region_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MapPlaceCategory" ADD CONSTRAINT "MapPlaceCategory_placeId_fkey" FOREIGN KEY ("placeId") REFERENCES "Place"("place_id") ON DELETE RESTRICT ON UPDATE CASCADE;

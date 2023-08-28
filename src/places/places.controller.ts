@@ -103,4 +103,15 @@ export class PlacesController {
     const result: GetPlaceById = await this.placesService.getOne(placeId);
     return result;
   }
+
+  @Get("/:id/posts")
+  @ApiOperation({ summary: "특정 id 를 가진 장소의 리뷰를 가져오기" })
+  @ApiResponse({
+    status: 200,
+    description: "",
+  })
+  async getPlacePosts(@Param("id", ParseIntPipe) placeId: number) {
+    const result = await this.placesService.getPlacePosts(placeId);
+    return result;
+  }
 }
