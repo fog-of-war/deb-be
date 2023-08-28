@@ -117,6 +117,7 @@ model Badge {
   badge_points      Int?     @default(100)
   badge_user        User?    @relation(fields: [badge_user_id], references: [user_id])
   badge_user_id     Int?
+  badge_image_url   String
 }
 
 model SearchHistory {

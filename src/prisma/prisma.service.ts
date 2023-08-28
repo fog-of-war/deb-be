@@ -126,6 +126,7 @@ export class PrismaService extends PrismaClient {
             badge_name: badge.badge_name,
             badge_criteria: badge.badge_criteria,
             badge_category_id: badge.badge_category_id,
+            badge_image_url: badge.badge_image_url,
           },
         });
       }

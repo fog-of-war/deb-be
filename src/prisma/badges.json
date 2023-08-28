@@ -3,120 +3,140 @@
     "badge_id": 1,
     "badge_name": "부랑자",
     "badge_criteria": 0,
-    "badge_category_id": 1
+    "badge_category_id": 1,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/부랑아.png"
   },
   {
     "badge_id": 2,
     "badge_name": "시민",
     "badge_criteria": 3,
-    "badge_category_id": 1
+    "badge_category_id": 1,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/시민.png"
   },
   {
     "badge_id": 3,
     "badge_name": "모험가",
     "badge_criteria": 10,
-    "badge_category_id": 1
+    "badge_category_id": 1,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/모험가.png"
   },
   {
     "badge_id": 4,
     "badge_name": "장군",
     "badge_criteria": 50,
-    "badge_category_id": 1
+    "badge_category_id": 1,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/장군.png"
   },
   {
     "badge_id": 5,
     "badge_name": "성주",
     "badge_criteria": 100,
-    "badge_category_id": 1
+    "badge_category_id": 1,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/성주.png"
   },
   {
     "badge_id": 6,
     "badge_name": "냠냠이",
     "badge_criteria": 1,
-    "badge_category_id": 2
+    "badge_category_id": 2,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/냠냠이.png"
   },
   {
     "badge_id": 7,
     "badge_name": "미식가",
     "badge_criteria": 5,
-    "badge_category_id": 2
+    "badge_category_id": 2,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/미식가.png"
   },
   {
     "badge_id": 8,
     "badge_name": "레스트랑 사장",
     "badge_criteria": 10,
-    "badge_category_id": 2
+    "badge_category_id": 2,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/레스토랑사장.png"
   },
   {
     "badge_id": 9,
     "badge_name": "줄넘기",
     "badge_criteria": 1,
-    "badge_category_id": 3
+    "badge_category_id": 3,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/줄넘기.png"
   },
   {
     "badge_id": 10,
     "badge_name": "몸짱",
     "badge_criteria": 5,
-    "badge_category_id": 3
+    "badge_category_id": 3,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/몸짱.png"
   },
   {
     "badge_id": 11,
     "badge_name": "트레이너",
     "badge_criteria": 10,
-    "badge_category_id": 3
+    "badge_category_id": 3,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/트레이너.png"
   },
   {
     "badge_id": 12,
     "badge_name": "화가",
     "badge_criteria": 1,
-    "badge_category_id": 4
+    "badge_category_id": 4,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/화가.png"
   },
   {
     "badge_id": 13,
     "badge_name": "다빈치",
     "badge_criteria": 5,
-    "badge_category_id": 4
+    "badge_category_id": 4,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/다빈치.png"
   },
   {
     "badge_id": 14,
     "badge_name": "피카소",
     "badge_criteria": 10,
-    "badge_category_id": 4
+    "badge_category_id": 4,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/피카소.png"
   },
   {
     "badge_id": 15,
     "badge_name": "석기시대",
     "badge_criteria": 1,
-    "badge_category_id": 5
+    "badge_category_id": 5,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/석기시대.png"
   },
   {
     "badge_id": 16,
     "badge_name": "한능검",
     "badge_criteria": 5,
-    "badge_category_id": 5
+    "badge_category_id": 5,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/한능검.png"
   },
   {
     "badge_id": 17,
     "badge_name": "고고학자",
     "badge_criteria": 10,
-    "badge_category_id": 5
+    "badge_category_id": 5,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/고고학자.png"
   },
   {
     "badge_id": 18,
     "badge_name": "아메리카노",
     "badge_criteria": 1,
-    "badge_category_id": 6
+    "badge_category_id": 6,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/아메리카노.png"
   },
   {
     "badge_id": 19,
     "badge_name": "라떼는말야",
     "badge_criteria": 5,
-    "badge_category_id": 6
+    "badge_category_id": 6,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/라떼는말야.png"
   },
   {
     "badge_id": 20,
     "badge_name": "바리스타",
     "badge_criteria": 10,
-    "badge_category_id": 6
+    "badge_category_id": 6,
+    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/바리스타.png"
   }
 ]
