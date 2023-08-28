@@ -18,12 +18,17 @@ import {
   ApiOperation,
 } from "@nestjs/swagger";
 import { PlacesService } from "./places.service"; // PlacesService의 경로로 수정해야 합니다.
-import { SearchResponse, GetPlaceById } from "./responses"; // 'your-models'는 실제 모델 파일의 경로에 맞게 변경해주세요.
+import {
+  SearchResponse,
+  GetPlaceById,
+  PlaceWithPostsResponse,
+} from "./responses"; // 'your-models'는 실제 모델 파일의 경로에 맞게 변경해주세요.
 
 @ApiTags("places")
 @Controller("places")
 export class PlacesController {
   constructor(private readonly placesService: PlacesService) {}
+
   @Get("/forjh")
   @ApiOperation({
     summary: "정훈님에게 선물 장소검색하기/ query 필요",
@@ -109,6 +114,7 @@ export class PlacesController {
   @ApiResponse({
     status: 200,
     description: "",
+    type: PlaceWithPostsResponse,
   })
   async getPlacePosts(@Param("id", ParseIntPipe) placeId: number) {
     const result = await this.placesService.getPlacePosts(placeId);

@@ -276,6 +276,11 @@ export class PlacesService {
   }
 
   async getPlacePosts(placeId: number) {
+    const place = await this.prisma.place.findFirst({
+      where: { place_id: placeId },
+      select: { place_id: true, place_name: true, place_star_rating: true },
+    });
+    place.place_star_rating = 4.5;
     const posts = await this.prisma.post.findMany({
       where: { post_place_id: placeId },
       select: {
@@ -307,6 +312,7 @@ export class PlacesService {
       });
     }
 
-    return postsWithUserInfo;
+    const newPlace = { ...place, place_posts: postsWithUserInfo };
+    return newPlace; // 반환 타입 수정
   }
 }
