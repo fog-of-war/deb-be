@@ -29,11 +29,10 @@ model User {
 }
 
 model UserRanking {
-  user_id      Int @id
-  user_points  Int
-  rank         Int
+  user_id     Int @id
+  user_points Int
+  rank        Int
 }
-
 
 model UserActivities {
   activity_id         Int      @id @default(autoincrement())
@@ -75,11 +74,19 @@ model Place {
   place_star_rating  Float?
   place_points       Int?
   place_address      String?
+  place_region       Region             @relation(fields: [place_region_id], references: [region_id])
+  place_region_id    Int
   place_latitude     Float?
   place_longitude    Float?
   place_visited_by   PlaceVisit[]
   place_posts        Post[]
   place_category_map MapPlaceCategory[]
+}
+
+model Region {
+  region_id    Int     @id @default(autoincrement())
+  region_name  String
+  region_place Place[]
 }
 
 model Category {

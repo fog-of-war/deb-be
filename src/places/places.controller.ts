@@ -39,8 +39,7 @@ export class PlacesController {
     @Res() res
   ): Promise<void> {
     try {
-      const searchResult: SearchResponse[] =
-        await this.placesService.findPlacesInfoForJH(query);
+      const searchResult = await this.placesService.findPlacesInfoForJH(query);
       res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
       res

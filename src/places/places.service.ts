@@ -152,6 +152,16 @@ export class PlacesService {
       }
     });
   }
+  extractGu(place_address: string) {
+    const array = place_address.split(" ");
+
+    if (array.length >= 2 && array[1].match(/구$/)) {
+      return array[1];
+    }
+
+    // 추출 실패 시 에러 메시지 반환
+    throw new Error("구 이름을 추출할 수 없습니다.");
+  }
 
   addAddress(payload: any): string {
     try {
@@ -197,6 +207,11 @@ export class PlacesService {
         );
 
       await this.checkQueryInResponsePlaces(response, place_name);
+      const gu = this.extractGu(place_address);
+
+      const region = await this.prisma.region.findFirst({
+        where: { region_name: gu },
+      });
 
       const createdPlace = await this.prisma.place.create({
         data: {
@@ -204,6 +219,7 @@ export class PlacesService {
           place_latitude: place_latitude,
           place_longitude: place_longitude,
           place_address: place_address,
+          place_region_id: region.region_id,
         },
       });
 
@@ -244,6 +260,7 @@ export class PlacesService {
           },
         },
         place_visited_by: true,
+        place_region: true,
       },
     });
     return result;

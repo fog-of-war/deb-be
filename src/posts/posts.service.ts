@@ -71,7 +71,7 @@ export class PostsService {
       await this.pointsService.assignPoints(userId, placeId);
       await this.levelsService.updateLevel(userId);
       await this.badgesService.checkAndAssignBadge(userId);
-      await this.ranksService.updateRanks()
+      await this.ranksService.updateRanks();
     } catch (error) {
       // 각 서비스의 에러를 적절하게 처리할 수 있도록 코드를 추가합니다.
       console.error("Error in createPostActions:", error);

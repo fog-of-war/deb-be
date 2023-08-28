@@ -70,6 +70,13 @@ class VisitedPlace {
   visited_user_id: number;
 }
 
+class Region {
+  @ApiProperty()
+  region_id: number;
+  @ApiProperty()
+  region_name: string;
+}
+
 export class GetPlaceById {
   @ApiProperty()
   place_id: number;
@@ -91,6 +98,9 @@ export class GetPlaceById {
 
   @ApiProperty()
   place_address: string;
+
+  @ApiProperty()
+  place_region: Region;
 
   @ApiProperty()
   place_latitude: number;

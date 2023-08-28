@@ -5,6 +5,7 @@ import * as placesData from "./landmarks.json";
 import * as badges from "./badges.json";
 import * as categories from "./categories.json";
 import * as levels from "./levels.json";
+import * as regions from "./regions.json";
 @Injectable()
 export class PrismaService extends PrismaClient {
   constructor(config: ConfigService) {
@@ -26,6 +27,9 @@ export class PrismaService extends PrismaClient {
           skipDuplicates: true,
         });
 
+        // 구 삽입 작업
+        await this.insertRegion();
+
         // 장소 삽입 작업
         await this.insertPlaces();
 
@@ -41,6 +45,35 @@ export class PrismaService extends PrismaClient {
     }
   }
 
+  async insertRegion() {
+    const regionData = regions as Array<any>; // JSON 파일을 배열로 변환
+    for (const region of regionData) {
+      // 데이터베이스에 해당 뱃지 이름이 있는지 확인
+      const existingRegion = await this.region.findFirst({
+        where: { region_name: region.region_name },
+      });
+
+      if (!existingRegion) {
+        await this.region.create({
+          data: {
+            region_name: region.region_name,
+          },
+        });
+      }
+    }
+  }
+
+  extractGu(place_address: string) {
+    const array = place_address.split(" ");
+
+    if (array.length >= 2 && array[1].match(/구$/)) {
+      return array[1];
+    }
+
+    // 추출 실패 시 에러 메시지 반환
+    throw new Error("구 이름을 추출할 수 없습니다.");
+  }
+
   async insertPlaces() {
     for (const placeData of placesData) {
       const existingPlace = await this.place.findFirst({
@@ -51,13 +84,22 @@ export class PrismaService extends PrismaClient {
         const categories = await this.category.findMany({
           where: { category_id: { in: placeData.place_category_ids } },
         });
+        console.log(
+          "🚀 ~ file: prisma.service.ts:92 ~ PrismaService ~ insertPlaces ~ placeData.place_address:",
+          placeData.place_address
+        );
 
+        const gu = this.extractGu(placeData.place_address);
+        const region = await this.region.findFirst({
+          where: { region_name: gu },
+        });
         const createdPlace = await this.place.create({
           data: {
             place_name: placeData.place_name,
             place_address: placeData.place_address,
             place_latitude: placeData.place_latitude,
             place_longitude: placeData.place_longitude,
+            place_region_id: region.region_id,
             place_category_map: {
               create: categories.map((category) => ({
                 category: { connect: { category_id: category.category_id } },
