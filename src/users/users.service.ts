@@ -67,6 +67,7 @@ export class UsersService {
 
   async leanUserInfo(user: any) {
     const selectedFields = [
+      "user_id",
       "user_image_url",
       "user_nickname",
       "user_points",
