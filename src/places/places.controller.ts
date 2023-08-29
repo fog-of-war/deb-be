@@ -23,6 +23,7 @@ import {
   GetPlaceById,
   PlaceWithPostsResponse,
 } from "./responses"; // 'your-models'는 실제 모델 파일의 경로에 맞게 변경해주세요.
+import { LoggerService } from "src/logger/logger.service";
 
 @ApiTags("places")
 @Controller("places")
@@ -31,7 +32,7 @@ export class PlacesController {
    *
    *
    */
-  constructor(private readonly placesService: PlacesService) {}
+  constructor(private readonly placesService: PlacesService,  private logger:LoggerService) {}
   /**
    *
    *
@@ -103,7 +104,7 @@ export class PlacesController {
           yCoordinate,
           query
         );
-
+      this.logger.log(`🔍 위도(latitude) : ${yCoordinate}, 경도(longitude) : ${xCoordinate}, 검색어 : ${query}`)
       res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
       res
@@ -154,6 +155,7 @@ export class PlacesController {
   })
   async getPlacePosts(@Param("id", ParseIntPipe) placeId: number) {
     const result = await this.placesService.getPlacePosts(placeId);
+    this.logger.log(`장소id (${placeId}) 의 게시물들이 조회됨 `)
     return result;
   }
 }
