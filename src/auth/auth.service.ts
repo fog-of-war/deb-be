@@ -25,15 +25,15 @@ export class AuthService {
 
   async naverLogin(req: Request): Promise<any> {
     const user = req.user;
-    return this.signToken(user["user_id"], user["user_nickname"]);
+    const result =  await  this.signToken(user["user_id"], user["user_nickname"]);
+    return result;
   }
 
   async signToken(userId: number, userNickname: string): Promise<string> {
     const payload = {
-      sub: userId,
-      userNickname,
+      sub: userId
     };
-    const secret = this.config.get("JWT_SECRET");
+    const secret = await this.config.get("JWT_SECRET");
     const token = await this.jwt.signAsync(payload, {
       expiresIn: "180m",
       secret: secret,

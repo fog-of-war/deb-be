@@ -2,23 +2,18 @@ import { Module } from "@nestjs/common";
 import { PostsController } from "./posts.controller";
 import { PostsService } from "./posts.service";
 import { PrismaModule } from "../prisma/prisma.module";
-import { PlacesService } from "src/places/places.service";
-import { BadgesService } from "src/badges/badges.service";
-import { PointsService } from "src/points/points.service";
-import { LevelsService } from "src/levels/levels.service";
-import { UsersService } from "src/users/users.service";
+import { PlacesModule } from "src/places/places.module";
+import { BadgesModule } from "src/badges/badges.module";
+import { PointsModule } from "src/points/points.module";
+import { LevelsModule } from "src/levels/levels.module";
+import { UsersModule } from "src/users/users.module";
 import { RanksModule } from "src/ranks/ranks.module";
 
 @Module({
-  imports: [PrismaModule, RanksModule],
+  imports: [PrismaModule, RanksModule ,PlacesModule,BadgesModule, PointsModule,LevelsModule, UsersModule],
   controllers: [PostsController],
   providers: [
-    PostsService,
-    PlacesService,
-    BadgesService,
-    PointsService,
-    LevelsService,
-    UsersService,
+    PostsService
   ],
 })
 export class PostsModule {}

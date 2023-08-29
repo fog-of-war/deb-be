@@ -7,7 +7,6 @@ import { GoogleStrategy, KakaoStrategy, NaverStrategy } from "./strategy";
 import { UsersModule } from "src/users/users.module";
 import { HttpModule } from "@nestjs/axios";
 import { PassportModule } from "@nestjs/passport";
-import { SessionSerializer } from "./serializer";
 import { RanksModule } from "src/ranks/ranks.module";
 
 @Module({
@@ -24,7 +23,6 @@ import { RanksModule } from "src/ranks/ranks.module";
     GoogleStrategy,
     KakaoStrategy,
     NaverStrategy,
-    SessionSerializer,
   ],
   controllers: [AuthController],
 })

@@ -27,7 +27,7 @@ export class UsersService {
     return user;
   }
   async findUserById(id: number): Promise<any | null> {
-    return this.prisma.user.findFirst({
+    return await this.prisma.user.findFirst({
       where: {
         user_id: id,
       },
@@ -35,7 +35,7 @@ export class UsersService {
     });
   }
   async findUserByEmail(email: string): Promise<any | null> {
-    return this.prisma.user.findFirst({
+    return await this.prisma.user.findFirst({
       where: {
         user_email: email,
       },
@@ -58,7 +58,7 @@ export class UsersService {
   }
 
   async initUser(userDto: any) {
-    return this.prisma.user.create({
+    return await this.prisma.user.create({
       data: {
         ...userDto,
       },

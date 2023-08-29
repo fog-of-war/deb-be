@@ -4,10 +4,12 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { PrismaService } from "../../prisma/prisma.service";
 import { RanksService } from "src/ranks/ranks.service";
+import { Logger } from "pactum/src/exports/settings";
+import { LoggerService } from "src/logger/logger.service";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
-  constructor(config: ConfigService, private prisma: PrismaService,  private ranksService: RanksService,) {
+  constructor(config: ConfigService, private prisma: PrismaService,  private ranksService: RanksService, private loggerService:LoggerService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       //   ignoreExpiration: false,
@@ -27,14 +29,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
     });
 
         // 랭킹 업데이트 로직 호출
-   const rank  = await this.ranksService.getUserRank(user.user_id);
+    const rank  = await this.ranksService.getUserRank(user.user_id);
 
-    console.log(
-      "🚀 ~ file: jwt.strategy.ts:27 ~ JwtStrategy ~ validate ~ user_nickname:",
-      user.user_nickname,
-      "🚀 ~ file: jwt.strategy.ts:27 ~ JwtStrategy ~ validate ~ user_email:",
-      user.user_email
-    );
+    this.loggerService.log(`user_id : ${user.user_id}, user_email : ${user.user_email}`)
     return user;
   }
 }
