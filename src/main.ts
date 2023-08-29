@@ -10,9 +10,13 @@ import * as cookieParser from "cookie-parser";
 import * as session from "express-session";
 import * as passport from "passport";
 import { PrismaService } from "./prisma/prisma.service";
+import { LoggerService } from "./logger/logger.service";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+  app.useLogger(app.get(LoggerService));
   app.enableCors({
     origin: [
       "http://localhost:3000",

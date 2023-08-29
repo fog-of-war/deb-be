@@ -23,12 +23,13 @@ import {
 } from "@nestjs/swagger";
 import { validate } from "class-validator";
 import { EditUserResponse, GetUserResponse } from "./responses";
+import { LoggerService } from "src/logger/logger.service";
 
 @ApiTags("users")
 @UseGuards(JwtGuard)
 @Controller("users")
 export class UsersController {
-  constructor(private userService: UsersService) {}
+  constructor(private userService: UsersService, private logger:LoggerService) {}
 
   @Get("me")
   @ApiOperation({ summary: "나의 정보 가져오기/ 마이페이지, 메인페이지 사용" })
@@ -40,6 +41,7 @@ export class UsersController {
   })
   async getMe(@GetUser() user: any) {
     const result = await this.userService.leanUserInfo(user);
+    this.logger.log(result);
     return result;
   }
 
