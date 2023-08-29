@@ -18,11 +18,12 @@ import { CreatePostDto, EditPostDto } from "./dto";
 import { GetUser } from "../auth/decorator";
 import { ApiTags, ApiBearerAuth, ApiResponse,ApiOperation } from "@nestjs/swagger";
 import { GetPostResponse, PostPostsResponse } from "./responses";
+import { LoggerService } from "src/logger/logger.service";
 
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {
-  constructor(private postService: PostsService) {}
+  constructor(private postService: PostsService,private logger: LoggerService) {}
 
   @Get()
   @ApiOperation({ summary: '모든 게시물 가져오기' })
@@ -45,8 +46,9 @@ export class PostsController {
   })
   @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
-  async getPostsByUserId(@GetUser("user_id") userId: number) {
+  async getPostsByUserId(@GetUser("user_id") userId: number, @GetUser("user_nickname") userNickname: string) {
     const result = await this.postService.getPostsByUserId(userId);
+    this.logger.log(userNickname,'가 자신의 게시물 호출')
     return result;
   }
 
@@ -75,12 +77,13 @@ export class PostsController {
     type: PostPostsResponse, // 반환 모델을 지정
   })
   async createPost(
-    @GetUser("user_id") userId: number,
+    @GetUser("user_id") userId: number, @GetUser("user_nickname") userNickname: string,
     @Body() dto: CreatePostDto
   ) {
     try {
       //
       const result = await this.postService.createPost(userId, dto);
+      this.logger.log(userNickname,'가 게시물 작성')
       return result;
     } catch (error) {
       throw new HttpException(
@@ -102,12 +105,13 @@ export class PostsController {
   @UseGuards(JwtGuard)
   @HttpCode(201)
   async editPostById(
-    @GetUser("user_id") userId: number,
+    @GetUser("user_id") userId: number, @GetUser("user_nickname") userNickname: string,
     @Param("id", ParseIntPipe) postId: number,
     @Body() dto: EditPostDto
   ) {
     try {
       const result = await this.postService.editPostById(userId, postId, dto);
+      this.logger.log(`${userNickname}가 게시물 ${postId} 수정`)
       return result;
     } catch (error) {
       // 에러 핸들링 코드
@@ -129,10 +133,12 @@ export class PostsController {
   @HttpCode(204)
   @ApiBearerAuth("access_token")
   @UseGuards(JwtGuard)
-  deletePost(
+  async deletePost(
     @GetUser("user_id") userId: number,
+    @GetUser("user_nickname") userNickname: string,
     @Param("id", ParseIntPipe) postId: number
   ) {
-    return this.postService.deletePostById(userId, postId);
-  }
+    await this.postService.deletePostById(userId, postId);
+    this.logger.log(`${userNickname}가 게시물 ${postId} 삭제`);
+  }  
 }
