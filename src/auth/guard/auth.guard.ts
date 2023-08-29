@@ -22,7 +22,7 @@ export class LoginGuard implements CanActivate {
       return false;
     }
 
-    // ❽ 인증 로직은 기존의 authService.validateUser를 사용한다.
+    // ❽ 인증 로직은 기존의 usersService.findUserByEmail를 사용한다.
     const user = await this.usersService.findUserByEmail(request.body.email);
 
     // 유저 정보가 없으면 false를 반환
@@ -34,6 +34,7 @@ export class LoginGuard implements CanActivate {
     return true;
   }
 }
+
 @Injectable()
 // ❷ AuthGuard 상속
 export class LocalAuthGuard extends AuthGuard("local") {
