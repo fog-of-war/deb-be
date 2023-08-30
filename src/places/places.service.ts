@@ -366,9 +366,6 @@ export class PlacesService {
         return foundPlace;
       })
     );
-
-    console.log("Result:", result);
-
     return result;
   }
 }
