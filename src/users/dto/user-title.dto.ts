@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsOptional, IsString, IsUrl, Length } from "class-validator";
+import {  IsNumber } from "class-validator";
 
 export class ChangeUserTitleDto {
-  @IsString()
+  @IsNumber()
   @ApiProperty()
-  user_selected_badge: number;
+  user_selected_badge_id: number;
 }

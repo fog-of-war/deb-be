@@ -87,8 +87,8 @@ export class UsersController {
     status: 200,
     description: '사용자가 소유한 뱃지 정보', 
   })
-  async getMyBadges(@GetUser() user: any) {
-    const result = await this.userService.findUserBadges(user);
+  async getMyBadges(@GetUser("user_id") userId: number,) {
+    const result = await this.userService.findUserBadges(userId);
     this.logger.log(result);
     return result;
   }

@@ -43,7 +43,7 @@ import { LogMethodMiddleware } from "./middleware/log-method.middleware";
   providers: [],
 })
 export class AppModule {  
-  configure(consumer: MiddlewareConsumer) {
-  consumer.apply(LogMethodMiddleware).forRoutes("*"); // 모든 라우트에 Middleware 적용
-}
+//   configure(consumer: MiddlewareConsumer) {
+//   consumer.apply(LogMethodMiddleware).forRoutes("*"); // 모든 라우트에 Middleware 적용
+// }
 }

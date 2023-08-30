@@ -66,43 +66,41 @@ export class UsersService {
   }
 
   async leanUserInfo(user: any) {
-    const selectedFields = [
-      "user_id",
-      "user_image_url",
-      "user_nickname",
-      "user_points",
-      "user_level",
-      "user_is_admin",
-      "user_is_deleted",
-      "user_badges",
-      "user_visited_places",
-      "user_authored_posts",
-    ];
-    // 방문장소말고 포스트에 장소 담아드리기
-    const leanUser = {};
-
-    selectedFields.forEach((field) => {
-      leanUser[field] = user[field];
-    });
-
-    return leanUser;
+    const result = await this.prisma.user.findFirst({
+      where:{user_id:user.user_id},
+      select:{
+        user_id:true,
+        user_image_url:true,
+        user_nickname:true,
+        user_points:true,
+        user_level:true,
+        user_is_admin:true,
+        user_is_deleted:true,
+        user_badges:true,
+        user_selected_badge:true,
+        user_visited_places:true,
+        user_authored_posts:true,
+      }})
+   return result;
   }
 
   async findUserBadges(userId: number) {    
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId },
-      include: {       
+      select: {      
+        user_badges: true, 
         user_selected_badge: true,
       },
     });
     return user;
   }
+  
   async changeTitle(userId:number, dto:ChangeUserTitleDto){    
     const user = await this.prisma.user.update({
       where: { user_id: userId },
       data: {       
         user_selected_badge: {
-        connect: { badge_id: dto.user_selected_badge }, // ChangeUserTitleDto에 선택한 뱃지 ID를 포함해야 함
+        connect: { badge_id: dto.user_selected_badge_id }, // ChangeUserTitleDto에 선택한 뱃지 ID를 포함해야 함
       }, },
     });
     return user;
