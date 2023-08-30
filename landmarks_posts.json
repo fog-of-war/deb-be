@@ -1,11 +1,13 @@
 {
     "코엑스": {
         "state": {
+            "new_level": 1,
             "new_badges": []
         }
     },
     "일자산허브천문공원": {
         "state": {
+            "new_level": 2,
             "new_badges": []
         }
     },
@@ -16,6 +18,7 @@
     },
     "서울식물원": {
         "state": {
+            "new_level": 3,
             "new_badges": []
         }
     },
@@ -36,6 +39,7 @@
     },
     "금천체육공원": {
         "state": {
+            "new_level": 4,
             "new_badges": []
         }
     },
@@ -61,6 +65,7 @@
     },
     "월드컵공원": {
         "state": {
+            "new_level": 5,
             "new_badges": []
         }
     },
@@ -121,6 +126,7 @@
     },
     "용마폭포공원": {
         "state": {
+            "new_level": 6,
             "new_badges": []
         }
     }
