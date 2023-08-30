@@ -22,6 +22,7 @@ import {
   SearchResponse,
   GetPlaceById,
   PlaceWithPostsResponse,
+  landmarksResponse,
 } from "./responses"; // 'your-models'는 실제 모델 파일의 경로에 맞게 변경해주세요.
 import { LoggerService } from "src/logger/logger.service";
 
