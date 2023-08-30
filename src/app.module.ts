@@ -1,4 +1,4 @@
-import { Module, ValidationPipe  } from "@nestjs/common";
+import { MiddlewareConsumer, Module, ValidationPipe  } from "@nestjs/common";
 import { PlacesModule } from "./places/places.module";
 import { UsersModule } from "./users/users.module";
 import { BadgesModule } from "./badges/badges.module";
@@ -14,6 +14,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
 import { RanksModule } from './ranks/ranks.module';
 import { LoggerModule } from './logger/logger.module';
 import * as redisStore from 'cache-manager-ioredis';
+import { LogMethodMiddleware } from "./middleware/log-method.middleware";
 
 @Module({
   imports: [
@@ -41,4 +42,8 @@ import * as redisStore from 'cache-manager-ioredis';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {  
+  configure(consumer: MiddlewareConsumer) {
+  consumer.apply(LogMethodMiddleware).forRoutes("*"); // 모든 라우트에 Middleware 적용
+}
+}

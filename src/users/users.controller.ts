@@ -41,7 +41,6 @@ export class UsersController {
   })
   async getMe(@GetUser() user: any) {
     const result = await this.userService.leanUserInfo(user);
-    this.logger.log(result);
     return result;
   }
 
@@ -72,6 +71,7 @@ export class UsersController {
     }
     try {
       await this.userService.editUser(userId, dto);
+      this.logger.log(`${userId}의 회원 정보 변경`)
       return { message: "유저 정보 변경에 성공했습니다" };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -86,7 +86,6 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: '사용자가 소유한 뱃지 정보', 
-    // type: UserBadgesResponse
   })
   async getMyBadges(@GetUser() user: any) {
     const result = await this.userService.findUserBadges(user);
@@ -110,6 +109,7 @@ export class UsersController {
     // 유효성 검사 수행
     try {
       await this.userService.changeTitle(userId, dto);
+      this.logger.log(`${userId}의 대표 칭호 변경`)
       return { message: "유저 칭호 변경에 성공했습니다" };
     } catch (error) {
       if (error instanceof NotFoundException) {
