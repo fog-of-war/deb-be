@@ -38,7 +38,7 @@ const placesArray = [
     "place_name": "서울대학교 관악캠퍼스",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
-    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/5서울대학교.png",
+    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/5서울대학교.jpeg",
     "place_latitude": 126.9511239870991,
     "place_longitude": 37.45978574975834
   },
@@ -110,7 +110,7 @@ const placesArray = [
     "place_name": "독립문",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
-    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/14독립문.jpeg",
+    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/14독립문.jpeg",
     "place_latitude": 126.959542648447,
     "place_longitude": 37.5724504220421
   },
@@ -150,7 +150,7 @@ const placesArray = [
     "place_name": "목동아이스링크",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
-    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/19목동아이스링크.jpeg",
+    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/19목동아이스링크.jpeg",
     "place_latitude": 126.879261276407,
     "place_longitude": 37.5307334776835
   },
@@ -166,7 +166,7 @@ const placesArray = [
     "place_name": "남산타워",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
-    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/21남산서울타워.webp",
+    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/21남산서울타워.webp",
     "place_latitude": 126.988230622132,
     "place_longitude": 37.5513049702718
   },
@@ -174,7 +174,7 @@ const placesArray = [
     "place_name": "진관사",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
-    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/22진관사.jpeg",
+    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/22진관사.jpeg",
     "place_latitude": 126.946885657783,
     "place_longitude": 37.63803747255906
   },
@@ -182,7 +182,7 @@ const placesArray = [
     "place_name": "광화문",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
-    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/23광화문.jpeg",
+    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/23광화문.jpeg",
     "place_latitude": 126.976861018866,
     "place_longitude": 37.5759689663327
   },
@@ -190,7 +190,7 @@ const placesArray = [
     "place_name": "숭례문",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
-    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/24숭례문.jpeg",
+    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/24숭례문.jpeg",
     "place_latitude": 126.975313124237,
     "place_longitude": 37.5600030088843
   },
@@ -198,14 +198,14 @@ const placesArray = [
     "place_name": "용마폭포공원",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
-    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/25용마폭포공원.jpeg",
+    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/25용마폭포공원.jpeg",
     "place_latitude": 127.090053515636,
     "place_longitude": 37.5736051123377
   }
-];
+]
 
-const baseUrl = "http://localhost:5000/v1/posts";
-// const baseUrl = "https://api.yubinhome.com/v1/posts";
+// const baseUrl = "http://localhost:5000/v1/posts";
+const baseUrl = "https://api.yubinhome.com/v1/posts";
 async function fetchData(placeObj) {
   const url = baseUrl;
   const body = JSON.stringify({
@@ -220,8 +220,8 @@ async function fetchData(placeObj) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization" :"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJmb2dvZnNlb3VsQGdtYWlsLmNvbSIsImlhdCI6MTY5MzM5MDkyMCwiZXhwIjoxNjkzNDAxNzIwfQ.Y2qXwrqcvl3GILtXTA_MBzCtEL6BgyJvPfRblCvMDgM"
-      // "Authorization" :"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJmb2dvZnNlb3VsQGdtYWlsLmNvbSIsImlhdCI6MTY5MzM5MzY0NiwiZXhwIjoxNjkzNDA0NDQ2fQ.9ad5cviR6a0_Z1AIBI6Wlr78zABRC5NnpWRO_fvaMZU"
+      // "Authorization" :"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJmb2dvZnNlb3VsQGdtYWlsLmNvbSIsImlhdCI6MTY5MzM5MDkyMCwiZXhwIjoxNjkzNDAxNzIwfQ.Y2qXwrqcvl3GILtXTA_MBzCtEL6BgyJvPfRblCvMDgM"
+      "Authorization" :"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJmb2dvZnNlb3VsQGdtYWlsLmNvbSIsImlhdCI6MTY5MzM5MzY0NiwiZXhwIjoxNjkzNDA0NDQ2fQ.9ad5cviR6a0_Z1AIBI6Wlr78zABRC5NnpWRO_fvaMZU"
     },
     body: body
   };

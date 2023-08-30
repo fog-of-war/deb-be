@@ -22,7 +22,7 @@ import {
   ApiOperation,
 } from "@nestjs/swagger";
 import { validate } from "class-validator";
-import { EditUserResponse, GetUserResponse } from "./responses";
+import { EditUserResponse, GetUserBadgeResponse, GetUserResponse } from "./responses";
 import { LoggerService } from "src/logger/logger.service";
 
 @ApiTags("users")
@@ -86,6 +86,7 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: '사용자가 소유한 뱃지 정보', 
+    type:GetUserBadgeResponse
   })
   async getMyBadges(@GetUser("user_id") userId: number,) {
     const result = await this.userService.findUserBadges(userId);
