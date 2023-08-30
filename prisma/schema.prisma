@@ -9,23 +9,38 @@ datasource db {
 }
 
 model User {
-  user_id             Int              @id @default(autoincrement())
-  user_email          String           @unique
-  user_providerId     String
-  user_image_url      String? //윤수님 쳌
-  user_nickname       String?
-  user_points         Int              @default(0) // 탐험포인트 작명 어떻게
-  user_level          Int              @default(0) // 사용자의 레벨 정보
-  user_is_admin       Role             @default(BASIC)
-  user_authored_posts Post[] // 사용자가 작성한 포스트들
-  user_visited_places PlaceVisit[] // 사용자가 방문한 장소들
-  user_badges         Badge[] // 사용자의 뱃지들
-  user_is_deleted     Boolean          @default(false)
-  user_created_at     DateTime         @default(now())
-  user_updated_at     DateTime         @updatedAt
-  user_search_history SearchHistory[]
-  user_activities     UserActivities[]
-  user_refresh_token  String?
+  user_id                Int              @id @default(autoincrement())
+  user_email             String           @unique
+  user_providerId        String
+  user_image_url         String? //윤수님 쳌
+  user_nickname          String?
+  user_points            Int              @default(0) // 탐험포인트 작명 어떻게
+  user_level             Int              @default(0) // 사용자의 레벨 정보
+  user_is_admin          Role             @default(BASIC)
+  user_authored_posts    Post[] // 사용자가 작성한 포스트들
+  user_visited_places    PlaceVisit[] // 사용자가 방문한 장소들
+  user_badges            Badge[] // 사용자의 뱃지들
+  user_selected_badge    Badge?           @relation("SelectedBadge", fields: [user_selected_badge_id], references: [badge_id])
+  user_selected_badge_id Int              @default(1)
+  user_is_deleted        Boolean          @default(false)
+  user_created_at        DateTime         @default(now())
+  user_updated_at        DateTime         @updatedAt
+  user_search_history    SearchHistory[]
+  user_activities        UserActivities[]
+  user_refresh_token     String?
+}
+
+model Badge {
+  badge_id                     Int      @id @default(autoincrement())
+  badge_name                   String
+  badge_category               Category @relation(fields: [badge_category_id], references: [category_id])
+  badge_category_id            Int
+  badge_criteria               Int
+  badge_points                 Int?     @default(100)
+  badge_owned_users            User?    @relation(fields: [badge_owned_users_id], references: [user_id])
+  badge_owned_users_id         Int?
+  badge_users_who_select_title User[]   @relation("SelectedBadge")
+  badge_image_url              String
 }
 
 model UserRanking {
@@ -106,18 +121,6 @@ model MapPlaceCategory {
   categoryId Int
 
   @@id([placeId, categoryId]) // 복합 기본 키 조합이 pk 대신 고유한 식별자로 작용합니다
-}
-
-model Badge {
-  badge_id          Int      @id @default(autoincrement())
-  badge_name        String
-  badge_category    Category @relation(fields: [badge_category_id], references: [category_id])
-  badge_category_id Int
-  badge_criteria    Int
-  badge_points      Int?     @default(100)
-  badge_user        User?    @relation(fields: [badge_user_id], references: [user_id])
-  badge_user_id     Int?
-  badge_image_url   String
 }
 
 model SearchHistory {
