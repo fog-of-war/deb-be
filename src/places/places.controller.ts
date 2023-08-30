@@ -42,7 +42,7 @@ export class PlacesController {
   @ApiResponse({
     status: 200,
     description: "",
-    type: PlaceWithPostsResponse,
+    type: landmarksResponse,
   })
   async getLandmarks() {
     const result = await this.placesService.getLandmarks();

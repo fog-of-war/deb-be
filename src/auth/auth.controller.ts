@@ -126,7 +126,7 @@ export class AuthController {
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
   async refreshTokens(
-    @GetUser("user") user: any,
+    @GetCurrentUser("user") user: any,
     @GetCurrentUser("user_refresh_token") rt: any,
   ) {
     try {
