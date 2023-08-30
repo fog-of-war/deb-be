@@ -13,6 +13,7 @@ import { Response } from "express";
 import { GoogleAuthGuard, NaverAuthGuard } from "./guard/auth.guard";
 import { Tokens } from "./types";
 import { GetCurrentUser, GetUser } from "./decorator";
+import { TokensResponse } from "./response";
 
 export class AuthRes {
   @ApiProperty()
@@ -35,7 +36,7 @@ export class AuthController {
   @ApiCreatedResponse({
     status: 201,
     description: "success",
-    type: AuthRes,
+    type:TokensResponse
   })
   @ApiCreatedResponse({ status: 403, description: "Forbidden." })
   @UseGuards(GoogleAuthGuard)
@@ -63,6 +64,7 @@ export class AuthController {
   @ApiCreatedResponse({
     status: 201,
     description: "success",
+    type:TokensResponse
   })
   @ApiCreatedResponse({ status: 403, description: "Forbidden.", type: AuthRes })
   @UseGuards(AuthGuard("naver"))
@@ -85,6 +87,7 @@ export class AuthController {
   @ApiCreatedResponse({
     status: 201,
     description: "success",
+    type:TokensResponse
   })
   @ApiCreatedResponse({ status: 403, description: "Forbidden.", type: AuthRes })
   @UseGuards(AuthGuard("kakao"))
@@ -106,6 +109,7 @@ export class AuthController {
   @ApiCreatedResponse({
     status: 201,
     description: "success",
+    type:TokensResponse
   })
   @HttpCode(HttpStatus.OK)
   async logout(@GetUser("user_id") userId: number) {
@@ -130,8 +134,6 @@ export class AuthController {
     @GetCurrentUser("user_refresh_token") rt: any,
   ) {
     try {
-      console.log("🚀 ~ file: auth.controller.ts:126 ~ AuthController ~ user:", user)
-      console.log("🚀 ~ file: auth.controller.ts:126 ~ AuthController ~ user:", user.sub)
       const result = await this.authService.refreshTokens(user.sub, rt.refreshToken);
       return result;
     } catch (error) {
