@@ -18,19 +18,21 @@ export class AuthService {
     const user = req.user;
     const tokens = await this.signToken(user["user_id"], user["user_email"]);
     await this.updateRtHash(user["user_id"], tokens.refresh_token);
-    // console.log("🚀 ~ file: auth.service.ts:22 ~ AuthService ~ googleLogin ~ tokens:", tokens)
     return tokens
   }
 
   async kakaoLogin(req: Request): Promise<any> {
     const user = req.user;
-    return this.signToken(user["user_id"], user["user_email"]);
+    const tokens = await this.signToken(user["user_id"], user["user_email"]);
+    await this.updateRtHash(user["user_id"], tokens.refresh_token);
+    return tokens
   }
 
   async naverLogin(req: Request): Promise<any> {
     const user = req.user;
-    const result =  await  this.signToken(user["user_id"], user["user_email"]);
-    return result;
+    const tokens = await this.signToken(user["user_id"], user["user_email"]);
+    await this.updateRtHash(user["user_id"], tokens.refresh_token);
+    return tokens
   }
 
   async signToken(userId: number, user_email: string): Promise<Tokens> {

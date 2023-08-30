@@ -72,9 +72,12 @@ export class AuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
   ) {
-    const token = await this.authService.naverLogin(req);
-    res.header("Authorization", `Bearer ${token}`);
-    res.status(201).send({ access_token: token });
+    const result = await this.authService.googleLogin(req);
+    // 응답 헤더에 액세스 토큰을 추가
+    console.log(`Bearer ${result.access_token}`);
+    console.log(`REfresh ${result.refresh_token}`);
+    res.header("Authorization", `Bearer ${result.access_token}`);
+    return result
   }
 
   @Get("kakao")
@@ -95,10 +98,12 @@ export class AuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
   ) {
-    const token = await this.authService.naverLogin(req);
-    // 쿠키를 설정한 후 응답을 보내기
-    res.header("Authorization", `Bearer ${token}`);
-    res.status(201).send({ access_token: token }); // 필요에 따라 응답 본문에도 추가
+    const result = await this.authService.googleLogin(req);
+    // 응답 헤더에 액세스 토큰을 추가
+    console.log(`Bearer ${result.access_token}`);
+    console.log(`REfresh ${result.refresh_token}`);
+    res.header("Authorization", `Bearer ${result.access_token}`);
+    return result
   }
 
   
