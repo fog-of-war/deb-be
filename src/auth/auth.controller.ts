@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
 import {
@@ -10,6 +10,8 @@ import {
 } from "@nestjs/swagger";
 import { Response } from "express";
 import { GoogleAuthGuard, NaverAuthGuard } from "./guard/auth.guard";
+import { Tokens } from "./types";
+import { GetCurrentUser, GetUser } from "./decorator";
 
 export class AuthRes {
   @ApiProperty()
@@ -39,12 +41,13 @@ export class AuthController {
   async googleAuthRedirect(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
-  ) {
-    const token = await this.authService.googleLogin(req);
+  ):Promise<Tokens> {
+    const result = await this.authService.googleLogin(req);
     // 응답 헤더에 액세스 토큰을 추가
-    console.log(`Bearer ${token}`);
-    res.header("Authorization", `Bearer ${token}`);
-    res.status(201).send({ access_token: token });
+    console.log(`Bearer ${result.access_token}`);
+    console.log(`REfresh ${result.refresh_token}`);
+    res.header("Authorization", `Bearer ${result.access_token}`);
+    return result
   }
 
   @Get("naver")
@@ -93,4 +96,39 @@ export class AuthController {
     res.header("Authorization", `Bearer ${token}`);
     res.status(201).send({ access_token: token }); // 필요에 따라 응답 본문에도 추가
   }
+
+  
+  @UseGuards(AuthGuard('jwt-access'))
+  @Post("logout")
+  @HttpCode(HttpStatus.OK)
+  async logout(@GetUser("user_id") userId: number) {
+    try {
+      const result = await this.authService.logout(userId);
+      return result;
+    } catch (error) {
+      // 예외 처리 로직을 추가합니다.
+      // 예를 들어, 클라이언트에게 오류 응답을 반환하거나 로깅할 수 있습니다.
+      console.error("Logout error:", error);
+      throw new InternalServerErrorException("Logout failed"); // 예외를 던집니다.
+    }
+  }
+  
+  @UseGuards(AuthGuard('jwt-refresh'))
+  @Post("refresh")
+  @HttpCode(HttpStatus.OK)
+  async refreshTokens(
+    @GetUser("user") user: any,
+    @GetCurrentUser("user_refresh_token") rt: any,
+  ) {
+    try {
+      console.log("🚀 ~ file: auth.controller.ts:126 ~ AuthController ~ user:", user)
+      console.log("🚀 ~ file: auth.controller.ts:126 ~ AuthController ~ user:", user.sub)
+      const result = await this.authService.refreshTokens(user.sub, rt.refreshToken);
+      return result;
+    } catch (error) {
+      console.error("Token refresh error:", error);
+      throw new InternalServerErrorException("Token refresh failed");
+    }
+  }
+  
 }

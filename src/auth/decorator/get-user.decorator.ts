@@ -6,7 +6,8 @@ export const GetUser = createParamDecorator(
     // console.log(request.user);
     // switchToHTTP 대신 웹소켓이나 rdc도 쓸 수 있습니다.
     if (data) {
-      return request.user[data];
+      console.log(request.user)
+      return request.user;
     }
 
     return request.user;

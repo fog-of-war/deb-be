@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, ValidationPipe  } from "@nestjs/common";
+import { MiddlewareConsumer, Module, ValidationPipe } from "@nestjs/common";
 import { PlacesModule } from "./places/places.module";
 import { UsersModule } from "./users/users.module";
 import { BadgesModule } from "./badges/badges.module";
@@ -13,8 +13,7 @@ import { LevelsModule } from "./levels/levels.module";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { RanksModule } from './ranks/ranks.module';
 import { LoggerModule } from './logger/logger.module';
-import * as redisStore from 'cache-manager-ioredis';
-import { LogMethodMiddleware } from "./middleware/log-method.middleware";
+
 
 @Module({
   imports: [
@@ -32,12 +31,6 @@ import { LogMethodMiddleware } from "./middleware/log-method.middleware";
     EventEmitterModule.forRoot(),
     RanksModule,
     LoggerModule,  
-    // CacheModule.register({
-    //   store: redisStore,
-    //   host: 'localhost',
-    //   port: 6379,
-    //   ttl: 100000, // 없는 경우 default 5초
-    // }),
   ],
   controllers: [],
   providers: [],

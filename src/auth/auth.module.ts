@@ -3,7 +3,7 @@ import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { JwtModule } from "@nestjs/jwt";
 import { PrismaModule } from "../prisma/prisma.module";
-import { GoogleStrategy, KakaoStrategy, NaverStrategy } from "./strategy";
+import { GoogleStrategy, KakaoStrategy, NaverStrategy, AtStrategy, RtStrategy } from "./strategy";
 import { UsersModule } from "src/users/users.module";
 import { HttpModule } from "@nestjs/axios";
 import { PassportModule } from "@nestjs/passport";
@@ -23,6 +23,8 @@ import { RanksModule } from "src/ranks/ranks.module";
     GoogleStrategy,
     KakaoStrategy,
     NaverStrategy,
+    AtStrategy,
+    RtStrategy
   ],
   controllers: [AuthController],
 })

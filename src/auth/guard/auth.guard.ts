@@ -66,7 +66,9 @@ export class GoogleAuthGuard extends AuthGuard("google") {
 export class NaverAuthGuard extends AuthGuard("naver") {
   async canActivate(context: any): Promise<boolean> {
     const result = (await super.canActivate(context)) as boolean;
+    console.log("🚀 ~ file: auth.guard.ts:69 ~ NaverAuthGuard ~ canActivate ~ result:", result)
     const request = context.switchToHttp().getRequest();
+    console.log("🚀 ~ file: auth.guard.ts:70 ~ NaverAuthGuard ~ canActivate ~ request:", request)
     return result;
   }
 }
