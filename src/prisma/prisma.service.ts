@@ -6,6 +6,7 @@ import * as badges from "./badges.json";
 import * as categories from "./categories.json";
 import * as levels from "./levels.json";
 import * as regions from "./regions.json";
+import * as posts from "./posts.json";
 @Injectable()
 export class PrismaService extends PrismaClient {
   constructor(config: ConfigService) {
@@ -151,5 +152,6 @@ export class PrismaService extends PrismaClient {
         });
       }
     }
+
   }
 }

@@ -1,7 +1,4 @@
-const fetch = require("node-fetch");
-const fs = require("fs");
-
-const placesArray = [
+[
   {
     "place_name": "코엑스",
     "post_star_rating": 5.0,
@@ -202,59 +199,4 @@ const placesArray = [
     "place_latitude": 127.090053515636,
     "place_longitude": 37.5736051123377
   }
-];
-
-const baseUrl = "http://localhost:5000/v1/posts";
-// const baseUrl = "https://api.yubinhome.com/v1/posts";
-async function fetchData(placeObj) {
-  const url = baseUrl;
-  const body = JSON.stringify({
-    place_name: placeObj.place_name,
-    post_star_rating: placeObj.post_star_rating,
-    post_description: placeObj.post_description,
-    post_image_url: placeObj.post_image_url,
-    place_latitude: placeObj.place_latitude,
-    place_longitude: placeObj.place_longitude
-  });
-  const options = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization" :"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJmb2dvZnNlb3VsQGdtYWlsLmNvbSIsImlhdCI6MTY5MzM5MDkyMCwiZXhwIjoxNjkzNDAxNzIwfQ.Y2qXwrqcvl3GILtXTA_MBzCtEL6BgyJvPfRblCvMDgM"
-      // "Authorization" :"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJmb2dvZnNlb3VsQGdtYWlsLmNvbSIsImlhdCI6MTY5MzM5MzY0NiwiZXhwIjoxNjkzNDA0NDQ2fQ.9ad5cviR6a0_Z1AIBI6Wlr78zABRC5NnpWRO_fvaMZU"
-    },
-    body: body
-  };
-
-  try {
-    const response = await fetch(url, options);
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      console.error(`Error fetching data for ${placeObj.place_name}`);
-      return null;
-    }
-  } catch (error) {
-    console.error(`Error fetching data for ${placeObj.place_name}: ${error.message}`);
-    return null;
-  }
-}
-
-async function main() {
-  const dataToSave = {};
-
-  for (const placeObj of placesArray) {
-    const data = await fetchData(placeObj);
-    if (data) {
-      dataToSave[placeObj.place_name] = data;
-      console.log(`Fetched data for ${placeObj.place_name}`);
-    }
-  }
-
-  const filename = "landmarks_posts.json";
-  fs.writeFileSync(filename, JSON.stringify(dataToSave, null, 4), "utf-8");
-  console.log(`All data saved to ${filename}`);
-}
-
-main();
+]

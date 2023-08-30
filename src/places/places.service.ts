@@ -362,6 +362,7 @@ export class PlacesService {
           where: {
             place_id: place.placeId,
           },
+          include:{place_posts:true}
         });
         return foundPlace;
       })

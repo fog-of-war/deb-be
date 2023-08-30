@@ -2,6 +2,36 @@
 
 import { ApiProperty } from '@nestjs/swagger';
 
+
+class Post {
+    @ApiProperty()
+    post_id: number;
+  
+    @ApiProperty()
+    post_created_at: string;
+  
+    @ApiProperty()
+    post_updated_at: string;
+  
+    @ApiProperty()
+    post_description: string;
+  
+    @ApiProperty()
+    post_image_url: string;
+  
+    @ApiProperty()
+    post_author_id: number;
+  
+    @ApiProperty()
+    post_star_rating: number;
+  
+    @ApiProperty()
+    post_place_id: number;
+  
+    @ApiProperty()
+    post_is_deleted: boolean;
+  }
+
 export class landmarksResponse {
   @ApiProperty()
   place_id: number;
@@ -32,4 +62,8 @@ export class landmarksResponse {
 
   @ApiProperty()
   place_longitude: number;
+  
+  @ApiProperty()
+  place_posts: Post;
+
 }
