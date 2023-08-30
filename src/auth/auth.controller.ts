@@ -7,6 +7,7 @@ import {
   ApiTags,
   ApiOAuth2,
   ApiOperation,
+  ApiBearerAuth,
 } from "@nestjs/swagger";
 import { Response } from "express";
 import { GoogleAuthGuard, NaverAuthGuard } from "./guard/auth.guard";
@@ -100,6 +101,12 @@ export class AuthController {
   
   @UseGuards(AuthGuard('jwt-access'))
   @Post("logout")
+  @ApiOperation({ summary: '로그아웃'})
+  @ApiBearerAuth("access_token")
+  @ApiCreatedResponse({
+    status: 201,
+    description: "success",
+  })
   @HttpCode(HttpStatus.OK)
   async logout(@GetUser("user_id") userId: number) {
     try {
@@ -114,6 +121,8 @@ export class AuthController {
   }
   
   @UseGuards(AuthGuard('jwt-refresh'))
+  @ApiOperation({ summary: '리프레시토큰'})
+  @ApiBearerAuth("refresh_token")
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
   async refreshTokens(
