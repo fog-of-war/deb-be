@@ -14,7 +14,7 @@ import {
 import { GetUser } from "../auth/decorator";
 import { JwtGuard } from "../auth/guard";
 import { UsersService } from "./users.service";
-import { EditUserDto } from "./dto";
+import { ChangeUserTitleDto, EditUserDto } from "./dto";
 import {
   ApiBearerAuth,
   ApiResponse,
@@ -73,6 +73,44 @@ export class UsersController {
     try {
       await this.userService.editUser(userId, dto);
       return { message: "유저 정보 변경에 성공했습니다" };
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+  @Get("me/badges")
+  @ApiOperation({ summary: '사용자의 소유한 뱃지 조회' }) // API 설명
+  @ApiBearerAuth("access_token")
+  @ApiResponse({
+    status: 200,
+    description: '사용자가 소유한 뱃지 정보', 
+    // type: UserBadgesResponse
+  })
+  async getMyBadges(@GetUser() user: any) {
+    const result = await this.userService.findUserBadges(user);
+    this.logger.log(result);
+    return result;
+  }
+
+  @Patch("me/title")
+  @ApiOperation({
+    summary:
+      "나의 정보 수정하기 / 프로필이미지, 닉네임, 변경 가능 (칭호 변경 기능 개발중)",
+  })
+  @ApiBearerAuth("access_token")
+  @HttpCode(201)
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: EditUserResponse, // 이 부분 수정
+  })  
+  async changeTitle(@GetUser("user_id") userId: number, @Body() dto: ChangeUserTitleDto) {
+    // 유효성 검사 수행
+    try {
+      await this.userService.changeTitle(userId, dto);
+      return { message: "유저 칭호 변경에 성공했습니다" };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

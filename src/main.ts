@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
-import * as session from "express-session";
+// import * as session from "express-session";
 import * as passport from "passport";
 import { PrismaService } from "./prisma/prisma.service";
 import { LoggerService } from "./logger/logger.service";
@@ -51,18 +51,18 @@ async function bootstrap() {
   );
 
   app.use(cookieParser());
-  app.use(
-    session({
-      secret: "cutify",
-      resave: false,
-      saveUninitialized: false,
-      cookie: { maxAge: 3600000 },
-    })
-  );
+  // app.use(
+  //   session({
+  //     secret: "cutify",
+  //     resave: false,
+  //     saveUninitialized: false,
+  //     cookie: { maxAge: 3600000 },
+  //   })
+  // );
   const prismaService = app.get(PrismaService);
   await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
   app.use(passport.initialize());
-  app.use(passport.session());
+  // app.use(passport.session());
 
   const config = new DocumentBuilder()
     .setTitle("fog of war example")

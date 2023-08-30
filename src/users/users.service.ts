@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateUserDto, EditUserDto, InitUserDto } from "./dto";
+import { ChangeUserTitleDto, CreateUserDto, EditUserDto, InitUserDto } from "./dto";
 import { BadgesService } from "../badges/badges.service";
 // import { User } from "@prisma/client";
 import { RanksService } from "src/ranks/ranks.service";
@@ -87,4 +87,25 @@ export class UsersService {
 
     return leanUser;
   }
+
+  async findUserBadges(userId: number) {    
+    const user = await this.prisma.user.findUnique({
+      where: { user_id: userId },
+      include: {       
+        user_selected_badge: true,
+      },
+    });
+    return user;
+  }
+  async changeTitle(userId:number, dto:ChangeUserTitleDto){    
+    const user = await this.prisma.user.update({
+      where: { user_id: userId },
+      data: {       
+        user_selected_badge: {
+        connect: { badge_id: dto.user_selected_badge }, // ChangeUserTitleDto에 선택한 뱃지 ID를 포함해야 함
+      }, },
+    });
+    return user;
+  }
 }
+

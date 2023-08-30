@@ -9,7 +9,7 @@ import {
   ApiOperation,
 } from "@nestjs/swagger";
 import { Response } from "express";
-import { GoogleAuthGuard, LoginGuard } from "./guard/auth.guard";
+import { GoogleAuthGuard, NaverAuthGuard } from "./guard/auth.guard";
 
 export class AuthRes {
   @ApiProperty()
@@ -49,10 +49,12 @@ export class AuthController {
 
   @Get("naver")
   @UseGuards(AuthGuard("naver"))
+  @UseGuards(NaverAuthGuard)
   @ApiOperation({ summary: '네이버 oauth' })
   async naverAuth(@Req() req) {}
 
   @Post("naver/oauth")
+  @UseGuards(NaverAuthGuard)
   @ApiOperation({ summary: '네이버 oauth 로그인 & 가입' })
   @ApiCreatedResponse({
     status: 201,
