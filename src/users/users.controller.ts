@@ -97,7 +97,7 @@ export class UsersController {
   @Patch("me/title")
   @ApiOperation({
     summary:
-      "나의 정보 수정하기 / 프로필이미지, 닉네임, 변경 가능 (칭호 변경 기능 개발중)",
+      "나의 칭호 변경하기",
   })
   @ApiBearerAuth("access_token")
   @HttpCode(201)
