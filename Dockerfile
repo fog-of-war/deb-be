@@ -50,11 +50,8 @@ COPY tsconfig.json ./
 # 소스 코드 복사
 COPY . .
 
-# # Prisma 파일 생성
-# RUN npx prisma generate
-
-# # Prisma 파일 생성
-# RUN npx prisma migrate dev 
+# Prisma 파일 생성
+# RUN npx prisma migrate deploy
 
 # 서버를 포트 5000으로 실행하도록 설정
 EXPOSE 5000

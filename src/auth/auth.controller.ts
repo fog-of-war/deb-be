@@ -14,6 +14,7 @@ import { GoogleAuthGuard, NaverAuthGuard } from "./guard/auth.guard";
 import { Tokens } from "./types";
 import { GetCurrentUser, GetUser } from "./decorator";
 import { TokensResponse } from "./response";
+import { LoggerService } from "src/logger/logger.service";
 
 export class AuthRes {
   @ApiProperty()
@@ -23,7 +24,7 @@ export class AuthRes {
 @ApiTags("auth")
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private logger: LoggerService) {}
 
   @Get("google")
   @ApiOAuth2(["profile"])
@@ -120,6 +121,7 @@ export class AuthController {
   async logout(@GetUser("user_id") userId: number) {
     try {
       const result = await this.authService.logout(userId);
+      this.logger.log(`user_id : ${userId}님이 로그아웃 하셨습니다.`)
       return result;
     } catch (error) {
       console.error("Logout error:", error);
@@ -138,6 +140,7 @@ export class AuthController {
   ) {
     try {
       const result = await this.authService.refreshTokens(user.sub, rt.refreshToken);
+      this.logger.log(`user_id : ${user.sub} 토큰 리프레시`)
       return result;
     } catch (error) {
       console.error("Token refresh error:", error);

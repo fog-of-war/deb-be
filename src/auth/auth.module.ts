@@ -8,6 +8,7 @@ import { UsersModule } from "src/users/users.module";
 import { HttpModule } from "@nestjs/axios";
 import { PassportModule } from "@nestjs/passport";
 import { RanksModule } from "src/ranks/ranks.module";
+import { LoggerModule } from "src/logger/logger.module";
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { RanksModule } from "src/ranks/ranks.module";
     UsersModule,
     HttpModule,
     PassportModule,
-    RanksModule
+    RanksModule,
+    LoggerModule
   ],
   providers: [
     AuthService,
