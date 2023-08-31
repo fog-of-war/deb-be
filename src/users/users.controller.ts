@@ -22,7 +22,7 @@ import {
   ApiOperation,
 } from "@nestjs/swagger";
 import { validate } from "class-validator";
-import { EditUserResponse, GetUserBadgeResponse, GetUserResponse } from "./responses";
+import { EditUserResponse, GetUserBadgeResponse, GetUserResponse, RegionWithVisitedCountDto } from "./responses";
 import { LoggerService } from "src/logger/logger.service";
 
 @ApiTags("users")
@@ -122,16 +122,16 @@ export class UsersController {
 
 
   @Get("me/region")
-  @ApiOperation({ summary: '사용자의 소유한 뱃지 조회' }) // API 설명
+  @ApiOperation({ summary: '사용자가 방문한 구역 정보 및 횟수 전달' }) // API 설명
   @ApiBearerAuth("access_token")
   @ApiResponse({
     status: 200,
-    description: '사용자가 소유한 뱃지 정보', 
-    type:GetUserBadgeResponse
+    description: '사용자가 방문한 구역 정보 및 횟수', 
+    type:RegionWithVisitedCountDto
   })
   async getMyVisitedRegionCount(@GetUser("user_id") userId: number,) {
     const result = await this.userService.getMyVisitedRegionCount(userId);
-    this.logger.log(result);
+    this.logger.log(`user_id : ${userId} 구역 정보 및 횟수 조회`);
     return result;
   }
 }
