@@ -107,6 +107,5 @@ export class AuthService {
       throw new ForbiddenException('Token refresh failed');
     }
   }
-  
 
 }

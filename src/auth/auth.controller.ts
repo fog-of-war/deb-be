@@ -122,8 +122,6 @@ export class AuthController {
       const result = await this.authService.logout(userId);
       return result;
     } catch (error) {
-      // 예외 처리 로직을 추가합니다.
-      // 예를 들어, 클라이언트에게 오류 응답을 반환하거나 로깅할 수 있습니다.
       console.error("Logout error:", error);
       throw new InternalServerErrorException("Logout failed"); // 예외를 던집니다.
     }
@@ -146,5 +144,4 @@ export class AuthController {
       throw new InternalServerErrorException("Token refresh failed");
     }
   }
-  
 }

@@ -31,15 +31,14 @@ export class RanksService {
       });
     }
   }
+
   async getAllUserRanks() {
     await this.updateRanks();
-
     const userRanks = await this.prisma.userRanking.findMany({
       orderBy: {
         user_points: 'desc',
       },
     });
-
     if (userRanks) {
       const formattedUserRanks = await Promise.all(
         userRanks.map(async (userRank) => {
@@ -54,7 +53,6 @@ export class RanksService {
               user_points: true,
             },
           });
-
           return {
             user_id: user.user_id,
             user_nickname: user.user_nickname,
@@ -64,7 +62,6 @@ export class RanksService {
           };
         })
       );
-
       return formattedUserRanks;
     } else {
       return null;
@@ -87,4 +84,6 @@ export class RanksService {
       return null; // 사용자가 랭킹에 없을 경우
     }
   }
+
+
 }

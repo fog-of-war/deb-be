@@ -119,4 +119,19 @@ export class UsersController {
       throw new InternalServerErrorException();
     }
   }
+
+
+  @Get("me/region")
+  @ApiOperation({ summary: '사용자의 소유한 뱃지 조회' }) // API 설명
+  @ApiBearerAuth("access_token")
+  @ApiResponse({
+    status: 200,
+    description: '사용자가 소유한 뱃지 정보', 
+    type:GetUserBadgeResponse
+  })
+  async getMyVisitedRegionCount(@GetUser("user_id") userId: number,) {
+    const result = await this.userService.getMyVisitedRegionCount(userId);
+    this.logger.log(result);
+    return result;
+  }
 }
