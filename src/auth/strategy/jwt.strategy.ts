@@ -28,11 +28,15 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
       },
     });
 
-    // if(user){    
-    //   const rank  = await this.ranksService.getUserRank(user.user_id);
-    //   this.loggerService.log(`user_id : ${user.user_id}, user_email : ${user.user_email}`)
-    // }
-        // 랭킹 업데이트 로직 호출
+    if(user){    
+      // 랭킹 업데이트 로직 호출
+      const rank  = await this.ranksService.getUserRank(user.user_id);
+      this.loggerService.log(`user_id : ${user.user_id}, user_email : ${user.user_email}`)
+    }
+    else{    
+      this.loggerService.log(`신규회원 가입 user_id : ${user.user_id}, user_email : ${user.user_email}`)
+      return user    
+    }
     return user;
   }
 }
