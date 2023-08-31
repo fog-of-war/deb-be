@@ -73,7 +73,7 @@ export class AuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
   ) {
-    const result = await this.authService.googleLogin(req);
+    const result = await this.authService.naverLogin(req);
     // 응답 헤더에 액세스 토큰을 추가
     console.log(`Bearer ${result.access_token}`);
     console.log(`REfresh ${result.refresh_token}`);
@@ -99,7 +99,7 @@ export class AuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
   ) {
-    const result = await this.authService.googleLogin(req);
+    const result = await this.authService.kakaoLogin(req);
     // 응답 헤더에 액세스 토큰을 추가
     console.log(`Bearer ${result.access_token}`);
     console.log(`REfresh ${result.refresh_token}`);

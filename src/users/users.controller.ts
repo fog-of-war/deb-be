@@ -80,6 +80,7 @@ export class UsersController {
       throw new InternalServerErrorException();
     }
   }
+
   @Get("me/badges")
   @ApiOperation({ summary: '사용자의 소유한 뱃지 조회' }) // API 설명
   @ApiBearerAuth("access_token")
@@ -127,7 +128,7 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: '사용자가 방문한 구역 정보 및 횟수', 
-    type:RegionWithVisitedCountDto
+    type:[RegionWithVisitedCountDto]
   })
   async getMyVisitedRegionCount(@GetUser("user_id") userId: number,) {
     const result = await this.userService.getMyVisitedRegionCount(userId);
