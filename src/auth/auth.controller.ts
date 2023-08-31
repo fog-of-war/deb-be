@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, InternalServerErrorException, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Controller, ForbiddenException, Get, HttpCode, HttpStatus, InternalServerErrorException, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
 import {
@@ -125,7 +125,7 @@ export class AuthController {
       return result;
     } catch (error) {
       console.error("Logout error:", error);
-      throw new InternalServerErrorException("Logout failed"); // 예외를 던집니다.
+      throw new ForbiddenException("Logout failed"); // 예외를 던집니다.
     }
   }
   
@@ -144,7 +144,7 @@ export class AuthController {
       return result;
     } catch (error) {
       console.error("Token refresh error:", error);
-      throw new InternalServerErrorException("Token refresh failed");
+      throw new ForbiddenException('Access Denied');
     }
   }
 }
