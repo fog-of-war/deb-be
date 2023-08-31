@@ -15,7 +15,6 @@ export class BadgesService {
         },
       },
     });
-
     return user;
   }
 

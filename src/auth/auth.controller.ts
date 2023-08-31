@@ -109,7 +109,7 @@ export class AuthController {
   
   @UseGuards(AuthGuard('jwt-access'))
   @Post("logout")
-  @ApiOperation({ summary: '로그아웃'})
+  @ApiOperation({ summary: '로그아웃 : 헤더(authorization)에 access_token을 담아서 보내주시면 됩니다'})
   @ApiBearerAuth("access_token")
   @ApiCreatedResponse({
     status: 201,
@@ -130,7 +130,7 @@ export class AuthController {
   }
   
   @UseGuards(AuthGuard('jwt-refresh'))
-  @ApiOperation({ summary: '리프레시토큰'})
+  @ApiOperation({ summary: '리프레시 토큰 사용 및 교체: 헤더(authorization)에 리프레시토큰을 담아서 보내주시면 됩니다'})
   @ApiBearerAuth("refresh_token")
   @Post("refresh")
   @HttpCode(HttpStatus.OK)

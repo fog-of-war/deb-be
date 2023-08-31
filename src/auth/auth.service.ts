@@ -92,9 +92,6 @@ export class AuthService {
       if (!user || !user.user_refresh_token) {
         throw new ForbiddenException('Access Denied');
       }
-      console.log("🚀 ~ file: auth.service.ts:95 ~ AuthService ~ refreshTokens ~ user.user_refresh_token:", user.user_refresh_token)
-      console.log("🚀 ~ file: auth.service.ts:95 ~ AuthService ~ refreshTokens ~ rt:", rt)
-
       const rtMatches = await argon.verify(user.user_refresh_token, rt);
       if (!rtMatches) {
         throw new ForbiddenException('Access Denied');
