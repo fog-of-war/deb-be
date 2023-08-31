@@ -49,7 +49,7 @@ export class PrismaService extends PrismaClient {
   async insertRegion() {
     const regionData = regions as Array<any>; // JSON 파일을 배열로 변환
     for (const region of regionData) {
-      // 데이터베이스에 해당 뱃지 이름이 있는지 확인
+      // 데이터베이스에 해당 지역 이름이 있는지 확인
       const existingRegion = await this.region.findFirst({
         where: { region_name: region.region_name },
       });
@@ -85,11 +85,6 @@ export class PrismaService extends PrismaClient {
         const categories = await this.category.findMany({
           where: { category_id: { in: placeData.place_category_ids } },
         });
-        console.log(
-          "🚀 ~ file: prisma.service.ts:92 ~ PrismaService ~ insertPlaces ~ placeData.place_address:",
-          placeData.place_address
-        );
-
         const gu = this.extractGu(placeData.place_address);
         const region = await this.region.findFirst({
           where: { region_name: gu },
@@ -137,7 +132,7 @@ export class PrismaService extends PrismaClient {
   async insertLevels() {
     const levelData = levels as Array<any>; // JSON 파일을 배열로 변환
     for (const level of levelData) {
-      // 데이터베이스에 해당 뱃지 이름이 있는지 확인
+      // 데이터베이스에 해당 레벨이 있는지 확인
       const existinglevel = await this.level.findFirst({
         where: { level_level: level.level_level },
       });

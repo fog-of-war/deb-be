@@ -90,7 +90,7 @@ export class UsersController {
   })
   async getMyBadges(@GetUser("user_id") userId: number,) {
     const result = await this.userService.findUserBadges(userId);
-    this.logger.log(result);
+    this.logger.log(`user_id ${userId} 뱃지 정보 호출`);
     return result;
   }
 
