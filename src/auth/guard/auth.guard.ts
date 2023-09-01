@@ -71,6 +71,3 @@ export class GoogleAuthGuard extends AuthGuard("google") {
 //     return result;
 //   }
 // }
-
-// @Injectable()
-// export class NaverAuthGuard extends AuthGuard('naver') {}

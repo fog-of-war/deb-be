@@ -85,5 +85,16 @@ export class RanksService {
     }
   }
 
+  async getRanksByRegion(region:string) {
+    await this.updateRanks() 
+    const result = await this.prisma.userRanking.findMany({
+      orderBy: {
+        user_id: 'desc',
+      },
+    });
+    return result;
+  }
 
 }
+
+

@@ -54,16 +54,19 @@ async function bootstrap() {
   const prismaService = app.get(PrismaService);
   await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
   app.use(passport.initialize());
-  // app.use(passport.session());
-
+  
   const config = new DocumentBuilder()
     .setTitle("fog of war example")
     .setDescription("The fog of war API description")
     .setVersion("1.0")
     .addTag("fog of war")
-    .addSecurity("bearer", {
+    .addSecurity("access_token", {
       type: "http",
-      scheme: "bearer",
+      scheme: "Bearer",
+    })
+    .addSecurity("refresh_token", {
+      type: "http",
+      scheme: "Bearer",
     })
     .addOAuth2()
     .build();

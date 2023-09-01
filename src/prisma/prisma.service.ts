@@ -27,16 +27,12 @@ export class PrismaService extends PrismaClient {
           data: categories,
           skipDuplicates: true,
         });
-
         // 구 삽입 작업
         await this.insertRegion();
-
         // 장소 삽입 작업
         await this.insertPlaces();
-
         // 뱃지 삽입 작업
         await this.insertBadges();
-
         // 레벨 삽입 작업
         await this.insertLevels();
       });

@@ -37,4 +37,17 @@ export class RanksController {
     const result = await this.ranksService.getUserRank(userId);
     return result;
   }
+
+  @Get("/:id")
+  @ApiOperation({ summary: '구별 랭킹 가져오기' })
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: [GetManyRanksResponse], // 반환 모델을 지정
+  })
+  async getRanksByRegion(@Param('id') region:string) {
+    const result = await this.ranksService.getRanksByRegion(region);
+    return result;
+  }
+
 }
