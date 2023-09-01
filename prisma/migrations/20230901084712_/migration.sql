@@ -11,12 +11,26 @@ CREATE TABLE "User" (
     "user_points" INTEGER NOT NULL DEFAULT 0,
     "user_level" INTEGER NOT NULL DEFAULT 0,
     "user_is_admin" "Role" NOT NULL DEFAULT 'BASIC',
+    "user_selected_badge_id" INTEGER NOT NULL DEFAULT 1,
     "user_is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "user_created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_updated_at" TIMESTAMP(3) NOT NULL,
     "user_refresh_token" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("user_id")
+);
+
+-- CreateTable
+CREATE TABLE "Badge" (
+    "badge_id" SERIAL NOT NULL,
+    "badge_name" TEXT NOT NULL,
+    "badge_category_id" INTEGER NOT NULL,
+    "badge_criteria" INTEGER NOT NULL,
+    "badge_points" INTEGER DEFAULT 100,
+    "badge_owned_users_id" INTEGER,
+    "badge_image_url" TEXT NOT NULL,
+
+    CONSTRAINT "Badge_pkey" PRIMARY KEY ("badge_id")
 );
 
 -- CreateTable
@@ -108,18 +122,6 @@ CREATE TABLE "MapPlaceCategory" (
 );
 
 -- CreateTable
-CREATE TABLE "Badge" (
-    "badge_id" SERIAL NOT NULL,
-    "badge_name" TEXT NOT NULL,
-    "badge_category_id" INTEGER NOT NULL,
-    "badge_criteria" INTEGER NOT NULL,
-    "badge_points" INTEGER DEFAULT 100,
-    "badge_user_id" INTEGER,
-
-    CONSTRAINT "Badge_pkey" PRIMARY KEY ("badge_id")
-);
-
--- CreateTable
 CREATE TABLE "SearchHistory" (
     "search_history_id" SERIAL NOT NULL,
     "search_keyword" TEXT NOT NULL,
@@ -154,6 +156,15 @@ CREATE UNIQUE INDEX "Category_category_name_key" ON "Category"("category_name");
 CREATE UNIQUE INDEX "Level_level_level_key" ON "Level"("level_level");
 
 -- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_user_selected_badge_id_fkey" FOREIGN KEY ("user_selected_badge_id") REFERENCES "Badge"("badge_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Badge" ADD CONSTRAINT "Badge_badge_category_id_fkey" FOREIGN KEY ("badge_category_id") REFERENCES "Category"("category_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Badge" ADD CONSTRAINT "Badge_badge_owned_users_id_fkey" FOREIGN KEY ("badge_owned_users_id") REFERENCES "User"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "UserActivities" ADD CONSTRAINT "UserActivities_activity_user_id_fkey" FOREIGN KEY ("activity_user_id") REFERENCES "User"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -176,12 +187,6 @@ ALTER TABLE "MapPlaceCategory" ADD CONSTRAINT "MapPlaceCategory_placeId_fkey" FO
 
 -- AddForeignKey
 ALTER TABLE "MapPlaceCategory" ADD CONSTRAINT "MapPlaceCategory_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("category_id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Badge" ADD CONSTRAINT "Badge_badge_category_id_fkey" FOREIGN KEY ("badge_category_id") REFERENCES "Category"("category_id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Badge" ADD CONSTRAINT "Badge_badge_user_id_fkey" FOREIGN KEY ("badge_user_id") REFERENCES "User"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SearchHistory" ADD CONSTRAINT "SearchHistory_search_user_id_fkey" FOREIGN KEY ("search_user_id") REFERENCES "User"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
