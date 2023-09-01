@@ -85,14 +85,73 @@ export class RanksService {
     }
   }
 
-  async getRanksByRegion(region:string) {
-    await this.updateRanks() 
-    const result = await this.prisma.userRanking.findMany({
-      orderBy: {
-        user_id: 'desc',
-      },
+  async getRegionRanksByRegion() {
+    // 1. 모든 유저의 지역 방문 정보 조회
+    const allUsers = await this.prisma.user.findMany({
+      include: { user_visited_places: { include: { visited_place: true } } }
     });
-    return result;
+  
+    // 2. 지역 방문 횟수 계산
+    const regionVisitCounts = {};
+    allUsers.forEach(user => {
+      user.user_visited_places.forEach(placeVisit => {
+        const regionId = placeVisit.visited_place.place_region_id;
+        if (!regionVisitCounts[regionId]) {
+          regionVisitCounts[regionId] = 1;
+        } else {
+          regionVisitCounts[regionId]++;
+        }
+      });
+    });
+  
+    // 3. 지역 방문 횟수를 기준으로 랭킹 생성
+    const ranking = Object.keys(regionVisitCounts)
+      .map(regionId => ({
+        regionId: parseInt(regionId),
+        visitCount: regionVisitCounts[regionId]
+      }))
+      .sort((a, b) => b.visitCount - a.visitCount);
+    console.log(":rocket: ~ file: ranks.service.ts:127 ~ RanksService ~ generateRegionRanking ~ ranking:", ranking)
+
+    return ranking;
+  }
+
+
+  async generateUserRankingForRegion(regionId) {
+    // 1. 모든 유저의 지역 방문 정보 조회
+    const allUsers = await this.prisma.user.findMany({
+      include: { 
+        user_visited_places: { include: { visited_place: true } },
+        user_badges:true,
+        user_selected_badge:true }
+    });
+    console.log(":rocket: ~ file: ranks.service.ts:104 ~ RanksService ~ getRegionRanksByRegion ~ allUsers:", allUsers)
+
+    // 2. 특정 지역에 대한 방문 횟수 계산
+    let regionVisitCount = 0;
+    allUsers.forEach(user => {
+      user.user_visited_places.forEach(placeVisit => {
+        if (placeVisit.visited_place.place_region_id === regionId) {
+          regionVisitCount++;
+        }
+      });
+    });
+  
+    // 3. 지역 방문 횟수를 기준으로 유저 랭킹 생성
+    const userRanking = allUsers
+      .map(user => ({
+        user_id: user.user_id,
+        user_nickname: user.user_nickname,
+        user_email: user.user_email,
+        user_image_url: user.user_image_url,
+        visitCount: user.user_visited_places.filter(
+          placeVisit => placeVisit.visited_place.place_region_id === regionId
+        ).length
+      }))
+      .filter(user => user.visitCount > 0)
+      .sort((a, b) => b.visitCount - a.visitCount);
+  
+    return { regionVisitCount, userRanking };
   }
 
 }

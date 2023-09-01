@@ -1,11 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { RanksService } from './ranks.service';
 import { CreateRankDto } from './dto/create-rank.dto';
 import { UpdateRankDto } from './dto/update-rank.dto';
 import { GetUser } from "../auth/decorator";
 import { JwtGuard } from 'src/auth/guard';
-import { ApiBearerAuth, ApiResponse, ApiTags,ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags,ApiOperation,ApiParam } from '@nestjs/swagger';
 import { GetOneRankResponse,GetManyRanksResponse } from './responses';
+import { identity } from 'rxjs';
 
 @ApiTags("ranks")
 @Controller('ranks')
@@ -38,16 +39,16 @@ export class RanksController {
     return result;
   }
 
-  @Get("/:id")
+  @Get("/region/:id")
   @ApiOperation({ summary: '구별 랭킹 가져오기' })
+  @ApiParam({name:'id', description:'해당 구의 아이디'})
   @ApiResponse({
     status: 200,
     description: "",
     type: [GetManyRanksResponse], // 반환 모델을 지정
   })
-  async getRanksByRegion(@Param('id') region:string) {
-    const result = await this.ranksService.getRanksByRegion(region);
+  async getRanksByRegion(@Param('id',ParseIntPipe) region_id:string) {
+    const result = await this.ranksService.generateUserRankingForRegion(region_id);
     return result;
   }
-
 }
