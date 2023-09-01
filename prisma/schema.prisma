@@ -99,9 +99,10 @@ model Place {
 }
 
 model Region {
-  region_id    Int     @id @default(autoincrement())
-  region_name  String
-  region_place Place[]
+  region_id           Int     @id @default(autoincrement())
+  region_name         String
+  region_english_name String
+  region_place        Place[]
 }
 
 model Category {

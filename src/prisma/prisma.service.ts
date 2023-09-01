@@ -51,11 +51,13 @@ export class PrismaService extends PrismaClient {
       });
 
       if (!existingRegion) {
-        await this.region.create({
+        const successRegion = await this.region.create({
           data: {
             region_name: region.region_name,
+            region_english_name: region.region_english_name,
           },
         });
+        console.log(`${successRegion} 생성성공`);
       }
     }
   }
@@ -143,6 +145,5 @@ export class PrismaService extends PrismaClient {
         });
       }
     }
-
   }
 }

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 
 export class RegionWithVisitedCountDto {
   @ApiProperty()
@@ -9,5 +9,7 @@ export class RegionWithVisitedCountDto {
 
   @ApiProperty()
   region_visited_count: number;
-}
 
+  @ApiProperty()
+  region_english_name: number;
+}
