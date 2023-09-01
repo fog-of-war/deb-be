@@ -10,7 +10,7 @@ import {
   ApiBearerAuth,
 } from "@nestjs/swagger";
 import { Response } from "express";
-import { GoogleAuthGuard, NaverAuthGuard } from "./guard/auth.guard";
+import { GoogleAuthGuard, NaverAuthGuard } from "./guard";
 import { Tokens } from "./types";
 import { GetCurrentUser, GetUser } from "./decorator";
 import { TokensResponse } from "./response";
@@ -55,12 +55,13 @@ export class AuthController {
 
   @Get("naver")
   @UseGuards(AuthGuard("naver"))
-  @UseGuards(NaverAuthGuard)
+  // @UseGuards(NaverAuthGuard)
   @ApiOperation({ summary: '네이버 oauth' })
   async naverAuth(@Req() req) {}
 
   @Post("naver/oauth")
-  @UseGuards(NaverAuthGuard)
+  @UseGuards(AuthGuard("naver"))
+  // @UseGuards(NaverAuthGuard)
   @ApiOperation({ summary: '네이버 oauth 로그인 & 가입' })
   @ApiCreatedResponse({
     status: 201,
@@ -68,11 +69,11 @@ export class AuthController {
     type:TokensResponse
   })
   @ApiCreatedResponse({ status: 403, description: "Forbidden.", type: AuthRes })
-  @UseGuards(AuthGuard("naver"))
   async naverAuthRedirect(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
   ) {
+    console.log("hi")
     const result = await this.authService.naverLogin(req);
     // 응답 헤더에 액세스 토큰을 추가
     console.log(`Bearer ${result.access_token}`);
