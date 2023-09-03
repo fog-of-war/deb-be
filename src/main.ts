@@ -15,7 +15,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
-  
+
   app.useLogger(app.get(LoggerService));
   app.enableCors({
     origin: [
@@ -23,6 +23,7 @@ async function bootstrap() {
       "https://fog-of-war-gray.vercel.app",
       "https://yubinhome.com",
       "https://www.yubinhome.com",
+      "https://accounts.kakao.com",
     ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // 인증 정보 허용
@@ -54,7 +55,7 @@ async function bootstrap() {
   const prismaService = app.get(PrismaService);
   await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
   app.use(passport.initialize());
-  
+
   const config = new DocumentBuilder()
     .setTitle("fog of war example")
     .setDescription("The fog of war API description")

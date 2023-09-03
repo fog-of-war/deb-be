@@ -31,6 +31,10 @@ export class KakaoStrategy extends PassportStrategy(Strategy, "kakao") {
         user_email: _json.kakao_account.email,
       };
       const user = await this.usersService.createUser(userDto);
+      console.log(
+        "🚀 ~ file: kakao.strategy.ts:34 ~ KakaoStrategy ~ classKakaoStrategyextendsPassportStrategy ~ user:",
+        user
+      );
       done(null, user);
     } catch (error) {
       done(error);
