@@ -57,7 +57,7 @@ export class PrismaService extends PrismaClient {
             region_english_name: region.region_english_name,
           },
         });
-        console.log(`${successRegion} 생성성공`);
+        console.log(`${successRegion.region_name} 생성성공`);
       }
     }
   }
