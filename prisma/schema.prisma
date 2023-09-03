@@ -37,8 +37,7 @@ model Badge {
   badge_category_id            Int
   badge_criteria               Int
   badge_points                 Int?     @default(100)
-  badge_owned_users            User?    @relation(fields: [badge_owned_users_id], references: [user_id])
-  badge_owned_users_id         Int?
+  badge_owned_users            User[]
   badge_users_who_select_title User[]   @relation("SelectedBadge")
   badge_image_url              String
 }
