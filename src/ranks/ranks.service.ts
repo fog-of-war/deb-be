@@ -138,21 +138,24 @@ export class RanksService {
         user_nickname: user.user_nickname,
         user_image_url: user.user_image_url,
         user_selected_badge: user.user_selected_badge.badge_name,
-        visitCount: user.user_visited_places.filter(
+        visit_count: user.user_visited_places.filter(
           (placeVisit) => placeVisit.visited_place.place_region_id === regionId
         ).length,
       }))
-      .filter((user) => user.visitCount > 0)
-      .sort((a, b) => b.visitCount - a.visitCount);
-
-    return { regionVisitCount, userRanking };
+      .filter((user) => user.visit_count > 0)
+      .sort((a, b) => b.visit_count - a.visit_count)
+      .map((user, index) => ({
+        ...user,
+        rank: index + 1,
+      }));
+    return { userRanking };
   }
 
   async generateUserRankingByAllRegions() {
     const result = [];
     for (let i = 1; i <= 25; i++) {
       const test = { region: undefined, ranking: undefined };
-      test.ranking = await this.generateUserRankingForRegion(i);
+      test.ranking = (await this.generateUserRankingForRegion(i)).userRanking;
       test.region = await this.prisma.region.findFirst({
         where: { region_id: i },
       });

@@ -21,7 +21,11 @@ import {
   ApiOperation,
   ApiParam,
 } from "@nestjs/swagger";
-import { GetOneRankResponse, GetManyRanksResponse } from "./responses";
+import {
+  GetOneRankResponse,
+  GetManyRanksResponse,
+  RegionRanking,
+} from "./responses";
 import { identity } from "rxjs";
 
 @ApiTags("ranks")
@@ -60,7 +64,7 @@ export class RanksController {
   @ApiResponse({
     status: 200,
     description: "",
-    type: [GetManyRanksResponse], // 반환 모델을 지정
+    type: [RegionRanking], // 반환 모델을 지정
   })
   async getRanksByAllRegion() {
     const result = await this.ranksService.generateUserRankingByAllRegions();
@@ -79,6 +83,6 @@ export class RanksController {
     const result = await this.ranksService.generateUserRankingForRegion(
       region_id
     );
-    return result;
+    return result.userRanking;
   }
 }
