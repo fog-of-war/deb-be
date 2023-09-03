@@ -220,7 +220,12 @@ async function fetchData(placeObj) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+<<<<<<< Updated upstream
       "Authorization" :"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjkzNDYxNzQ1LCJleHAiOjE2OTM0NzI1NDV9.Vg1aGpK5syQV2xIUgmNZHKU6BsK58puMen_5xK4Nx1E"
+=======
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJfZW1haWwiOiJ5c2hpbmI5OEBuYXZlci5jb20iLCJpYXQiOjE2OTM3NDYxMDYsImV4cCI6MTY5Mzc0OTcwNn0.6Cj8FckISEYka03ILALcxjnmXyhIUKtzHPFz_KV57AA",
+>>>>>>> Stashed changes
       // "Authorization" :"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJmb2dvZnNlb3VsQGdtYWlsLmNvbSIsImlhdCI6MTY5MzQwMzA2NCwiZXhwIjoxNjkzNDEzODY0fQ.a5IOYOk_-HeaYHXxI5B7Qbi9_UlbIv0EuezrXI_1x1E"
     },
     body: body

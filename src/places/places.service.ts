@@ -21,7 +21,7 @@ export class PlacesService {
         Authorization: "KakaoAK " + this.clientID,
       },
       params: {
-        radius: 3000,
+        radius: 20000,
         query: query,
       },
     };
@@ -57,7 +57,7 @@ export class PlacesService {
       params: {
         x: x, //longitude
         y: y, //latitude
-        radius: 3000,
+        radius: 20000,
         query: query,
       },
     };
@@ -116,7 +116,7 @@ export class PlacesService {
         x: x,
         y: y,
         query: query,
-        radius: 100,
+        radius: 20000,
         size: 3,
       },
     };
@@ -362,7 +362,7 @@ export class PlacesService {
           where: {
             place_id: place.placeId,
           },
-          include:{place_posts:true}
+          include: { place_posts: true },
         });
         return foundPlace;
       })
