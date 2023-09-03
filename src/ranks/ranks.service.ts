@@ -136,8 +136,8 @@ export class RanksService {
       .map((user) => ({
         user_id: user.user_id,
         user_nickname: user.user_nickname,
-        user_email: user.user_email,
         user_image_url: user.user_image_url,
+        user_selected_badge: user.user_selected_badge.badge_name,
         visitCount: user.user_visited_places.filter(
           (placeVisit) => placeVisit.visited_place.place_region_id === regionId
         ).length,
@@ -150,17 +150,14 @@ export class RanksService {
 
   async generateUserRankingByAllRegions() {
     const result = [];
-    for (let i = 1; i >= 25; i++) {
-      const test = this.generateUserRankingForRegion(i);
-      console.log(
-        "🚀 ~ file: ranks.service.ts:155 ~ RanksService ~ generateUserRankingByAllRegions ~ test:",
-        test
-      );
+    for (let i = 1; i <= 25; i++) {
+      const test = { region: undefined, ranking: undefined };
+      test.ranking = await this.generateUserRankingForRegion(i);
+      test.region = await this.prisma.region.findFirst({
+        where: { region_id: i },
+      });
+      result.push(test); // Store the test result in the result array
     }
-    console.log(
-      "🚀 ~ file: ranks.service.ts:153 ~ RanksService ~ generateUserRankingByAllRegions ~ result:",
-      result
-    );
     return result;
   }
 }

@@ -66,6 +66,7 @@ export class RanksController {
     const result = await this.ranksService.generateUserRankingByAllRegions();
     return result;
   }
+
   @Get("/region/:id")
   @ApiOperation({ summary: "구별 랭킹 가져오기" })
   @ApiParam({ name: "id", description: "해당 구의 아이디" })
