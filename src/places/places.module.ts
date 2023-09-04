@@ -5,9 +5,9 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { LoggerModule } from "src/logger/logger.module";
 
 @Module({
-  imports:[LoggerModule],
+  imports: [LoggerModule],
   providers: [PlacesService, PrismaService],
   controllers: [PlacesController],
-  exports:[PlacesService]
+  exports: [PlacesService],
 })
 export class PlacesModule {}

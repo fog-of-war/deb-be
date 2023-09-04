@@ -33,7 +33,10 @@ export class PlacesController {
    *
    *
    */
-  constructor(private readonly placesService: PlacesService,  private logger:LoggerService) {}
+  constructor(
+    private readonly placesService: PlacesService,
+    private logger: LoggerService
+  ) {}
   /**
    *
    *
@@ -99,13 +102,15 @@ export class PlacesController {
   ): Promise<void> {
     try {
       //http://localhost:5000/v1/places/search?x=126.975278&y=37.559722&query=숭례문
+      this.logger.log(
+        `🔍 위도(latitude) : ${yCoordinate}, 경도(longitude) : ${xCoordinate}, 검색어 : ${query}`
+      );
       const searchResult: SearchResponse[] =
         await this.placesService.findPlacesInfoFromKakao(
           xCoordinate,
           yCoordinate,
           query
         );
-      this.logger.log(`🔍 위도(latitude) : ${yCoordinate}, 경도(longitude) : ${xCoordinate}, 검색어 : ${query}`)
       res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
       res
@@ -156,7 +161,7 @@ export class PlacesController {
   })
   async getPlacePosts(@Param("id", ParseIntPipe) placeId: number) {
     const result = await this.placesService.getPlacePosts(placeId);
-    this.logger.log(`장소id (${placeId}) 의 게시물들이 조회됨 `)
+    this.logger.log(`장소id (${placeId}) 의 게시물들이 조회됨 `);
     return result;
   }
 }

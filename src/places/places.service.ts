@@ -6,9 +6,13 @@ import { PrismaService } from "../prisma/prisma.service";
 @Injectable()
 export class PlacesService {
   private readonly clientID: string;
+  private readonly naverClientID: string;
+  private readonly naverClientSecret: string;
 
   constructor(private config: ConfigService, private prisma: PrismaService) {
     this.clientID = this.config.get("KAKAO_CLIENT_ID");
+    this.naverClientID = this.config.get("NAVER_CLIENT_ID");
+    this.naverClientSecret = this.config.get("NAVER_CLIENT_PW");
   }
   /**
    *
@@ -63,7 +67,6 @@ export class PlacesService {
     };
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
-      // Filter out results with "커피" as the place name only when the query includes "맛집"
       const filteredResults = response.data.documents.filter(
         (document: any) => {
           if (query.includes("맛집")) {
@@ -73,6 +76,11 @@ export class PlacesService {
         }
       );
       const result = await this.areTheyExistInDB(filteredResults);
+      result.forEach((item: any) => {
+        item.naver_place_url =
+          "https://map.naver.com/p/search/" + item.place_name;
+      });
+
       return result;
     } catch (error) {
       throw new Error(
@@ -80,6 +88,31 @@ export class PlacesService {
       );
     }
   }
+
+  // async findPlacesInfoFromNaver(query: string): Promise<any> {
+  //   const api_url = `https://openapi.naver.com/v1/search/local.xml`;
+  //   const options = {
+  //     headers: {
+  //       "X-Naver-Client-Id": this.naverClientID,
+  //       "X-Naver-Client-Secret": this.naverClientSecret,
+  //     },
+  //     params: {
+  //       query: query,
+  //     },
+  //   };
+  //   try {
+  //     const response: AxiosResponse<any> = await axios.get(api_url, options);
+  //     console.log(
+  //       "🚀 ~ file: places.service.ts:101 ~ PlacesService ~ findPlacesInfoFromNaver ~ response:",
+  //       response.data
+  //     );
+  //     return response;
+  //   } catch (error) {
+  //     throw new Error(
+  //       `findPlacesInfoFromNaver: 네이버에서 해당 장소 검색 실패`
+  //     );
+  //   }
+  // }
 
   async areTheyExistInDB(payload: any) {
     const promises = payload.map(async (data) => {
