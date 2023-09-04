@@ -38,12 +38,17 @@ export class SearchResponse {
   y: number;
 
   @ApiProperty()
+  naver_place_url: string;
+
+  @ApiProperty({ required: false }) // 옵셔널 필드
   place_posts: any[];
-  @ApiProperty()
+
+  @ApiProperty({ required: false }) // 옵셔널 필드
   place_posts_id: any[];
-  @ApiProperty()
+
+  @ApiProperty({ required: false }) // 옵셔널 필드
   place_star_rating: number;
 
-  @ApiProperty({ type: PlaceCategory, isArray: true })
+  @ApiProperty({ type: PlaceCategory, isArray: true, required: false })
   place_category_map: PlaceCategory[];
 }
