@@ -30,6 +30,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
     done: (error: any, user?: any, info?: any) => void
   ): Promise<any> {
     // 사용자 프로필 정보 요청을 위한 옵션 설정
+
     const options = {
       url: "https://openapi.naver.com/v1/nid/me",
       headers: {

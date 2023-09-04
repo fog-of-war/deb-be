@@ -11,9 +11,8 @@ import { CategoriesModule } from "./categories/categories.module";
 import { PointsModule } from "./points/points.module";
 import { LevelsModule } from "./levels/levels.module";
 import { EventEmitterModule } from "@nestjs/event-emitter";
-import { RanksModule } from './ranks/ranks.module';
-import { LoggerModule } from './logger/logger.module';
-
+import { RanksModule } from "./ranks/ranks.module";
+import { LoggerModule } from "./logger/logger.module";
 
 @Module({
   imports: [
@@ -30,13 +29,13 @@ import { LoggerModule } from './logger/logger.module';
     LevelsModule,
     EventEmitterModule.forRoot(),
     RanksModule,
-    LoggerModule,  
+    LoggerModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {  
-//   configure(consumer: MiddlewareConsumer) {
-//   consumer.apply(LogMethodMiddleware).forRoutes("*"); // 모든 라우트에 Middleware 적용
-// }
+export class AppModule {
+  //   configure(consumer: MiddlewareConsumer) {
+  //   consumer.apply(LogMethodMiddleware).forRoutes("*"); // 모든 라우트에 Middleware 적용
+  // }
 }

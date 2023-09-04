@@ -3,7 +3,13 @@ import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { JwtModule } from "@nestjs/jwt";
 import { PrismaModule } from "../prisma/prisma.module";
-import { GoogleStrategy, KakaoStrategy, NaverStrategy, AtStrategy, RtStrategy } from "./strategy";
+import {
+  GoogleStrategy,
+  KakaoStrategy,
+  NaverStrategy,
+  AtStrategy,
+  RtStrategy,
+} from "./strategy";
 import { UsersModule } from "src/users/users.module";
 import { HttpModule } from "@nestjs/axios";
 import { PassportModule } from "@nestjs/passport";
@@ -18,7 +24,7 @@ import { LoggerModule } from "src/logger/logger.module";
     HttpModule,
     PassportModule,
     RanksModule,
-    LoggerModule
+    LoggerModule,
   ],
   providers: [
     AuthService,
@@ -26,7 +32,7 @@ import { LoggerModule } from "src/logger/logger.module";
     KakaoStrategy,
     NaverStrategy,
     AtStrategy,
-    RtStrategy
+    RtStrategy,
   ],
   controllers: [AuthController],
 })
