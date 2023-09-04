@@ -48,9 +48,15 @@ export class PlacesController {
     description: "",
     type: landmarksResponse,
   })
-  async getLandmarks() {
-    const result = await this.placesService.getLandmarks();
-    return result;
+  async getLandmarks(@Res() res) {
+    try {
+      const result = await this.placesService.getLandmarks();
+      return result;
+    } catch (error) {
+      res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: "Error occurred during search." });
+    }
   }
   /**
    *
@@ -75,7 +81,7 @@ export class PlacesController {
       res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
       res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .status(HttpStatus.NOT_FOUND)
         .json({ message: "Error occurred during search." });
     }
   }
@@ -114,7 +120,7 @@ export class PlacesController {
       res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
       res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .status(HttpStatus.NOT_FOUND)
         .json({ message: "Error occurred during search." });
     }
   }
@@ -129,9 +135,15 @@ export class PlacesController {
   @ApiCreatedResponse({
     status: 200,
   })
-  async getAllPlaces() {
-    const result = await this.placesService.getAll();
-    return result;
+  async getAllPlaces(@Res() res) {
+    try {
+      const result = await this.placesService.getAll();
+      return result;
+    } catch (error) {
+      res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: "Error occurred during search." });
+    }
   }
   /**
    *
@@ -144,9 +156,15 @@ export class PlacesController {
     description: "",
     type: GetPlaceById, // 반환 모델을 지정
   })
-  async getPlace(@Param("id", ParseIntPipe) placeId: number) {
-    const result: GetPlaceById = await this.placesService.getOne(placeId);
-    return result;
+  async getPlace(@Param("id", ParseIntPipe) placeId: number, @Res() res) {
+    try {
+      const result: GetPlaceById = await this.placesService.getOne(placeId);
+      return result;
+    } catch (error) {
+      res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: "Error occurred during search." });
+    }
   }
   /**
    *
@@ -159,9 +177,15 @@ export class PlacesController {
     description: "",
     type: PlaceWithPostsResponse,
   })
-  async getPlacePosts(@Param("id", ParseIntPipe) placeId: number) {
-    const result = await this.placesService.getPlacePosts(placeId);
-    this.logger.log(`장소id (${placeId}) 의 게시물들이 조회됨 `);
-    return result;
+  async getPlacePosts(@Param("id", ParseIntPipe) placeId: number, @Res() res) {
+    try {
+      const result = await this.placesService.getPlacePosts(placeId);
+      this.logger.log(`장소id (${placeId}) 의 게시물들이 조회됨 `);
+      return result;
+    } catch (error) {
+      res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: "Error occurred during search." });
+    }
   }
 }
