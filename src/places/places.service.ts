@@ -6,13 +6,9 @@ import { PrismaService } from "../prisma/prisma.service";
 @Injectable()
 export class PlacesService {
   private readonly clientID: string;
-  private readonly naverClientID: string;
-  private readonly naverClientSecret: string;
 
   constructor(private config: ConfigService, private prisma: PrismaService) {
     this.clientID = this.config.get("KAKAO_CLIENT_ID");
-    this.naverClientID = this.config.get("NAVER_CLIENT_ID");
-    this.naverClientSecret = this.config.get("NAVER_CLIENT_PW");
   }
   /**
    *
@@ -89,31 +85,6 @@ export class PlacesService {
     }
   }
 
-  // async findPlacesInfoFromNaver(query: string): Promise<any> {
-  //   const api_url = `https://openapi.naver.com/v1/search/local.xml`;
-  //   const options = {
-  //     headers: {
-  //       "X-Naver-Client-Id": this.naverClientID,
-  //       "X-Naver-Client-Secret": this.naverClientSecret,
-  //     },
-  //     params: {
-  //       query: query,
-  //     },
-  //   };
-  //   try {
-  //     const response: AxiosResponse<any> = await axios.get(api_url, options);
-  //     console.log(
-  //       "🚀 ~ file: places.service.ts:101 ~ PlacesService ~ findPlacesInfoFromNaver ~ response:",
-  //       response.data
-  //     );
-  //     return response;
-  //   } catch (error) {
-  //     throw new Error(
-  //       `findPlacesInfoFromNaver: 네이버에서 해당 장소 검색 실패`
-  //     );
-  //   }
-  // }
-
   async areTheyExistInDB(payload: any) {
     const promises = payload.map(async (data) => {
       const result = await this.prisma.place.findFirst({
@@ -138,7 +109,10 @@ export class PlacesService {
     const results = await Promise.all(promises);
     return results; // 모든 작업의 결과 반환
   }
-
+  /**
+   *
+   *
+   */
   async findPlaceInfoFromKakao(query: string, x: any, y: any): Promise<any> {
     const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;
     const options = {
