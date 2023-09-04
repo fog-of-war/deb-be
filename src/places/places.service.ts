@@ -317,7 +317,6 @@ export class PlacesService {
       where: { place_id: placeId },
       select: { place_id: true, place_name: true, place_star_rating: true },
     });
-    place.place_star_rating = 4.5;
     const posts = await this.prisma.post.findMany({
       where: { post_place_id: placeId },
       select: {
@@ -375,5 +374,34 @@ export class PlacesService {
       })
     );
     return result;
+  }
+
+  /**
+   *
+   *
+   */
+
+  async updatePlaceStarRating(place_id: number) {
+    const place = await this.prisma.place.findUnique({
+      where: { place_id: place_id },
+      include: {
+        place_posts: { select: { post_star_rating: true } },
+      },
+    });
+
+    if (!place || !place.place_posts.length) {
+      return; // Place not found or no associated posts
+    }
+
+    const totalStarRating = place.place_posts.reduce((sum, post) => {
+      return sum + (post.post_star_rating || 0);
+    }, 0);
+
+    const averageStarRating = totalStarRating / place.place_posts.length;
+
+    await this.prisma.place.update({
+      where: { place_id: place_id },
+      data: { place_star_rating: averageStarRating },
+    });
   }
 }

@@ -68,6 +68,7 @@ export class PostsService {
   ): Promise<void> {
     try {
       await this.placesService.createPlaceVisit(userId, placeId);
+      await this.placesService.updatePlaceStarRating(placeId);
       await this.pointsService.assignPoints(userId, placeId);
       await this.levelsService.updateLevel(userId);
       await this.badgesService.checkAndAssignBadge(userId);
