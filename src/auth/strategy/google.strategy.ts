@@ -26,26 +26,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
     profile: any,
     done: VerifyCallback
   ): Promise<any> {
+
+    console.log(profile);
     const { id, emails, photos } = profile;
-    console.log(
-      "🚀 ~ file: google.strategy.ts:30 ~ 구글에서 주는 엑세스토큰:",
-      accessToken
-    );
-
-    // 개행 추가
-    console.log(
-      "🚀 ~ file: google.strategy.ts:30 ~ 구글에서 주는 공급자아이디:",
-      id
-    );
-    console.log(
-      "🚀 ~ file: google.strategy.ts:30 ~ 구글에서 주는 공급자아이디:",
-      emails
-    );
-    console.log(
-      "🚀 ~ file: google.strategy.ts:30 ~ 구글에서 주는 공급자아이디:",
-      photos
-    );
-
     const email = emails[0].value;
 
     let user = await this.usersService.findUserByEmail(email);
@@ -54,7 +37,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       const userDto = {
         user_providerId: id,
         user_email: email,
-        user_image_url: photos[0].value,
       };
       try {
         user = await this.usersService.createUser(userDto);

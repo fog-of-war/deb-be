@@ -3,11 +3,18 @@ import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { JwtModule } from "@nestjs/jwt";
 import { PrismaModule } from "../prisma/prisma.module";
-import { GoogleStrategy, KakaoStrategy, NaverStrategy } from "./strategy";
+import {
+  GoogleStrategy,
+  KakaoStrategy,
+  NaverStrategy,
+  AtStrategy,
+  RtStrategy,
+} from "./strategy";
 import { UsersModule } from "src/users/users.module";
 import { HttpModule } from "@nestjs/axios";
 import { PassportModule } from "@nestjs/passport";
-import { SessionSerializer } from "./serializer";
+import { RanksModule } from "src/ranks/ranks.module";
+import { LoggerModule } from "src/logger/logger.module";
 
 @Module({
   imports: [
@@ -16,13 +23,16 @@ import { SessionSerializer } from "./serializer";
     UsersModule,
     HttpModule,
     PassportModule,
+    RanksModule,
+    LoggerModule,
   ],
   providers: [
     AuthService,
     GoogleStrategy,
     KakaoStrategy,
     NaverStrategy,
-    SessionSerializer,
+    AtStrategy,
+    RtStrategy,
   ],
   controllers: [AuthController],
 })

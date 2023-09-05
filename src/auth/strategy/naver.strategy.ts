@@ -30,6 +30,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
     done: (error: any, user?: any, info?: any) => void
   ): Promise<any> {
     // 사용자 프로필 정보 요청을 위한 옵션 설정
+
     const options = {
       url: "https://openapi.naver.com/v1/nid/me",
       headers: {
@@ -43,14 +44,13 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
       })
       .toPromise();
     const profileInfo = response.data.response;
-    const { id, email, profile_image } = profileInfo;
+    const { id, email } = profileInfo;
     let user = await this.usersService.findUserByEmail(email);
 
     if (!user) {
       const userDto = {
         user_providerId: id,
         user_email: email,
-        user_image_url: profile_image,
       };
       try {
         user = await this.usersService.createUser(userDto);
@@ -63,17 +63,3 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
     done(null, user);
   }
 }
-
-// {
-//   resultcode: '00',
-//   message: 'success',
-//   response: {
-//     id: 'S-2BUO-alQrN7L6qi44J1IKLYOiMtq3OCiUoMc_5wRo',
-//     nickname: '신유빈',
-//     profile_image: 'https://ssl.pstatic.net/static/pwe/address/img_profile.png',
-//     email: 'yshinb98@naver.com',
-//     mobile: '010-2030-8968',
-//     mobile_e164: '+821020308968',
-//     name: '신유빈'
-//   }
-// }

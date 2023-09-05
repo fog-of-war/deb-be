@@ -1,19 +1,29 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { ValidationPipe } from "@nestjs/common";
+import {
+  UnprocessableEntityException,
+  ValidationError,
+  ValidationPipe,
+} from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import * as cookieParser from "cookie-parser";
-import * as session from "express-session";
 import * as passport from "passport";
+import { PrismaService } from "./prisma/prisma.service";
+import { LoggerService } from "./logger/logger.service";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+
+  app.useLogger(app.get(LoggerService));
   app.enableCors({
     origin: [
       "http://localhost:3000",
       "https://fog-of-war-gray.vercel.app",
       "https://yubinhome.com",
       "https://www.yubinhome.com",
+      "https://accounts.kakao.com",
     ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // 인증 정보 허용
@@ -22,29 +32,44 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      // 이 옵션을 추가하여 DTO에 정의되지 않은 속성은 필터링합니다.
-      // 몰래 id 를 보내서 pk를 조작하려고 하는 등의 경우를 막아줌
-      forbidNonWhitelisted: true, // 이 옵션을 추가하여 DTO에 정의되지 않은 속성이 들어올 경우 요청을 거부합니다.
-    })
-  );
-  app.use(cookieParser());
-  app.use(
-    session({
-      secret: "cutify",
-      resave: false,
-      saveUninitialized: false,
-      cookie: { maxAge: 3600000 },
+      forbidNonWhitelisted: true,
+      transform: true,
+      exceptionFactory: (validationErrors: ValidationError[]) => {
+        // 여기서 원하는 예외 처리 로직을 구현합니다.
+        // 예를 들어, 무조건 422 Unprocessable Entity를 반환하도록 만들 수 있습니다.
+        const formattedErrors = validationErrors.map((error) => ({
+          property: error.property,
+          constraints: error.constraints,
+        }));
+
+        return new UnprocessableEntityException({
+          statusCode: 422,
+          message: "입력 형식을 확인하세요",
+          errors: formattedErrors,
+        });
+      },
     })
   );
 
+  app.use(cookieParser());
+  const prismaService = app.get(PrismaService);
+  await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
   app.use(passport.initialize());
-  app.use(passport.session());
 
   const config = new DocumentBuilder()
     .setTitle("fog of war example")
     .setDescription("The fog of war API description")
     .setVersion("1.0")
     .addTag("fog of war")
+    .addSecurity("access_token", {
+      type: "http",
+      scheme: "Bearer",
+    })
+    .addSecurity("refresh_token", {
+      type: "http",
+      scheme: "Bearer",
+    })
+    .addOAuth2()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);

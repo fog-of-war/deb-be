@@ -1,6 +1,7 @@
 import { Optional } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
 import {
+  IsArray,
   IsEmail,
   IsNotEmpty,
   IsOptional,
@@ -18,9 +19,4 @@ export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty()
   user_email: string;
-
-  @IsString()
-  @IsOptional()
-  @ApiProperty()
-  user_image_url: string;
 }

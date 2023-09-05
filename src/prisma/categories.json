@@ -1,0 +1,10 @@
+[
+  { "category_name": "기본", "category_points": 100, "category_id": 1 },
+  { "category_name": "미식", "category_points": 0, "category_id": 2 },
+  { "category_name": "운동", "category_points": 0, "category_id": 3 },
+  { "category_name": "미술관", "category_points": 0, "category_id": 4 },
+  { "category_name": "역사", "category_points": 0, "category_id": 5 },
+  { "category_name": "커피", "category_points": 0, "category_id": 6 },
+  { "category_name": "랜드마크", "category_points": 300, "category_id": 7 },
+  { "category_name": "협찬", "category_points": 1500, "category_id": 8 }
+]
