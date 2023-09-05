@@ -87,12 +87,9 @@ export class AuthController {
   }
 
   @Get("kakao")
-  @UseGuards(KakaoAuthGuard)
-  @ApiOperation({ summary: "[승인전 사용불가]카카오 oauth" })
   async kakaoAuth(@Req() req) {}
-
+  
   @Post("kakao/oauth")
-  @UseGuards(KakaoAuthGuard)
   async kakaoAuthRedirect(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
