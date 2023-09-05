@@ -58,7 +58,7 @@ export class AuthController {
   }
 
   @Get("kakao")
-  @UseGuards(AuthGuard("kakao"))
+  // @UseGuards(AuthGuard("kakao"))
   async kakaoAuth(@Req() req) {}
 
   @Get("kakao/redirect")
@@ -67,7 +67,7 @@ export class AuthController {
     description: "success",
   })
   @ApiCreatedResponse({ status: 403, description: "Forbidden.", type: AuthRes })
-  @UseGuards(AuthGuard("kakao"))
+  // @UseGuards(AuthGuard("kakao"))
   async kakaoAuthRedirect(
     @Req() req: any,
     @Res({ passthrough: true }) res: Response
