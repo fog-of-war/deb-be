@@ -144,14 +144,14 @@ CREATE TABLE "Level" (
 );
 
 -- CreateTable
-CREATE TABLE "Alerts" (
+CREATE TABLE "Alert" (
     "alert_id" SERIAL NOT NULL,
     "alert_post_id" INTEGER NOT NULL,
     "alert_region_id" INTEGER NOT NULL,
     "alert_place_id" INTEGER NOT NULL,
     "alert_created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Alerts_pkey" PRIMARY KEY ("alert_id")
+    CONSTRAINT "Alert_pkey" PRIMARY KEY ("alert_id")
 );
 
 -- CreateTable
@@ -226,6 +226,7 @@ ALTER TABLE "_BadgeToUser" ADD CONSTRAINT "_BadgeToUser_A_fkey" FOREIGN KEY ("A"
 -- AddForeignKey
 ALTER TABLE "_BadgeToUser" ADD CONSTRAINT "_BadgeToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
+
 CREATE OR REPLACE FUNCTION alert_post_created() RETURNS trigger AS $$
 DECLARE
    new_post_place_id INT;
@@ -256,3 +257,17 @@ AFTER INSERT
 ON "Post"
 FOR EACH ROW
 EXECUTE FUNCTION alert_post_created();
+
+
+CREATE OR REPLACE FUNCTION notify_alert_insert() RETURNS TRIGGER AS $$
+BEGIN
+    PERFORM pg_notify('alert_insert', NEW.alert_id::TEXT);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_alert_insert
+AFTER INSERT
+ON "Alert"
+FOR EACH ROW
+EXECUTE FUNCTION notify_alert_insert();

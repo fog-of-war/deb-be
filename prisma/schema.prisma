@@ -151,7 +151,7 @@ enum Role {
   ADMIN
 }
 
-model Alerts {
+model Alert {
   alert_id         Int      @id @default(autoincrement())
   alert_post_id    Int
   alert_region_id  Int
