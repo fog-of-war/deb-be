@@ -28,6 +28,8 @@ model User {
   user_search_history    SearchHistory[]
   user_activities        UserActivities[]
   user_refresh_token     String?
+
+  @@index([user_email, user_points, user_level, user_created_at])
 }
 
 model Badge {
@@ -69,6 +71,8 @@ model Post {
   post_place       Place?   @relation(fields: [post_place_id], references: [place_id])
   post_place_id    Int?
   post_is_deleted  Boolean  @default(false)
+
+  @@index([post_author_id, post_place_id, post_created_at])
 }
 
 model PlaceVisit {
@@ -95,6 +99,8 @@ model Place {
   place_visited_by   PlaceVisit[]
   place_posts        Post[]
   place_category_map MapPlaceCategory[]
+
+  @@index([place_name, place_address, place_star_rating, place_region_id, place_created_at])
 }
 
 model Region {
