@@ -1,9 +1,9 @@
 import { Controller, Get, Sse } from "@nestjs/common";
 import { AlertsService } from "./alerts.service";
 import { GetCurrentUser } from "src/auth/decorator";
-import { Observable } from "rxjs";
-import { MessageEvent } from "./dto";
-import { Response } from "express";
+// import { Observable } from "rxjs";
+// import { MessageEvent } from "./dto";
+// import { Response } from "express";
 @Controller("alerts")
 export class AlertsController {
   constructor(private readonly alertsService: AlertsService) {}

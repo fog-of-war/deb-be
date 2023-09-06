@@ -259,15 +259,15 @@ FOR EACH ROW
 EXECUTE FUNCTION alert_post_created();
 
 
-CREATE OR REPLACE FUNCTION notify_alert_insert() RETURNS TRIGGER AS $$
-BEGIN
-    PERFORM pg_notify('alert_insert', NEW.alert_id::TEXT);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- CREATE OR REPLACE FUNCTION notify_alert_insert() RETURNS TRIGGER AS $$
+-- BEGIN
+--     PERFORM pg_notify('alert_insert', NEW.alert_id::TEXT);
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_alert_insert
-AFTER INSERT
-ON "Alert"
-FOR EACH ROW
-EXECUTE FUNCTION notify_alert_insert();
+-- CREATE TRIGGER trigger_alert_insert
+-- AFTER INSERT
+-- ON "Alert"
+-- FOR EACH ROW
+-- EXECUTE FUNCTION notify_alert_insert();
