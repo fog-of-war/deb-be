@@ -72,7 +72,7 @@ model Post {
   post_place_id    Int?
   post_is_deleted  Boolean  @default(false)
 
-  @@index([post_author_id, post_place_id, post_created_at])
+  @@index([post_author_id, post_place_id, post_created_at, post_is_deleted])
 }
 
 model PlaceVisit {
@@ -149,6 +149,14 @@ model Level {
 enum Role {
   BASIC
   ADMIN
+}
+
+model Alerts {
+  alert_id         Int      @id @default(autoincrement())
+  alert_post_id    Int
+  alert_region_id  Int
+  alert_place_id   Int
+  alert_created_at DateTime @default(now())
 }
 
 //참고 : https://vertabelo.com/blog/user-profile-database-model/

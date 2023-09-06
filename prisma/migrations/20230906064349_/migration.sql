@@ -27,7 +27,6 @@ CREATE TABLE "Badge" (
     "badge_category_id" INTEGER NOT NULL,
     "badge_criteria" INTEGER NOT NULL,
     "badge_points" INTEGER DEFAULT 100,
-    "badge_owned_users_id" INTEGER,
     "badge_image_url" TEXT NOT NULL,
 
     CONSTRAINT "Badge_pkey" PRIMARY KEY ("badge_id")
@@ -98,6 +97,7 @@ CREATE TABLE "Place" (
 CREATE TABLE "Region" (
     "region_id" SERIAL NOT NULL,
     "region_name" TEXT NOT NULL,
+    "region_english_name" TEXT NOT NULL,
 
     CONSTRAINT "Region_pkey" PRIMARY KEY ("region_id")
 );
@@ -143,11 +143,37 @@ CREATE TABLE "Level" (
     CONSTRAINT "Level_pkey" PRIMARY KEY ("level_id")
 );
 
+-- CreateTable
+CREATE TABLE "Alerts" (
+    "alert_id" SERIAL NOT NULL,
+    "alert_post_id" INTEGER NOT NULL,
+    "alert_region_id" INTEGER NOT NULL,
+    "alert_place_id" INTEGER NOT NULL,
+    "alert_created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Alerts_pkey" PRIMARY KEY ("alert_id")
+);
+
+-- CreateTable
+CREATE TABLE "_BadgeToUser" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_user_email_key" ON "User"("user_email");
 
 -- CreateIndex
+CREATE INDEX "User_user_email_user_points_user_level_user_created_at_idx" ON "User"("user_email", "user_points", "user_level", "user_created_at");
+
+-- CreateIndex
+CREATE INDEX "Post_post_author_id_post_place_id_post_created_at_post_is_d_idx" ON "Post"("post_author_id", "post_place_id", "post_created_at", "post_is_deleted");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Place_place_name_key" ON "Place"("place_name");
+
+-- CreateIndex
+CREATE INDEX "Place_place_name_place_address_place_star_rating_place_regi_idx" ON "Place"("place_name", "place_address", "place_star_rating", "place_region_id", "place_created_at");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Category_category_name_key" ON "Category"("category_name");
@@ -155,14 +181,17 @@ CREATE UNIQUE INDEX "Category_category_name_key" ON "Category"("category_name");
 -- CreateIndex
 CREATE UNIQUE INDEX "Level_level_level_key" ON "Level"("level_level");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "_BadgeToUser_AB_unique" ON "_BadgeToUser"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_BadgeToUser_B_index" ON "_BadgeToUser"("B");
+
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_user_selected_badge_id_fkey" FOREIGN KEY ("user_selected_badge_id") REFERENCES "Badge"("badge_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Badge" ADD CONSTRAINT "Badge_badge_category_id_fkey" FOREIGN KEY ("badge_category_id") REFERENCES "Category"("category_id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Badge" ADD CONSTRAINT "Badge_badge_owned_users_id_fkey" FOREIGN KEY ("badge_owned_users_id") REFERENCES "User"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserActivities" ADD CONSTRAINT "UserActivities_activity_user_id_fkey" FOREIGN KEY ("activity_user_id") REFERENCES "User"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -190,3 +219,40 @@ ALTER TABLE "MapPlaceCategory" ADD CONSTRAINT "MapPlaceCategory_categoryId_fkey"
 
 -- AddForeignKey
 ALTER TABLE "SearchHistory" ADD CONSTRAINT "SearchHistory_search_user_id_fkey" FOREIGN KEY ("search_user_id") REFERENCES "User"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_BadgeToUser" ADD CONSTRAINT "_BadgeToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Badge"("badge_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_BadgeToUser" ADD CONSTRAINT "_BadgeToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+CREATE OR REPLACE FUNCTION alert_post_created() RETURNS trigger AS $$
+DECLARE
+   new_post_place_id INT;
+   new_place_region_id INT;
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        SELECT post_place_id INTO new_post_place_id
+        FROM "Post"
+        WHERE post_id = NEW.post_id;
+
+        IF new_post_place_id IS NOT NULL THEN
+            SELECT place_region_id INTO new_place_region_id
+            FROM "Place"
+            WHERE place_id = new_post_place_id;
+        END IF;
+        
+        IF new_place_region_id IS NOT NULL THEN
+            INSERT INTO "Alerts" (alert_post_id, alert_region_id, alert_place_id) VALUES (NEW.post_id, new_place_region_id, new_post_place_id);
+        END IF;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_alert_post_created
+AFTER INSERT
+ON "Post"
+FOR EACH ROW
+EXECUTE FUNCTION alert_post_created();

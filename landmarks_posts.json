@@ -1,21 +1,41 @@
 {
     "코엑스": {
         "state": {
+            "new_level": 1,
             "new_badges": []
         }
     },
     "일자산허브천문공원": {
         "state": {
+            "new_level": 2,
             "new_badges": []
         }
     },
     "국립4.19민주묘지": {
         "state": {
-            "new_badges": []
+            "new_badges": [
+                {
+                    "badge_id": 2,
+                    "badge_name": "시민",
+                    "badge_category_id": 1,
+                    "badge_criteria": 3,
+                    "badge_points": 100,
+                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/시민.png"
+                },
+                {
+                    "badge_id": 15,
+                    "badge_name": "석기시대",
+                    "badge_category_id": 5,
+                    "badge_criteria": 1,
+                    "badge_points": 100,
+                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/석기시대.png"
+                }
+            ]
         }
     },
     "서울식물원": {
         "state": {
+            "new_level": 3,
             "new_badges": []
         }
     },
@@ -36,7 +56,17 @@
     },
     "금천체육공원": {
         "state": {
-            "new_badges": []
+            "new_level": 4,
+            "new_badges": [
+                {
+                    "badge_id": 9,
+                    "badge_name": "줄넘기",
+                    "badge_category_id": 3,
+                    "badge_criteria": 1,
+                    "badge_points": 100,
+                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/줄넘기.png"
+                }
+            ]
         }
     },
     "경춘선숲길": {
@@ -46,7 +76,16 @@
     },
     "도봉산": {
         "state": {
-            "new_badges": []
+            "new_badges": [
+                {
+                    "badge_id": 3,
+                    "badge_name": "모험가",
+                    "badge_category_id": 1,
+                    "badge_criteria": 10,
+                    "badge_points": 100,
+                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/모험가.png"
+                }
+            ]
         }
     },
     "세종대왕기념관": {
@@ -61,15 +100,11 @@
     },
     "월드컵공원": {
         "state": {
+            "new_level": 5,
             "new_badges": []
         }
     },
     "독립문": {
-        "state": {
-            "new_badges": []
-        }
-    },
-    "예술의전당": {
         "state": {
             "new_badges": []
         }
@@ -106,7 +141,16 @@
     },
     "진관사": {
         "state": {
-            "new_badges": []
+            "new_badges": [
+                {
+                    "badge_id": 16,
+                    "badge_name": "한능검",
+                    "badge_category_id": 5,
+                    "badge_criteria": 5,
+                    "badge_points": 100,
+                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/한능검.png"
+                }
+            ]
         }
     },
     "광화문": {
@@ -121,7 +165,6 @@
     },
     "용마폭포공원": {
         "state": {
-            "new_level": 7,
             "new_badges": []
         }
     }
