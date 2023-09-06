@@ -26,8 +26,10 @@ export class PostsService {
   /** 여러 개의 게시물 가져오기 */
   async getPosts() {
     const result = await this.prisma.post.findMany({
+      where: { post_is_deleted: false },
       include: {
-        post_place: true, // Include the associated Place information
+        post_place: true,
+        // Include the associated Place information
       },
     });
     return result;
@@ -36,7 +38,7 @@ export class PostsService {
   /** 여러 개의 게시물 가져오기 */
   async getPostsByUserId(userId: number) {
     const result = this.prisma.post.findMany({
-      where: { post_author_id: userId },
+      where: { post_author_id: userId, post_is_deleted: false },
       include: {
         post_place: true, // Include the associated Place information
       },
@@ -49,6 +51,7 @@ export class PostsService {
     const post = await this.prisma.post.findFirst({
       where: {
         post_id: postId,
+        post_is_deleted: false,
       },
       include: {
         post_place: true, // Include the associated Place information
@@ -194,6 +197,7 @@ export class PostsService {
       where: {
         post_id: postId,
         post_author_id: userId,
+        post_is_deleted: false,
       },
     });
 
@@ -214,11 +218,13 @@ export class PostsService {
 
   /** 게시물 삭제하기 */
   async deletePostById(userId: number, postId: number) {
-    return this.prisma.post.delete({
+    return this.prisma.post.update({
       where: {
         post_id: postId,
         post_author_id: userId,
+        post_is_deleted: false,
       },
+      data: { post_is_deleted: true },
     });
   }
 }
