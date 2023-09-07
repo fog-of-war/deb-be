@@ -1,3 +1,9 @@
+-- 로그 메시지 상세하게 표시
+ALTER SYSTEM SET log_statement = 'all';
+
+-- 변경된 설정을 즉시 적용
+SELECT pg_reload_conf();
+
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('BASIC', 'ADMIN');
 
@@ -243,7 +249,7 @@ BEGIN
         END IF;
         
         IF new_place_region_id IS NOT NULL THEN
-            INSERT INTO "Alerts" (alert_post_id, alert_region_id, alert_place_id) VALUES (NEW.post_id, new_place_region_id, new_post_place_id);
+            INSERT INTO "Alert" (alert_post_id, alert_region_id, alert_place_id) VALUES (NEW.post_id, new_place_region_id, new_post_place_id);
         END IF;
     END IF;
     

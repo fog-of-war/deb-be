@@ -133,7 +133,7 @@ const placesArray = [
     post_star_rating: 1.0,
     post_description: "랜드마크",
     post_image_url:
-      " https://fog-of-war.s3.ap-northeast-2.amazonaws.com/%E1%84%85%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%84%86%E1%85%A1%E1%84%8F%E1%85%B3/15%E1%84%8B%E1%85%A8%E1%84%89%E1%85%AE%E1%86%AF%E1%84%8B%E1%85%B4%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%83%E1%85%A1%E1%86%BC.webp",
+      "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/%E1%84%85%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%84%86%E1%85%A1%E1%84%8F%E1%85%B3/15%E1%84%8B%E1%85%A8%E1%84%89%E1%85%AE%E1%86%AF%E1%84%8B%E1%85%B4%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%83%E1%85%A1%E1%86%BC.webp",
     place_latitude: 127.0117919806623,
     place_longitude: 37.47922106107729,
   },
@@ -229,8 +229,8 @@ const placesArray = [
   },
 ];
 
-// const baseUrl = "http://localhost:5000/v1/posts";
-const baseUrl = "https://api.yubinhome.com/v1/posts";
+const baseUrl = "http://localhost:5000/v1/posts";
+// const baseUrl = "https://api.yubinhome.com/v1/posts";
 async function fetchData(placeObj) {
   const url = baseUrl;
   const body = JSON.stringify({
@@ -246,7 +246,7 @@ async function fetchData(placeObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk0MDcwNzAzLCJleHAiOjE2OTQwNzQzMDN9.0aJHf1mdEcV_-5w6v_atTE2SSW17ome4GQZHPJ4t12A",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk0MDgxMjgxLCJleHAiOjE2OTQwODQ4ODF9.KSrVYiP0FmHrdJIlw8YbhYehFckcEQ7is2Pr5pn6O6Q",
     },
     body: body,
   };

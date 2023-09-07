@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
+  Res,
 } from "@nestjs/common";
 import { JwtGuard } from "../auth/guard";
 import { PostsService } from "./posts.service";
@@ -92,13 +93,15 @@ export class PostsController {
   async createPost(
     @GetUser("user_id") userId: number,
     @GetUser("user_nickname") userNickname: string,
-    @Body() dto: CreatePostDto
+    @Body() dto: CreatePostDto,
+    @Res() res
   ) {
     try {
-      //
+      this.logger.log(userNickname, "가 게시물 작성 시도");
+
       const result = await this.postService.createPost(userId, dto);
       this.logger.log(userNickname, "가 게시물 작성");
-      return result;
+      res.status(HttpStatus.CREATED).json(result);
     } catch (error) {
       throw new HttpException(
         {
