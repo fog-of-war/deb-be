@@ -140,7 +140,7 @@ export class PlacesController {
   async getAllPlaces(@Res() res) {
     try {
       const result = await this.placesService.getAll();
-      return result;
+      return res.status(HttpStatus.OK).json(result);
     } catch (error) {
       res
         .status(HttpStatus.NOT_FOUND)
@@ -183,7 +183,7 @@ export class PlacesController {
     try {
       const result = await this.placesService.getPlacePosts(placeId);
       this.logger.log(`장소id (${placeId}) 의 게시물들이 조회됨 `);
-      return result;
+      return res.status(HttpStatus.OK).json(result);
     } catch (error) {
       res
         .status(HttpStatus.NOT_FOUND)
