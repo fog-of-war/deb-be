@@ -102,6 +102,10 @@ export class PlacesService {
         data.place_posts = result.place_posts;
         data.place_star_rating = result.place_star_rating;
         data.place_category_map = result.place_category_map;
+      } else {
+        data.place_posts = [];
+        data.place_star_rating = null;
+        data.place_category_map = [];
       }
       return data; // 수정: 각 작업의 결과 반환
     });

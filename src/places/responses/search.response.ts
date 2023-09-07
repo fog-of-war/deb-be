@@ -47,7 +47,7 @@ export class SearchResponse {
   place_posts_id: any[];
 
   @ApiProperty({ required: false }) // 옵셔널 필드
-  place_star_rating: number;
+  place_star_rating: number | null;
 
   @ApiProperty({ type: PlaceCategory, isArray: true, required: false })
   place_category_map: PlaceCategory[];
