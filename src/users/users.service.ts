@@ -1,6 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { ChangeUserTitleDto, CreateUserDto, EditUserDto, InitUserDto } from "./dto";
+import {
+  ChangeUserTitleDto,
+  CreateUserDto,
+  EditUserDto,
+  InitUserDto,
+} from "./dto";
 import { BadgesService } from "../badges/badges.service";
 // import { User } from "@prisma/client";
 import { RanksService } from "src/ranks/ranks.service";
@@ -67,45 +72,46 @@ export class UsersService {
 
   async leanUserInfo(user: any) {
     const result = await this.prisma.user.findFirst({
-      where:{user_id:user.user_id},
-      select:{
-        user_id:true,
-        user_image_url:true,
-        user_nickname:true,
-        user_points:true,
-        user_level:true,
-        user_is_admin:true,
-        user_is_deleted:true,
-        user_badges:true,
-        user_selected_badge:true,
-        user_visited_places:true,
-        user_authored_posts:true,
-      }})
-   return result;
+      where: { user_id: user.user_id },
+      select: {
+        user_id: true,
+        user_image_url: true,
+        user_nickname: true,
+        user_points: true,
+        user_level: true,
+        user_is_admin: true,
+        user_is_deleted: true,
+        user_badges: true,
+        user_selected_badge: true,
+        user_visited_places: true,
+        user_authored_posts: true,
+      },
+    });
+    return result;
   }
 
-  async findUserBadges(userId: number) {    
+  async findUserBadges(userId: number) {
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId },
-      select: {      
-        user_badges: true, 
+      select: {
+        user_badges: true,
         user_selected_badge: true,
       },
     });
     return user;
   }
-  
-  async changeTitle(userId:number, dto:ChangeUserTitleDto){    
+
+  async changeTitle(userId: number, dto: ChangeUserTitleDto) {
     const user = await this.prisma.user.update({
       where: { user_id: userId },
-      data: {       
+      data: {
         user_selected_badge: {
-        connect: { badge_id: dto.user_selected_badge_id }, // ChangeUserTitleDto에 선택한 뱃지 ID를 포함해야 함
-      }, },
+          connect: { badge_id: dto.user_selected_badge_id }, // ChangeUserTitleDto에 선택한 뱃지 ID를 포함해야 함
+        },
+      },
     });
     return user;
   }
-
 
   async getMyVisitedRegionCount(userId: number) {
     const result = await this.prisma.user.findFirst({
@@ -113,19 +119,20 @@ export class UsersService {
       select: { user_visited_places: { include: { visited_place: true } } },
     });
     const regions = await this.prisma.region.findMany({});
-    const regionsWithVisitedCount = regions.map(region => ({
+    const regionsWithVisitedCount = regions.map((region) => ({
       ...region,
       region_visited_count: 0,
     }));
-    result.user_visited_places.forEach(item => {
+    result.user_visited_places.forEach((item) => {
       const regionId = item.visited_place.place_region_id;
-      
-      const regionToUpdate = regionsWithVisitedCount.find(region => region.region_id === regionId);
+
+      const regionToUpdate = regionsWithVisitedCount.find(
+        (region) => region.region_id === regionId
+      );
       if (regionToUpdate) {
         regionToUpdate.region_visited_count++;
       }
-    });  
+    });
     return regionsWithVisitedCount;
   }
 }
-

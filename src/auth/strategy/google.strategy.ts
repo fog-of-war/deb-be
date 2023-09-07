@@ -26,9 +26,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
     profile: any,
     done: VerifyCallback
   ): Promise<any> {
-
-    console.log(profile);
-    const { id, emails, photos } = profile;
+    const { id, emails } = profile;
     const email = emails[0].value;
 
     let user = await this.usersService.findUserByEmail(email);

@@ -22,14 +22,22 @@ import {
   ApiOperation,
 } from "@nestjs/swagger";
 import { validate } from "class-validator";
-import { EditUserResponse, GetUserBadgeResponse, GetUserResponse, RegionWithVisitedCountDto } from "./responses";
+import {
+  EditUserResponse,
+  GetUserBadgeResponse,
+  GetUserResponse,
+  RegionWithVisitedCountDto,
+} from "./responses";
 import { LoggerService } from "src/logger/logger.service";
 
 @ApiTags("users")
 @UseGuards(JwtGuard)
 @Controller("users")
 export class UsersController {
-  constructor(private userService: UsersService, private logger:LoggerService) {}
+  constructor(
+    private userService: UsersService,
+    private logger: LoggerService
+  ) {}
 
   @Get("me")
   @ApiOperation({ summary: "나의 정보 가져오기/ 마이페이지, 메인페이지 사용" })
@@ -41,6 +49,7 @@ export class UsersController {
   })
   async getMe(@GetUser() user: any) {
     const result = await this.userService.leanUserInfo(user);
+    this.logger.log("자신의 회원정보 호출한 사람", user);
     return result;
   }
 
@@ -71,7 +80,7 @@ export class UsersController {
     }
     try {
       await this.userService.editUser(userId, dto);
-      this.logger.log(`${userId}의 회원 정보 변경`)
+      this.logger.log(`${userId}의 회원 정보 변경`);
       return { message: "유저 정보 변경에 성공했습니다" };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -82,14 +91,14 @@ export class UsersController {
   }
 
   @Get("me/badges")
-  @ApiOperation({ summary: '사용자의 소유한 뱃지 조회' }) // API 설명
+  @ApiOperation({ summary: "사용자의 소유한 뱃지 조회" }) // API 설명
   @ApiBearerAuth("access_token")
   @ApiResponse({
     status: 200,
-    description: '사용자가 소유한 뱃지 정보', 
-    type:GetUserBadgeResponse
+    description: "사용자가 소유한 뱃지 정보",
+    type: GetUserBadgeResponse,
   })
-  async getMyBadges(@GetUser("user_id") userId: number,) {
+  async getMyBadges(@GetUser("user_id") userId: number) {
     const result = await this.userService.findUserBadges(userId);
     this.logger.log(`user_id ${userId} 뱃지 정보 호출`);
     return result;
@@ -97,8 +106,7 @@ export class UsersController {
 
   @Patch("me/title")
   @ApiOperation({
-    summary:
-      "나의 칭호 변경하기",
+    summary: "나의 칭호 변경하기",
   })
   @ApiBearerAuth("access_token")
   @HttpCode(201)
@@ -106,12 +114,15 @@ export class UsersController {
     status: 200,
     description: "",
     type: EditUserResponse, // 이 부분 수정
-  })  
-  async changeTitle(@GetUser("user_id") userId: number, @Body() dto: ChangeUserTitleDto) {
+  })
+  async changeTitle(
+    @GetUser("user_id") userId: number,
+    @Body() dto: ChangeUserTitleDto
+  ) {
     // 유효성 검사 수행
     try {
       await this.userService.changeTitle(userId, dto);
-      this.logger.log(`${userId}의 대표 칭호 변경`)
+      this.logger.log(`${userId}의 대표 칭호 변경`);
       return { message: "유저 칭호 변경에 성공했습니다" };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -121,16 +132,15 @@ export class UsersController {
     }
   }
 
-
   @Get("me/region")
-  @ApiOperation({ summary: '사용자가 방문한 구역 정보 및 횟수 전달' }) // API 설명
+  @ApiOperation({ summary: "사용자가 방문한 구역 정보 및 횟수 전달" }) // API 설명
   @ApiBearerAuth("access_token")
   @ApiResponse({
     status: 200,
-    description: '사용자가 방문한 구역 정보 및 횟수', 
-    type:[RegionWithVisitedCountDto]
+    description: "사용자가 방문한 구역 정보 및 횟수",
+    type: [RegionWithVisitedCountDto],
   })
-  async getMyVisitedRegionCount(@GetUser("user_id") userId: number,) {
+  async getMyVisitedRegionCount(@GetUser("user_id") userId: number) {
     const result = await this.userService.getMyVisitedRegionCount(userId);
     this.logger.log(`user_id : ${userId} 구역 정보 및 횟수 조회`);
     return result;

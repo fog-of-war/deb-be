@@ -5,9 +5,9 @@ import { Injectable, ExecutionContext } from "@nestjs/common";
 export class KakaoAuthGuard extends AuthGuard("kakao") {
   canActivate(context: ExecutionContext) {
     try {
-      console.log(
-        "🚀 ~ file: kakao.guard.ts:8 ~ KakaoAuthGuard ~ canActivate ~ 실행됨:"
-      );
+      // console.log(
+      //   "🚀 ~ file: kakao.guard.ts:8 ~ KakaoAuthGuard ~ canActivate ~ 실행됨:"
+      // );
 
       return super.canActivate(context);
     } catch (error) {
