@@ -29,8 +29,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
     });
 
     if (user) {
-      // 랭킹 업데이트 로직 호출
-      await this.ranksService.getUserRank(user.user_id);
       this.loggerService.log(
         `user_id : ${user.user_id}, user_email : ${user.user_email}`
       );
