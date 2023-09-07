@@ -1,0 +1,1 @@
+ docker exec -it fow-be-dev-db-1 psql -U postgres -d nest -a -f /docker-entrypoint-initdb.d/trigger.sql

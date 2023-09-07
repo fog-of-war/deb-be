@@ -360,6 +360,7 @@ export class PlacesService {
    *
    */
   async getLandmarks() {
+    console.log("hi");
     const places = await this.prisma.mapPlaceCategory.findMany({
       where: {
         categoryId: 7,
