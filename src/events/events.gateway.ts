@@ -30,8 +30,8 @@ export class EventsGateway {
     return data;
   }
 
-  @SubscribeMessage("events")
-  handleEvent(client: Client, data: string): string {
-    return data;
-  }
+  // @SubscribeMessage("events")
+  // handleEvent(client: Client, data: string): string {
+  //   return data;
+  // }
 }
