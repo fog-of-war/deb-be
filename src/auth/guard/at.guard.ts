@@ -16,16 +16,10 @@ export class ATGuard extends AuthGuard("jwt-access") {
     super();
   }
 
-  canActivate(
-    context: ExecutionContext
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     this.logger.log(ATGuard.name);
-    console.log(
-      "🚀 ~ file: at.guard.ts:23 ~ ATGuard ~ classATGuardextendsAuthGuard ~ ATGuard:",
-      ATGuard
-    );
 
-    if (super.canActivate(context)) {
+    if (await super.canActivate(context)) {
       return true;
     }
 
