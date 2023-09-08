@@ -14,6 +14,7 @@ import {
   Res,
   UseFilters,
   UnauthorizedException,
+  NotFoundException,
 } from "@nestjs/common";
 import { ATGuard, JwtGuard } from "../auth/guard";
 import { PostsService } from "./posts.service";
@@ -154,7 +155,22 @@ export class PostsController {
     @GetCurrentUserId() userId: number,
     @Param("id", ParseIntPipe) postId: number
   ) {
-    await this.postService.deletePostById(userId["sub"], postId);
-    this.logger.log(`${userId["user_email"]}가 게시물 ${postId} 삭제`);
+    try {
+      const result = await this.postService.deletePostById(
+        userId["sub"],
+        postId
+      );
+      this.logger.log(`${userId["user_email"]}가 게시물 ${postId} 삭제`);
+      if (!result) {
+        throw new NotFoundException("게시물을 찾을 수 없습니다.");
+      }
+    } catch (error) {
+      if (error.status === HttpStatus.NOT_FOUND) {
+        // 게시물을 찾을 수 없는 경우 404 응답을 보냅니다.
+        throw new NotFoundException("게시물을 찾을 수 없습니다.");
+      }
+      // 다른 예외 처리가 필요한 경우 처리할 수 있습니다.
+      throw error;
+    }
   }
 }

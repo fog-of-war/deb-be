@@ -324,7 +324,7 @@ export class PlacesService {
       select: { place_id: true, place_name: true, place_star_rating: true },
     });
     const posts = await this.prisma.post.findMany({
-      where: { post_place_id: placeId },
+      where: { post_place_id: placeId, post_is_deleted: false },
       select: {
         post_id: true,
         post_created_at: true,

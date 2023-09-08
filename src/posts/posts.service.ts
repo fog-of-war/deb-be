@@ -223,15 +223,32 @@ export class PostsService {
     return updatedPost;
   }
 
+  // /** 게시물 삭제하기 */
+  // async deletePostById(userId: number, postId: number) {
+  //   return this.prisma.post.update({
+  //     where: {
+  //       post_id: postId,
+  //       post_author_id: userId,
+  //       post_is_deleted: false,
+  //     },
+  //     data: { post_is_deleted: true },
+  //   });
+  // }
+
+  /** 게시물 삭제하기 */
   /** 게시물 삭제하기 */
   async deletePostById(userId: number, postId: number) {
-    return this.prisma.post.update({
-      where: {
-        post_id: postId,
-        post_author_id: userId,
-        post_is_deleted: false,
-      },
-      data: { post_is_deleted: true },
-    });
+    try {
+      const deletedPost = await this.prisma.post.delete({
+        where: {
+          post_id: postId,
+          post_author_id: userId,
+        },
+      });
+      if (!deletedPost) {
+        throw new NotFoundException("게시물을 찾을 수 없습니다."); // 404 오류 반환
+      }
+      return deletedPost;
+    } catch (error) {}
   }
 }
