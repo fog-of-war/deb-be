@@ -87,29 +87,36 @@ export class PostsService {
   }
 
   /** 게시물 생성하기 */
+  /** 게시물 생성하기 */
   async createPost(userId: number, dto: CreatePostDto): Promise<any> {
-    const userStateBefore = await this.usersService.findUserById(userId);
-    const existingPlace = await this.findPlaceByCoordinates(dto.place_name);
-    let post;
-    let placeId;
+    try {
+      const userStateBefore = await this.usersService.findUserById(userId);
+      const existingPlace = await this.findPlaceByCoordinates(dto.place_name);
+      let post;
+      let placeId;
 
-    if (existingPlace) {
-      await this.createPostWithExistingPlace(existingPlace, userId, dto);
-      placeId = existingPlace.place_id;
-    } else {
-      const { place_name, place_latitude, place_longitude } = dto;
-      const newPlace = await this.placesService.createPlace(
-        place_name,
-        place_latitude,
-        place_longitude
-      );
-      await this.createPostWithNewPlace(newPlace, userId, dto);
-      placeId = newPlace.place_id;
+      if (existingPlace) {
+        await this.createPostWithExistingPlace(existingPlace, userId, dto);
+        placeId = existingPlace.place_id;
+      } else {
+        const { place_name, place_latitude, place_longitude } = dto;
+        const newPlace = await this.placesService.createPlace(
+          place_name,
+          place_latitude,
+          place_longitude
+        );
+        await this.createPostWithNewPlace(newPlace, userId, dto);
+        placeId = newPlace.place_id;
+      }
+      // Create PlaceVisit
+      await this.createPostActions(userId, placeId);
+      const result = await this.compareUserStates(userId, userStateBefore);
+      return result;
+    } catch (error) {
+      // 여기에서 예외 처리를 수행합니다.
+      console.error("게시물 생성 중 오류가 발생했습니다:", error);
+      throw error; // 예외를 다시 던지거나, 다른 처리 방법을 선택할 수 있습니다.
     }
-    // Create PlaceVisit
-    await this.createPostActions(userId, placeId);
-    const result = await this.compareUserStates(userId, userStateBefore);
-    return result;
   }
 
   private async compareUserStates(

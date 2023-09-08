@@ -94,22 +94,21 @@ export class PostsController {
     @Res() res
   ) {
     try {
+      console.log("hi");
       const result = await this.postService.createPost(userId["sub"], dto);
       this.logger.log(userId["user_email"], "가 게시물 작성");
       res.status(HttpStatus.CREATED).json(result);
     } catch (error) {
-      throw new UnauthorizedException();
-
-      // throw new HttpException(
-      // {
-      //   status: HttpStatus.UNPROCESSABLE_ENTITY,
-      //   error: "입력 형식을 확인하세요",
-      // },
-      //   HttpStatus.UNPROCESSABLE_ENTITY,
-      //   {
-      //     cause: error,
-      //   }
-      // );
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          error: "입력 형식을 확인하세요",
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+        {
+          cause: error,
+        }
+      );
     }
   }
 

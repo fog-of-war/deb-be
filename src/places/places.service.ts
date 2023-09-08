@@ -176,6 +176,8 @@ export class PlacesService {
 
     if (array.length >= 2 && array[1].match(/구$/)) {
       return array[1];
+    } else {
+      return "기타";
     }
 
     // 추출 실패 시 에러 메시지 반환

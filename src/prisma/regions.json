@@ -23,5 +23,6 @@
   { "region_name": "서초구", "region_english_name": "Seocho" },
   { "region_name": "강남구", "region_english_name": "Gangnam" },
   { "region_name": "송파구", "region_english_name": "Songpa" },
-  { "region_name": "강동구", "region_english_name": "Gangdong" }
+  { "region_name": "강동구", "region_english_name": "Gangdong" },
+  { "region_name": "기타", "region_english_name": "Guitar" }
 ]
