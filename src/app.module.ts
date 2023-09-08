@@ -14,6 +14,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
 import { RanksModule } from "./ranks/ranks.module";
 import { LoggerModule } from "./logger/logger.module";
 // import { AlertsModule } from "./alerts/alerts.module";
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { LoggerModule } from "./logger/logger.module";
     EventEmitterModule.forRoot(),
     RanksModule,
     LoggerModule,
+    EventsModule,
     // AlertsModule,
   ],
   controllers: [],

@@ -1,10 +1,10 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 import { JwtPayloadWithRt } from "../../auth/types";
 
-export const GetCurrentUser = createParamDecorator(
-  (data: string | undefined, context: ExecutionContext) => {
+export const GetCurrentUserId = createParamDecorator(
+  (data: undefined, context: ExecutionContext): number => {
     const request = context.switchToHttp().getRequest();
     if (!data) return request.user;
-    return request.user["data"];
+    return request.user["sub"];
   }
 );

@@ -21,9 +21,15 @@ import {
   ApiBearerAuth,
 } from "@nestjs/swagger";
 import { Response } from "express";
-import { GoogleAuthGuard, NaverAuthGuard, KakaoAuthGuard } from "./guard";
+import {
+  GoogleAuthGuard,
+  NaverAuthGuard,
+  KakaoAuthGuard,
+  ATGuard,
+  RtGuard,
+} from "./guard";
 import { Tokens } from "./types";
-import { GetCurrentUser, GetUser } from "./decorator";
+import { GetCurrentUser, GetCurrentUserId, GetUser } from "./decorator";
 import { TokensResponse } from "./response";
 import { LoggerService } from "src/logger/logger.service";
 
@@ -105,7 +111,7 @@ export class AuthController {
     return result;
   }
 
-  @UseGuards(AuthGuard("jwt-access"))
+  @UseGuards(ATGuard)
   @Post("logout")
   @ApiOperation({
     summary:
@@ -118,10 +124,12 @@ export class AuthController {
     type: TokensResponse,
   })
   @HttpCode(HttpStatus.OK)
-  async logout(@GetUser("user_id") userId: number) {
+  async logout(@GetCurrentUserId() userId: number): Promise<boolean> {
     try {
       const result = await this.authService.logout(userId);
-      this.logger.log(`user_id : ${userId}님이 로그아웃 하셨습니다.`);
+      this.logger.log(
+        `user_id : ${userId["user_email"]}님이 로그아웃 하셨습니다.`
+      );
       return result;
     } catch (error) {
       console.error("Logout error:", error);
@@ -129,7 +137,7 @@ export class AuthController {
     }
   }
 
-  @UseGuards(AuthGuard("jwt-refresh"))
+  @UseGuards(RtGuard)
   @ApiOperation({
     summary:
       "리프레시 토큰 사용 및 교체: 헤더(authorization)에 리프레시토큰을 담아서 보내주시면 됩니다",
@@ -138,15 +146,12 @@ export class AuthController {
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
   async refreshTokens(
-    @GetCurrentUser("user") user: any,
-    @GetCurrentUser("user_refresh_token") rt: any
+    @GetCurrentUserId() userId: number,
+    @GetCurrentUser("user_refresh_token") refreshToken: string
   ) {
     try {
-      const result = await this.authService.refreshTokens(
-        user.sub,
-        rt.refreshToken
-      );
-      this.logger.log(`user_id : ${user.sub} 토큰 리프레시`);
+      const result = await this.authService.refreshTokens(userId, refreshToken);
+      this.logger.log(`user_id : ${userId["user_email"]} 토큰 리프레시`);
       return result;
     } catch (error) {
       console.error("Token refresh error:", error);
