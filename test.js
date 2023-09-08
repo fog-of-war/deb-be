@@ -229,8 +229,8 @@ const placesArray = [
   },
 ];
 
-const baseUrl = "http://localhost:5000/v1/posts";
-// const baseUrl = "https://api.yubinhome.com/v1/posts";
+// const baseUrl = "http://localhost:5000/v1/posts";
+const baseUrl = "https://api.yubinhome.com/v1/posts";
 async function fetchData(placeObj) {
   const url = baseUrl;
   const body = JSON.stringify({
@@ -246,7 +246,7 @@ async function fetchData(placeObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk0MTU2NDcwLCJleHAiOjE2OTQxNjAwNzB9.SFf2GwQqwTvBJ0pV7k6glAVf6TXbESCsZWQ0CO0ryf",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk0MTc0MjYzLCJleHAiOjE2OTQ3NzkwNjN9.zfNN0Y6PIwacdV9aKhF5hKQKGvjZw_F5huIXNg_uPIU",
     },
     body: body,
   };

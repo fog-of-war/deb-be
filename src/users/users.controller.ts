@@ -48,7 +48,7 @@ export class UsersController {
     type: GetUserResponse, // 반환 모델을 지정
   })
   async getMe(@GetCurrentUserId() userId: number) {
-    const result = await this.userService.leanUserInfo(userId);
+    const result = await this.userService.leanUserInfo(userId["sub"]);
     this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
     return result;
   }
@@ -80,7 +80,7 @@ export class UsersController {
       throw new UnprocessableEntityException(errorResponse);
     }
     try {
-      await this.userService.editUser(userId, dto);
+      await this.userService.editUser(userId["sub"], dto);
       this.logger.log(`${userId["user_email"]}의 회원 정보 변경`);
       return { message: "유저 정보 변경에 성공했습니다" };
     } catch (error) {
@@ -100,7 +100,7 @@ export class UsersController {
     type: GetUserBadgeResponse,
   })
   async getMyBadges(@GetCurrentUserId() userId: number) {
-    const result = await this.userService.findUserBadges(userId);
+    const result = await this.userService.findUserBadges(userId["sub"]);
     this.logger.log(`${userId["user_email"]} 뱃지 정보 호출`);
     return result;
   }
@@ -122,7 +122,7 @@ export class UsersController {
   ) {
     // 유효성 검사 수행
     try {
-      await this.userService.changeTitle(userId, dto);
+      await this.userService.changeTitle(userId["sub"], dto);
       this.logger.log(`${userId["user_email"]}의 대표 칭호 변경`);
       return { message: "유저 칭호 변경에 성공했습니다" };
     } catch (error) {
@@ -142,7 +142,9 @@ export class UsersController {
     type: [RegionWithVisitedCountDto],
   })
   async getMyVisitedRegionCount(@GetCurrentUserId() userId: number) {
-    const result = await this.userService.getMyVisitedRegionCount(userId);
+    const result = await this.userService.getMyVisitedRegionCount(
+      userId["sub"]
+    );
     this.logger.log(`user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`);
     return result;
   }
