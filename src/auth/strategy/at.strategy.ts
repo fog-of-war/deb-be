@@ -15,10 +15,6 @@ export class AtStrategy extends PassportStrategy(Strategy, "jwt-access") {
   }
 
   async validate(payload: JwtPayload) {
-    console.log(
-      "🚀 ~ file: at.strategy.ts:17 ~ AtStrategy ~ validate ~ payload:",
-      payload
-    );
     return payload;
   }
 }
