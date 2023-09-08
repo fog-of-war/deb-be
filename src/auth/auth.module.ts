@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Logger, Module } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { JwtModule } from "@nestjs/jwt";
@@ -22,7 +22,9 @@ import { LoggerModule } from "src/logger/logger.module";
     JwtModule.register({}),
     UsersModule,
     HttpModule,
-    PassportModule,
+    PassportModule.register({
+      passReqToCallback: true, // 이 옵션을 추가하여 Request 객체를 Strategy로 전달
+    }),
     RanksModule,
     LoggerModule,
   ],
@@ -33,6 +35,7 @@ import { LoggerModule } from "src/logger/logger.module";
     NaverStrategy,
     AtStrategy,
     RtStrategy,
+    Logger,
   ],
   controllers: [AuthController],
 })

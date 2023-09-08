@@ -11,8 +11,8 @@ import {
   UseGuards,
 } from "@nestjs/common";
 // import { User } from "@prisma/client";
-import { GetUser } from "../auth/decorator";
-import { JwtGuard } from "../auth/guard";
+import { GetCurrentUserId, GetUser } from "../auth/decorator";
+import { ATGuard, JwtGuard } from "../auth/guard";
 import { UsersService } from "./users.service";
 import { ChangeUserTitleDto, EditUserDto } from "./dto";
 import {
@@ -31,7 +31,7 @@ import {
 import { LoggerService } from "src/logger/logger.service";
 
 @ApiTags("users")
-@UseGuards(JwtGuard)
+@UseGuards(ATGuard)
 @Controller("users")
 export class UsersController {
   constructor(
@@ -47,13 +47,14 @@ export class UsersController {
     description: "",
     type: GetUserResponse, // 반환 모델을 지정
   })
-  async getMe(@GetUser() user: any) {
-    const result = await this.userService.leanUserInfo(user);
-    this.logger.log("자신의 회원정보 호출한 사람", user);
+  async getMe(@GetCurrentUserId() userId: number) {
+    const result = await this.userService.leanUserInfo(userId);
+    this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
     return result;
   }
 
   @Patch("me")
+  @UseGuards(ATGuard)
   @ApiOperation({
     summary:
       "나의 정보 수정하기 / 프로필이미지, 닉네임, 변경 가능 (칭호 변경 기능 개발중)",
@@ -65,7 +66,7 @@ export class UsersController {
     description: "",
     type: EditUserResponse, // 이 부분 수정
   })
-  async editUser(@GetUser("user_id") userId: number, @Body() dto: EditUserDto) {
+  async editUser(@GetCurrentUserId() userId: number, @Body() dto: EditUserDto) {
     // 유효성 검사 수행
     const errors = await validate(dto);
     if (errors.length > 0) {
@@ -80,7 +81,7 @@ export class UsersController {
     }
     try {
       await this.userService.editUser(userId, dto);
-      this.logger.log(`${userId}의 회원 정보 변경`);
+      this.logger.log(`${userId["user_email"]}의 회원 정보 변경`);
       return { message: "유저 정보 변경에 성공했습니다" };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -98,9 +99,9 @@ export class UsersController {
     description: "사용자가 소유한 뱃지 정보",
     type: GetUserBadgeResponse,
   })
-  async getMyBadges(@GetUser("user_id") userId: number) {
+  async getMyBadges(@GetCurrentUserId() userId: number) {
     const result = await this.userService.findUserBadges(userId);
-    this.logger.log(`user_id ${userId} 뱃지 정보 호출`);
+    this.logger.log(`${userId["user_email"]} 뱃지 정보 호출`);
     return result;
   }
 
@@ -116,13 +117,13 @@ export class UsersController {
     type: EditUserResponse, // 이 부분 수정
   })
   async changeTitle(
-    @GetUser("user_id") userId: number,
+    @GetCurrentUserId() userId: number,
     @Body() dto: ChangeUserTitleDto
   ) {
     // 유효성 검사 수행
     try {
       await this.userService.changeTitle(userId, dto);
-      this.logger.log(`${userId}의 대표 칭호 변경`);
+      this.logger.log(`${userId["user_email"]}의 대표 칭호 변경`);
       return { message: "유저 칭호 변경에 성공했습니다" };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -140,9 +141,9 @@ export class UsersController {
     description: "사용자가 방문한 구역 정보 및 횟수",
     type: [RegionWithVisitedCountDto],
   })
-  async getMyVisitedRegionCount(@GetUser("user_id") userId: number) {
+  async getMyVisitedRegionCount(@GetCurrentUserId() userId: number) {
     const result = await this.userService.getMyVisitedRegionCount(userId);
-    this.logger.log(`user_id : ${userId} 구역 정보 및 횟수 조회`);
+    this.logger.log(`user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`);
     return result;
   }
 }

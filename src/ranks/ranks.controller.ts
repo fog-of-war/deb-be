@@ -12,8 +12,8 @@ import {
 import { RanksService } from "./ranks.service";
 import { CreateRankDto } from "./dto/create-rank.dto";
 import { UpdateRankDto } from "./dto/update-rank.dto";
-import { GetUser } from "../auth/decorator";
-import { JwtGuard } from "src/auth/guard";
+import { GetCurrentUser, GetCurrentUserId, GetUser } from "../auth/decorator";
+import { ATGuard, JwtGuard } from "src/auth/guard";
 import {
   ApiBearerAuth,
   ApiResponse,
@@ -53,9 +53,9 @@ export class RanksController {
     type: GetOneRankResponse, // 반환 모델을 지정
   })
   @ApiBearerAuth("access_token")
-  @UseGuards(JwtGuard)
-  async getRankByUserId(@GetUser("user_id") userId: number) {
-    const result = await this.ranksService.getUserRank(userId);
+  @UseGuards(ATGuard)
+  async getRankByUserId(@GetCurrentUserId() userId: number) {
+    const result = await this.ranksService.getUserRank(userId["sub"]);
     return result;
   }
   @Get("/region")

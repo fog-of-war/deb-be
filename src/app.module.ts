@@ -1,4 +1,11 @@
-import { MiddlewareConsumer, Module, ValidationPipe } from "@nestjs/common";
+import {
+  MiddlewareConsumer,
+  Module,
+  Scope,
+  UnauthorizedException,
+  ValidationPipe,
+  Logger,
+} from "@nestjs/common";
 import { PlacesModule } from "./places/places.module";
 import { UsersModule } from "./users/users.module";
 import { BadgesModule } from "./badges/badges.module";
@@ -14,8 +21,9 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
 import { RanksModule } from "./ranks/ranks.module";
 import { LoggerModule } from "./logger/logger.module";
 // import { AlertsModule } from "./alerts/alerts.module";
-import { EventsModule } from './events/events.module';
-
+import { EventsModule } from "./events/events.module";
+import { UnauthorizedExceptionFilter } from "./filters";
+import { APP_FILTER } from "@nestjs/core";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -36,10 +44,13 @@ import { EventsModule } from './events/events.module';
     // AlertsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    Logger,
+    {
+      provide: APP_FILTER,
+      scope: Scope.REQUEST,
+      useClass: UnauthorizedExceptionFilter,
+    },
+  ],
 })
-export class AppModule {
-  //   configure(consumer: MiddlewareConsumer) {
-  //   consumer.apply(LogMethodMiddleware).forRoutes("*"); // 모든 라우트에 Middleware 적용
-  // }
-}
+export class AppModule {}

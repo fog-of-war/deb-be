@@ -5,9 +5,6 @@ import { ExecutionContext, Injectable } from "@nestjs/common";
 export class NaverAuthGuard extends AuthGuard("naver") {
   canActivate(context: ExecutionContext) {
     try {
-      // console.log(
-      //   "🚀 ~ file: naver.guard.ts:8 ~ NaverAuthGuard ~ canActivate ~ 실행됨:"
-      // );
       return super.canActivate(context);
     } catch (error) {
       console.log(

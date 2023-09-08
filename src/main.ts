@@ -10,6 +10,7 @@ import * as cookieParser from "cookie-parser";
 import * as passport from "passport";
 import { PrismaService } from "./prisma/prisma.service";
 import { LoggerService } from "./logger/logger.service";
+import { UnauthorizedExceptionFilter } from "./filters";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -29,6 +30,7 @@ async function bootstrap() {
     credentials: true, // 인증 정보 허용
   });
   app.setGlobalPrefix("v1");
+  // app.useGlobalFilters(new UnauthorizedExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -50,7 +52,7 @@ async function bootstrap() {
       },
     })
   );
-
+  app.useGlobalFilters(new UnauthorizedExceptionFilter());
   app.use(cookieParser());
   const prismaService = app.get(PrismaService);
   await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)

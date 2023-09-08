@@ -47,7 +47,7 @@ export class PostsService {
   }
 
   /** 하나의 게시물 가져오기 */
-  async getPostById(userId: number, postId: number) {
+  async getPostById(postId: number) {
     const post = await this.prisma.post.findFirst({
       where: {
         post_id: postId,

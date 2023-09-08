@@ -94,7 +94,7 @@ export class UsersService {
 
   async findUserBadges(userId: number) {
     const user = await this.prisma.user.findUnique({
-      where: { user_id: userId },
+      where: { user_id: userId["sub"] },
       select: {
         user_badges: true,
         user_selected_badge: true,
