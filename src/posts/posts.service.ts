@@ -236,7 +236,6 @@ export class PostsService {
   // }
 
   /** 게시물 삭제하기 */
-  /** 게시물 삭제하기 */
   async deletePostById(userId: number, postId: number) {
     try {
       const deletedPost = await this.prisma.post.delete({
