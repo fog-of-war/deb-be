@@ -11,14 +11,13 @@ import * as passport from "passport";
 import { PrismaService } from "./prisma/prisma.service";
 import { LoggerService } from "./logger/logger.service";
 import { UnauthorizedExceptionFilter } from "./filters";
-import { ATGuard } from "./auth/guard";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
 
-  // app.useLogger(app.get(LoggerService));
+  app.useLogger(app.get(LoggerService));
   app.enableCors({
     origin: [
       "http://localhost:3000",
@@ -31,7 +30,6 @@ async function bootstrap() {
     credentials: true, // 인증 정보 허용
   });
   app.setGlobalPrefix("v1");
-  // app.useGlobalGuards(new ATGuard());
   // app.useGlobalFilters(new UnauthorizedExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe({
