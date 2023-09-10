@@ -10,7 +10,7 @@ import {
   WsResponse,
 } from "@nestjs/websockets";
 import { from, Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { map, delay } from "rxjs/operators";
 import { LoggerService } from "src/logger/logger.service";
 import { Server, Socket } from "socket.io";
 
@@ -35,9 +35,14 @@ export class EventsGateway
   @SubscribeMessage("test")
   handleMessage(@MessageBody() data: string): Observable<WsResponse<number>> {
     this.logger.log("🐤웹소켓 test", data);
+
     const numbers = [1, 2, 3, 4, 5];
-    this.server.emit("data", "hello");
-    return from(numbers).pipe(map((item) => ({ event: "events", data: item })));
+
+    // interval을 사용하여 3초 간격으로 데이터를 생성하고 delay로 간격 설정
+    return from(numbers).pipe(
+      delay(3000), // 3초 딜레이
+      map((item) => ({ event: "events", data: item }))
+    );
   }
 
   @SubscribeMessage("error")
