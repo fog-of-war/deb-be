@@ -12,16 +12,16 @@ import {
 import { from, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { LoggerService } from "src/logger/logger.service";
-import { Server, Socket } from "socket.io"; // Socket 타입 import
+import { Server, Socket } from "socket.io";
 
 export const onlineMap = {};
+
 @WebSocketGateway({
   cors: {
     origin: "*",
   },
-  options: { namespace: /\/ws-.+/ },
+  namespace: /\/ws-.+/, // "options" 대신 "namespace"를 사용
 })
-//implements 를 붙이면 타입스크립트로 지정해둔 메서드를 무조건 만들어줘야하기때문에 검사용으로 굿
 export class EventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -29,47 +29,35 @@ export class EventsGateway
   public server: Server;
 
   constructor(private logger: LoggerService) {}
-  // 메시지 처리를 위한 이벤트 핸들러 추가
+
   @SubscribeMessage("test")
-  handleMessage(@MessageBody() data: string): void {
-    console.error("🥺WebSocket 메시지:", data);
+  handleMessage(@MessageBody() data: string): Observable<WsResponse<number>> {
+    const numbers = [1, 2, 3, 4, 5];
     this.server.emit("🥺data", data);
+    this.logger.log("🐤웹소켓 test");
+    return from(numbers).pipe(map((item) => ({ event: "events", data: item })));
   }
 
-  // 에러 처리를 위한 이벤트 핸들러 추가
   @SubscribeMessage("error")
   handleErrorMessage(@MessageBody() error: string): void {
     console.error("🥺WebSocket 오류:", error);
-    // 클라이언트에 에러 메시지 전송
     this.server.emit("🥺error", error);
   }
 
-  // OnGatewayInit 인터페이스의 메서드 구현
-  afterInit(server: Server) {
-    // WebSocket 게이트웨이 초기화 시 처리할 로직을 구현합니다.
-    this.logger.log("🐤웹소켓 초기화 안뇽");
+  afterInit(server: Server): any {
+    this.logger.log("🐤웹소켓 초기화 안녕");
   }
 
-  // OnGatewayConnection 인터페이스의 메서드 구현
-  handleConnection(
-    @ConnectedSocket() socket: Socket
-    // client: any,
-    // ...args: any[]
-  ) {
-    // 클라이언트 연결 시 처리할 로직을 구현합니다.
-    this.logger.log("🐤웹소켓 연결 히히");
+  handleConnection(@ConnectedSocket() socket: Socket) {
+    this.logger.log(
+      `🐤웹소켓 연결 히히. 현재 네임스페이스: ${socket.nsp.name}`
+    );
     if (!onlineMap[socket.nsp.name]) {
       onlineMap[socket.nsp.name] = {};
     }
     socket.emit("Connect Hello", socket.nsp.name);
   }
-
-  // OnGatewayDisconnect 인터페이스의 메서드 구현
-  handleDisconnect(
-    @ConnectedSocket() socket: Socket
-    // client: any
-  ) {
-    // 클라이언트 연결 해제 시 처리할 로직을 구현합니다.
+  handleDisconnect(@ConnectedSocket() socket: Socket) {
     this.logger.log("🐤웹소켓 연결해제 빠잉");
     socket.emit("Disconnect", socket.nsp.name);
     const newNamespace = socket.nsp;
