@@ -32,17 +32,25 @@ export class EventsGateway
 
   constructor(private logger: LoggerService) {}
 
-  @SubscribeMessage("test")
-  handleMessage(@MessageBody() data: string): Observable<WsResponse<number>> {
-    this.logger.log("🐤웹소켓 test", data);
+  @SubscribeMessage("send_message")
+  handleEvent(
+    @MessageBody() data: string
+  ): Observable<WsResponse<number>> | any {
+    this.logger.log("🐤웹소켓 send_message 라우터 호출됨", data);
+    this.server.emit("receive_message", { message: data }); // 모든 클라이언트에게 메시지 전송
+  }
 
-    const numbers = [1, 2, 3, 4, 5];
-
-    // interval을 사용하여 3초 간격으로 데이터를 생성하고 delay로 간격 설정
-    return from(numbers).pipe(
-      delay(3000), // 3초 딜레이
-      map((item) => ({ event: "events", data: item }))
-    );
+  @SubscribeMessage("send_alert")
+  handleAlertEvent(
+    @MessageBody() data: string
+  ): Observable<WsResponse<number>> | any {
+    this.logger.log("🐤웹소켓 send_alert 라우터 호출됨", data);
+    this.server.emit("receive_alert", { message: data });
+    // const numbers = [1, 2, 3, 4, 5];
+    // return from(numbers).pipe(
+    //   map((item) => ({ event: "receive_alert", message: "hi" }))
+    // );
+    // 모든 클라이언트에게 메시지 전송
   }
 
   @SubscribeMessage("error")
@@ -57,19 +65,21 @@ export class EventsGateway
 
   handleConnection(@ConnectedSocket() socket: Socket) {
     this.logger.log(
-      `🐤웹소켓 연결 히히. 현재 네임스페이스: ${socket.nsp.name}`
+      `🐤웹소켓 연결 현재 네임스페이스: ${socket.nsp.name}, ${socket.id}`
     );
     if (!onlineMap[socket.nsp.name]) {
       onlineMap[socket.nsp.name] = {};
     }
-    socket.emit("Connect Hello", socket.nsp.name);
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
     this.logger.log("🐤웹소켓 연결해제 빠잉");
-    socket.emit("Disconnect", socket.nsp.name);
+    // socket.emit("Disconnect", socket.nsp.name);
+    // socket.emit("Disconnect", "🐤웹소켓 연결해제 빠잉");
     const newNamespace = socket.nsp;
     delete onlineMap[socket.nsp.name][socket.id];
     newNamespace.emit("onlineList", Object.values(onlineMap[socket.nsp.name]));
   }
 }
+// const numbers = [1, 2, 3, 4, 5];
+// return from(numbers).pipe(map((item) => ({ event: "events", data: item })));
