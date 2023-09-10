@@ -13,6 +13,12 @@ import { from, Observable } from "rxjs";
 import { map, delay } from "rxjs/operators";
 import { LoggerService } from "src/logger/logger.service";
 import { Server, Socket } from "socket.io";
+import {
+  ClientProxy,
+  EventPattern,
+  MessagePattern,
+} from "@nestjs/microservices";
+import { Inject } from "@nestjs/common";
 
 //ws://localhost:5000/v1/ws-alert postman 으로 성공
 
@@ -30,7 +36,10 @@ export class EventsGateway
   @WebSocketServer()
   public server: Server;
 
-  constructor(private logger: LoggerService) {}
+  constructor(
+    @Inject("ALERT") private readonly alertClient: ClientProxy,
+    private logger: LoggerService
+  ) {}
 
   @SubscribeMessage("send_message")
   handleEvent(
@@ -44,13 +53,10 @@ export class EventsGateway
   handleAlertEvent(
     @MessageBody() data: string
   ): Observable<WsResponse<number>> | any {
-    this.logger.log("🐤웹소켓 send_alert 라우터 호출됨", data);
+    console.log("Received alert event:", data);
+
+    // this.logger.log("🐤웹소켓 send_alert 라우터 호출됨", "안녕");
     this.server.emit("receive_alert", { message: data });
-    // const numbers = [1, 2, 3, 4, 5];
-    // return from(numbers).pipe(
-    //   map((item) => ({ event: "receive_alert", message: "hi" }))
-    // );
-    // 모든 클라이언트에게 메시지 전송
   }
 
   @SubscribeMessage("error")
@@ -83,3 +89,9 @@ export class EventsGateway
 }
 // const numbers = [1, 2, 3, 4, 5];
 // return from(numbers).pipe(map((item) => ({ event: "events", data: item })));
+
+// const numbers = [1, 2, 3, 4, 5];
+// return from(numbers).pipe(
+//   map((item) => ({ event: "receive_alert", message: "hi" }))
+// );
+// 모든 클라이언트에게 메시지 전송

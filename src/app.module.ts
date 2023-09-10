@@ -24,6 +24,7 @@ import { LoggerModule } from "./logger/logger.module";
 import { EventsModule } from "./events/events.module";
 import { UnauthorizedExceptionFilter } from "./filters";
 import { APP_FILTER } from "@nestjs/core";
+import { ClientsModule, Transport } from "@nestjs/microservices";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -41,7 +42,16 @@ import { APP_FILTER } from "@nestjs/core";
     RanksModule,
     LoggerModule,
     EventsModule,
-    // AlertsModule,
+    ClientsModule.register([
+      {
+        name: "ALERT", // 마이크로서비스의 이름
+        transport: Transport.TCP, // 원하는 트랜스포트 설정
+        options: {
+          host: "localhost", // 마이크로서비스 호스트
+          port: 5001, // 마이크로서비스 포트
+        },
+      },
+    ]),
   ],
   controllers: [],
   providers: [

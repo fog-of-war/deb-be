@@ -95,7 +95,6 @@ export class PostsController {
     @Res() res
   ) {
     try {
-      console.log("hi");
       const result = await this.postService.createPost(userId["sub"], dto);
       this.logger.log(userId["user_email"], "가 게시물 작성");
       res.status(HttpStatus.CREATED).json(result);
