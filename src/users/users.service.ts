@@ -19,7 +19,7 @@ export class UsersService {
   ) {}
   async editUser(userId: number, dto: EditUserDto) {
     const user = await this.prisma.user.update({
-      where: { user_id: userId },
+      where: { user_id: userId, user_is_deleted: false },
       data: { ...dto },
       select: {
         user_nickname: true,
@@ -34,7 +34,7 @@ export class UsersService {
 
   async findUserById(user_id: number): Promise<any | null> {
     const user = await this.prisma.user.findFirst({
-      where: { user_id: user_id },
+      where: { user_id: user_id, user_is_deleted: false },
       select: {
         user_id: true,
         user_image_url: true,
@@ -87,7 +87,7 @@ export class UsersService {
 
   async findUserBadges(userId: number) {
     const user = await this.prisma.user.findUnique({
-      where: { user_id: userId },
+      where: { user_id: userId, user_is_deleted: false },
       select: {
         user_badges: true,
         user_selected_badge: true,
@@ -98,7 +98,7 @@ export class UsersService {
 
   async changeTitle(userId: number, dto: ChangeUserTitleDto) {
     const user = await this.prisma.user.update({
-      where: { user_id: userId },
+      where: { user_id: userId, user_is_deleted: false },
       data: {
         user_selected_badge: {
           connect: { badge_id: dto.user_selected_badge_id }, // ChangeUserTitleDto에 선택한 뱃지 ID를 포함해야 함
@@ -110,7 +110,7 @@ export class UsersService {
 
   async getMyVisitedRegionCount(userId: number) {
     const result = await this.prisma.user.findFirst({
-      where: { user_id: userId },
+      where: { user_id: userId, user_is_deleted: false },
       select: { user_visited_places: { include: { visited_place: true } } },
     });
     const regions = await this.prisma.region.findMany({});
@@ -129,5 +129,19 @@ export class UsersService {
       }
     });
     return regionsWithVisitedCount;
+  }
+
+  async leaveService(userId: number) {
+    const result = await this.prisma.user.update({
+      where: { user_id: userId, user_is_deleted: false },
+      data: {
+        user_is_deleted: true,
+        user_email: "deleted",
+        user_nickname: "탈퇴한사용자",
+        user_refresh_token: null,
+        user_delete_at: new Date(),
+      },
+    });
+    return result;
   }
 }

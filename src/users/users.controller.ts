@@ -1,12 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
+  HttpStatus,
   InternalServerErrorException,
   NotFoundException,
   Patch,
   Post,
+  Res,
   UnprocessableEntityException,
   UseGuards,
 } from "@nestjs/common";
@@ -50,7 +53,6 @@ export class UsersController {
   async getMe(@GetCurrentUserId() userId: number) {
     const result = await this.userService.findUserById(userId["sub"]);
     this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
-    this.logger.log("자신의 회원정보 호출", result);
     return result;
   }
 
@@ -119,7 +121,8 @@ export class UsersController {
   })
   async changeTitle(
     @GetCurrentUserId() userId: number,
-    @Body() dto: ChangeUserTitleDto
+    @Body() dto: ChangeUserTitleDto,
+    @Res() res
   ) {
     // 유효성 검사 수행
     try {
@@ -142,11 +145,46 @@ export class UsersController {
     description: "사용자가 방문한 구역 정보 및 횟수",
     type: [RegionWithVisitedCountDto],
   })
-  async getMyVisitedRegionCount(@GetCurrentUserId() userId: number) {
-    const result = await this.userService.getMyVisitedRegionCount(
-      userId["sub"]
-    );
-    this.logger.log(`user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`);
-    return result;
+  async getMyVisitedRegionCount(
+    @GetCurrentUserId() userId: number,
+    @Res() res
+  ) {
+    try {
+      const result = await this.userService.getMyVisitedRegionCount(
+        userId["sub"]
+      );
+      this.logger.log(
+        `user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`
+      );
+      return result;
+    } catch (err) {
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: "유저정보를 찾을 수 없습니다" });
+    }
+  }
+
+  @Delete("me/leave")
+  @ApiOperation({ summary: "사용자 탈퇴" }) // API 설명
+  @ApiBearerAuth("access_token")
+  @ApiResponse({
+    status: 200,
+    description: "탈퇴성공",
+  })
+  async leaveService(@GetCurrentUserId() userId: number, @Res() res) {
+    try {
+      const result = await this.userService.leaveService(userId["sub"]);
+      this.logger.log(`user_id : ${userId["user_email"]} 회원탈퇴`);
+      return res.status(HttpStatus.NO_CONTENT).json(result);
+    } catch (error) {
+      console.log(
+        "🚀 ~ file: users.controller.ts:168 ~ UsersController ~ leaveService ~ error:",
+        error
+      );
+      // 에러 발생 시 에러 메시지를 응답으로 보내기
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: "유저정보를 찾을 수 없습니다" });
+    }
   }
 }
