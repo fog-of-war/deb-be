@@ -4,7 +4,7 @@ CREATE TYPE "Role" AS ENUM ('BASIC', 'ADMIN');
 -- CreateTable
 CREATE TABLE "User" (
     "user_id" SERIAL NOT NULL,
-    "user_email" TEXT NOT NULL,
+    "user_email" TEXT,
     "user_providerId" TEXT NOT NULL,
     "user_image_url" TEXT,
     "user_nickname" TEXT,
@@ -160,9 +160,6 @@ CREATE TABLE "_BadgeToUser" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_user_email_key" ON "User"("user_email");
 
 -- CreateIndex
 CREATE INDEX "User_user_email_user_points_user_level_user_created_at_idx" ON "User"("user_email", "user_points", "user_level", "user_created_at");

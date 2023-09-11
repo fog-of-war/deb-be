@@ -227,15 +227,15 @@ const placesArray = [
     place_latitude: 127.090053515636,
     place_longitude: 37.5736051123377,
   },
-  {
-    place_name: "달리는커피 거제상동점",
-    post_star_rating: 5.0,
-    post_description: "달려라 왕바우",
-    post_image_url:
-      "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/25용마폭포공원.jpeg",
-    place_latitude: 128.635266779107,
-    place_longitude: 34.8610605916813,
-  },
+  // {
+  //   place_name: "달리는커피 거제상동점",
+  //   post_star_rating: 5.0,
+  //   post_description: "달려라 왕바우",
+  //   post_image_url:
+  //     "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/25용마폭포공원.jpeg",
+  //   place_latitude: 128.635266779107,
+  //   place_longitude: 34.8610605916813,
+  // },
 ];
 
 // const baseUrl = "http://localhost:5000/v1/posts";
@@ -255,7 +255,7 @@ async function fetchData(placeObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk0NDM3ODk0LCJleHAiOjE2OTQ0NDE0OTR9.6dxirauUjmVY0UdmJQMg6jVHg-Yq2LyxtzCPOU5JG1M",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk0NDM5OTQ4LCJleHAiOjE2OTQ0NDM1NDh9.DjBvKPxXidxj8giZuWEM4rwCFv6_T3Lk40CDoovB3Sw",
     },
     body: body,
   };
