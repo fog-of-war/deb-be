@@ -22,5 +22,8 @@ export class CategoriesService {
     });
     return "This action adds a new category";
   }
-
+  async findCategoryName(category_id) {
+    const result = await this.prisma.category.findFirst(category_id);
+    return result;
+  }
 }

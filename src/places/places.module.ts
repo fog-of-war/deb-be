@@ -1,12 +1,13 @@
 import { Module } from "@nestjs/common";
 import { PlacesService } from "./places.service";
 import { PlacesController } from "./places.controller";
-import { PrismaService } from "src/prisma/prisma.service";
 import { LoggerModule } from "src/logger/logger.module";
+import { CategoriesModule } from "src/categories/categories.module";
+import { PrismaModule } from "src/prisma/prisma.module";
 
 @Module({
-  imports: [LoggerModule],
-  providers: [PlacesService, PrismaService],
+  imports: [LoggerModule, CategoriesModule, PrismaModule],
+  providers: [PlacesService],
   controllers: [PlacesController],
   exports: [PlacesService],
 })

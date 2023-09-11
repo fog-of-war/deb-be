@@ -2,12 +2,17 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosResponse } from "axios";
 import { PrismaService } from "../prisma/prisma.service";
+import { CategoriesService } from "src/categories/categories.service";
 
 @Injectable()
 export class PlacesService {
   private readonly clientID: string;
 
-  constructor(private config: ConfigService, private prisma: PrismaService) {
+  constructor(
+    private config: ConfigService,
+    private prisma: PrismaService,
+    private categoriesService: CategoriesService
+  ) {
     this.clientID = this.config.get("KAKAO_CLIENT_ID");
   }
   /**
@@ -72,16 +77,36 @@ export class PlacesService {
         }
       );
       const result = await this.areTheyExistInDB(filteredResults);
-      result.forEach((item: any) => {
-        item.naver_place_url =
-          "https://map.naver.com/p/search/" + item.place_name;
-      });
-
+      await this.processItems(result);
       return result;
     } catch (error) {
       throw new Error(
         `findPlacesInfoFromKakao: 카카오에서 해당 장소 검색 실패`
       );
+    }
+  }
+
+  async processItems(items) {
+    try {
+      for (const item of items) {
+        item.naver_place_url =
+          "https://map.naver.com/p/search/" + item.place_name;
+
+        if (item.place_category_map.length == 0) {
+          const categoryId = this.setCategory(item);
+          // categoryId 배열의 각 요소에 대해 비동기적으로 처리
+          const categoryPromises = categoryId.map(async (categoryIdItem) => {
+            return await this.categoriesService.findCategoryName(
+              categoryIdItem.categoryId
+            );
+          });
+          const categoryResults = await Promise.all(categoryPromises);
+          item.place_category_map = categoryResults;
+        }
+      }
+    } catch (error) {
+      // 예외 처리 코드
+      console.error("Error in processItems:", error);
     }
   }
 
@@ -219,6 +244,7 @@ export class PlacesService {
     }
     return categoryArray; // 매핑이 없는 경우 undefined 반환
   }
+
   /**
    *
    *
@@ -335,9 +361,7 @@ export class PlacesService {
         post_star_rating: true,
       },
     });
-
     const postsWithUserInfo = [];
-
     for (const post of posts) {
       const user = await this.prisma.user.findUnique({
         where: { user_id: post.post_author_id },
