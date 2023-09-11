@@ -15,6 +15,7 @@ CREATE TABLE "User" (
     "user_is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "user_created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_updated_at" TIMESTAMP(3) NOT NULL,
+    "user_delete_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_refresh_token" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("user_id")

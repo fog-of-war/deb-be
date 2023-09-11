@@ -1,9 +1,3 @@
--- 로그 메시지 상세하게 표시
-ALTER SYSTEM SET log_statement = 'all';
-
--- 변경된 설정을 즉시 적용
-SELECT pg_reload_conf();
-
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('BASIC', 'ADMIN');
 
@@ -21,6 +15,7 @@ CREATE TABLE "User" (
     "user_is_deleted" BOOLEAN NOT NULL DEFAULT false,
     "user_created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_updated_at" TIMESTAMP(3) NOT NULL,
+    "user_delete_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "user_refresh_token" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("user_id")
@@ -231,6 +226,7 @@ ALTER TABLE "_BadgeToUser" ADD CONSTRAINT "_BadgeToUser_A_fkey" FOREIGN KEY ("A"
 
 -- AddForeignKey
 ALTER TABLE "_BadgeToUser" ADD CONSTRAINT "_BadgeToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
 
 CREATE OR REPLACE FUNCTION alert_post_created() RETURNS trigger AS $$
 DECLARE
