@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { CreatePostDto, EditPostDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
@@ -11,6 +13,7 @@ import { PointsService } from "src/points/points.service";
 import { LevelsService } from "src/levels/levels.service";
 import { UsersService } from "src/users/users.service";
 import { RanksService } from "src/ranks/ranks.service";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class PostsService {
@@ -87,9 +90,16 @@ export class PostsService {
   }
 
   /** 게시물 생성하기 */
-  /** 게시물 생성하기 */
   async createPost(userId: number, dto: CreatePostDto): Promise<any> {
     try {
+      const user = await this.prisma.user.findFirst({
+        where: { user_id: userId, user_is_deleted: false },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+
       const userStateBefore = await this.usersService.findUserById(userId);
       const existingPlace = await this.findPlaceByCoordinates(dto.place_name);
       let post;
@@ -113,9 +123,11 @@ export class PostsService {
       const result = await this.compareUserStates(userId, userStateBefore);
       return result;
     } catch (error) {
-      // 여기에서 예외 처리를 수행합니다.
-      console.error("게시물 생성 중 오류가 발생했습니다:", error);
-      throw error; // 예외를 다시 던지거나, 다른 처리 방법을 선택할 수 있습니다.
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // Prisma에서 발생한 에러 처리
+        throw new BadRequestException("게시물 생성 중 오류가 발생했습니다.");
+      }
+      throw error; // 다른 예외는 그대로 던짐
     }
   }
 
@@ -200,27 +212,40 @@ export class PostsService {
 
   /** 게시물 수정하기 */
   async editPostById(userId: number, postId: number, dto: EditPostDto) {
-    const post = await this.prisma.post.findFirst({
-      where: {
-        post_id: postId,
-        post_author_id: userId,
-        post_is_deleted: false,
-      },
-    });
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { user_id: userId, user_is_deleted: false },
+      });
 
-    if (!post) {
-      // 수정하려는 게시물을 찾지 못한 경우
-      throw new NotFoundException(`Post with id ${postId} not found.`);
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+
+      const post = await this.prisma.post.findFirst({
+        where: {
+          post_id: postId,
+          post_author_id: userId,
+          post_is_deleted: false,
+        },
+      });
+
+      if (!post) {
+        throw new NotFoundException(`Post with id ${postId} not found.`);
+      }
+
+      // 수정할 필드들을 업데이트
+      const updatedPost = await this.prisma.post.update({
+        where: { post_id: postId },
+        data: {
+          post_star_rating: dto.post_star_rating,
+          post_description: dto.post_description,
+        },
+      });
+
+      return updatedPost;
+    } catch (err) {
+      throw err;
     }
-    // 수정할 필드들을 업데이트
-    const updatedPost = await this.prisma.post.update({
-      where: { post_id: postId },
-      data: {
-        post_star_rating: dto.post_star_rating,
-        post_description: dto.post_description,
-      },
-    });
-    return updatedPost;
   }
 
   // /** 게시물 삭제하기 */
@@ -235,9 +260,51 @@ export class PostsService {
   //   });
   // }
 
+  // /** 게시물 삭제하기 */
+  // async deletePostById(userId: number, postId: number) {
+  //   try {
+  //     // const user = await this.prisma.user.findFirst({
+  //     //   where: { user_id: userId, user_is_deleted: false },
+  //     // });
+  //     // // console.log(
+  //     // //   "🚀 ~ file: posts.service.ts:269 ~ PostsService ~ deletePostById ~ user:",
+  //     // //   user
+  //     // // );
+
+  //     // if (!user) {
+  //     //   throw new UnauthorizedException();
+  //     // }
+
+  //     const deletedPost = await this.prisma.post.delete({
+  //       where: {
+  //         post_id: postId,
+  //         post_author_id: userId,
+  //       },
+  //     });
+
+  //     if (!deletedPost) {
+  //       throw new NotFoundException("게시물을 찾을 수 없습니다."); // 404 오류 반환
+  //     }
+
+  //     return deletedPost;
+  // } catch (error) {
+  //   if (error instanceof Prisma.PrismaClientKnownRequestError) {
+  //     // Prisma에서 발생한 에러 처리
+  //     throw new BadRequestException("게시물 삭제 중 오류가 발생했습니다.");
+  //   }
+  //   throw error; // 다른 예외는 그대로 던짐
+  // }
+  // }
+
   /** 게시물 삭제하기 */
   async deletePostById(userId: number, postId: number) {
     try {
+      const user = await this.prisma.user.findFirst({
+        where: { user_id: userId, user_is_deleted: false },
+      });
+      if (!user) {
+        throw new UnauthorizedException();
+      }
       const deletedPost = await this.prisma.post.delete({
         where: {
           post_id: postId,

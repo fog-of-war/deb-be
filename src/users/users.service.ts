@@ -109,26 +109,30 @@ export class UsersService {
   }
 
   async getMyVisitedRegionCount(userId: number) {
-    const result = await this.prisma.user.findFirst({
-      where: { user_id: userId, user_is_deleted: false },
-      select: { user_visited_places: { include: { visited_place: true } } },
-    });
-    const regions = await this.prisma.region.findMany({});
-    const regionsWithVisitedCount = regions.map((region) => ({
-      ...region,
-      region_visited_count: 0,
-    }));
-    result.user_visited_places.forEach((item) => {
-      const regionId = item.visited_place.place_region_id;
+    try {
+      const result = await this.prisma.user.findFirst({
+        where: { user_id: userId, user_is_deleted: false },
+        select: { user_visited_places: { include: { visited_place: true } } },
+      });
+      const regions = await this.prisma.region.findMany({});
+      const regionsWithVisitedCount = regions.map((region) => ({
+        ...region,
+        region_visited_count: 0,
+      }));
+      result.user_visited_places.forEach((item) => {
+        const regionId = item.visited_place.place_region_id;
 
-      const regionToUpdate = regionsWithVisitedCount.find(
-        (region) => region.region_id === regionId
-      );
-      if (regionToUpdate) {
-        regionToUpdate.region_visited_count++;
-      }
-    });
-    return regionsWithVisitedCount;
+        const regionToUpdate = regionsWithVisitedCount.find(
+          (region) => region.region_id === regionId
+        );
+        if (regionToUpdate) {
+          regionToUpdate.region_visited_count++;
+        }
+      });
+      return regionsWithVisitedCount;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   async leaveService(userId: number) {

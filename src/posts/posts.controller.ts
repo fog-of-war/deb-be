@@ -159,10 +159,12 @@ export class PostsController {
         userId["sub"],
         postId
       );
-      this.logger.log(`${userId["user_email"]}가 게시물 ${postId} 삭제`);
+
       if (!result) {
+        this.logger.log(`${userId["user_email"]}가 게시물 ${postId} 삭제실패`);
         throw new NotFoundException("게시물을 찾을 수 없습니다.");
       }
+      this.logger.log(`${userId["user_email"]}가 게시물 ${postId} 삭제`);
     } catch (error) {
       if (error.status === HttpStatus.NOT_FOUND) {
         // 게시물을 찾을 수 없는 경우 404 응답을 보냅니다.

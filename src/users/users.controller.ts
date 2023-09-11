@@ -156,7 +156,7 @@ export class UsersController {
       this.logger.log(
         `user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`
       );
-      return result;
+      res.status(HttpStatus.OK).json(result);
     } catch (err) {
       return res
         .status(HttpStatus.NOT_FOUND)

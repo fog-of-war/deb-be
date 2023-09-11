@@ -4,7 +4,7 @@ const fs = require("fs");
 const placesArray = [
   {
     place_name: "코엑스",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "코엑스",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/1코엑스.jpeg",
@@ -13,7 +13,7 @@ const placesArray = [
   },
   {
     place_name: "일자산허브천문공원",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/2허브천문공원.jpeg",
@@ -22,7 +22,7 @@ const placesArray = [
   },
   {
     place_name: "국립4.19민주묘지",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/3국립419민주묘지.jpeg",
@@ -31,7 +31,7 @@ const placesArray = [
   },
   {
     place_name: "서울식물원",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/4서울식물원.jpeg",
@@ -40,7 +40,7 @@ const placesArray = [
   },
   {
     place_name: "서울대학교 관악캠퍼스",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/5서울대학교.jpeg",
@@ -49,7 +49,7 @@ const placesArray = [
   },
   {
     place_name: "어린이대공원",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/6어린이대공원.png",
@@ -58,7 +58,7 @@ const placesArray = [
   },
   {
     place_name: "신도림테크노마트",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/7신도림테크노마트.jpeg",
@@ -67,7 +67,7 @@ const placesArray = [
   },
   {
     place_name: "금천체육공원",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/8금천체육공원.jpeg",
@@ -76,7 +76,7 @@ const placesArray = [
   },
   {
     place_name: "경춘선숲길",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/9경춘선숲길.jpeg",
@@ -85,7 +85,7 @@ const placesArray = [
   },
   {
     place_name: "도봉산",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/10도봉산.jpeg",
@@ -94,7 +94,7 @@ const placesArray = [
   },
   {
     place_name: "세종대왕기념관",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/11세종대왕기념관.jpeg",
@@ -103,7 +103,7 @@ const placesArray = [
   },
   {
     place_name: "노량진 수산시장",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/12노량진수상시장.jpeg",
@@ -112,7 +112,7 @@ const placesArray = [
   },
   {
     place_name: "월드컵공원",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/13월드컵공원.jpeg",
@@ -121,7 +121,7 @@ const placesArray = [
   },
   {
     place_name: "독립문",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/14독립문.jpeg",
@@ -130,7 +130,7 @@ const placesArray = [
   },
   {
     place_name: "예술의전당",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/%E1%84%85%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%84%86%E1%85%A1%E1%84%8F%E1%85%B3/15%E1%84%8B%E1%85%A8%E1%84%89%E1%85%AE%E1%86%AF%E1%84%8B%E1%85%B4%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%83%E1%85%A1%E1%86%BC.webp",
@@ -139,7 +139,7 @@ const placesArray = [
   },
   {
     place_name: "서울숲",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/16서울숲공원.jpeg",
@@ -148,7 +148,7 @@ const placesArray = [
   },
   {
     place_name: "정릉",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/17정릉.webp",
@@ -157,7 +157,7 @@ const placesArray = [
   },
   {
     place_name: "롯데월드타워",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/18롯데월드타워.webp",
@@ -166,7 +166,7 @@ const placesArray = [
   },
   {
     place_name: "목동아이스링크",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/19목동아이스링크.jpeg",
@@ -175,7 +175,7 @@ const placesArray = [
   },
   {
     place_name: "63스퀘어",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/20육삼빌딩.webp",
@@ -184,7 +184,7 @@ const placesArray = [
   },
   {
     place_name: "남산타워",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/21남산서울타워.webp",
@@ -193,7 +193,7 @@ const placesArray = [
   },
   {
     place_name: "진관사",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/22진관사.jpeg",
@@ -202,7 +202,7 @@ const placesArray = [
   },
   {
     place_name: "광화문",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/23광화문.jpeg",
@@ -211,7 +211,7 @@ const placesArray = [
   },
   {
     place_name: "숭례문",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/24숭례문.jpeg",
@@ -220,7 +220,7 @@ const placesArray = [
   },
   {
     place_name: "용마폭포공원",
-    post_star_rating: 1.0,
+    post_star_rating: 5.0,
     post_description: "랜드마크",
     post_image_url:
       "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/25용마폭포공원.jpeg",
@@ -255,7 +255,7 @@ async function fetchData(placeObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk0NDI0NTM0LCJleHAiOjE2OTQ0MjgxMzR9.gP2bIwCdiSftjMzuch1z_ZVgyDBBhZsUKAcObf4ELNg",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk0NDM3ODk0LCJleHAiOjE2OTQ0NDE0OTR9.6dxirauUjmVY0UdmJQMg6jVHg-Yq2LyxtzCPOU5JG1M",
     },
     body: body,
   };
