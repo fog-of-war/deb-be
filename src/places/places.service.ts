@@ -66,7 +66,6 @@ export class PlacesService {
         y: y, //latitude
         radius: 20000,
         query: query,
-        size: 1,
       },
     };
     try {
@@ -92,20 +91,11 @@ export class PlacesService {
   async processItems(items) {
     try {
       for (const item of items) {
-        console.log(
-          "🚀 ~ file: places.service.ts:96 ~ PlacesService ~ processItems ~ item:",
-          item
-        );
-
         item.naver_place_url =
           "https://map.naver.com/p/search/" + item.place_name;
 
         if (item.place_category_map.length == 0) {
           const categoryIdArray = this.setCategoryId(item);
-          console.log(
-            "🚀 ~ file: places.service.ts:105 ~ PlacesService ~ processItems ~ categoryIdArray:",
-            categoryIdArray
-          );
           // categoryId 배열의 각 요소에 대해 비동기적으로 처리
           const categoryPromises = categoryIdArray.map(
             async (categoryIdItem) => {
@@ -115,13 +105,7 @@ export class PlacesService {
               item.place_category_map.push(category);
             }
           );
-
-          const categoryResults = await Promise.all(categoryPromises);
-          console.log(
-            "🚀 ~ file: places.service.ts:120 ~ PlacesService ~ processItems ~ categoryResults:",
-            categoryResults
-          );
-          // item.place_category_map = categoryResults;
+          await Promise.all(categoryPromises);
         }
       }
     } catch (error) {
