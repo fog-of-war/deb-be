@@ -31,14 +31,29 @@ export class UsersService {
     });
     return user;
   }
-  async findUserById(id: number): Promise<any | null> {
-    return await this.prisma.user.findFirst({
-      where: {
-        user_id: id,
+
+  async findUserById(user_id: number): Promise<any | null> {
+    const user = await this.prisma.user.findFirst({
+      where: { user_id: user_id },
+      select: {
+        user_id: true,
+        user_image_url: true,
+        user_nickname: true,
+        user_points: true,
+        user_level: true,
+        user_is_admin: true,
+        user_is_deleted: true,
+        user_badges: true,
+        user_selected_badge: true,
+        user_visited_places: true,
+        user_authored_posts: true,
       },
-      include: { user_badges: true },
     });
+    // 랭킹 업데이트 로직 호출
+    await this.ranksService.getUserRank(user_id);
+    return user;
   }
+
   async findUserByEmail(email: string): Promise<any | null> {
     return await this.prisma.user.findFirst({
       where: {

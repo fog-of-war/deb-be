@@ -48,8 +48,9 @@ export class UsersController {
     type: GetUserResponse, // 반환 모델을 지정
   })
   async getMe(@GetCurrentUserId() userId: number) {
-    const result = await this.userService.leanUserInfo(userId["sub"]);
+    const result = await this.userService.findUserById(userId["sub"]);
     this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
+    this.logger.log("자신의 회원정보 호출", result);
     return result;
   }
 

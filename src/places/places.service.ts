@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import axios, { AxiosResponse } from "axios";
 import { PrismaService } from "../prisma/prisma.service";
 import { CategoriesService } from "src/categories/categories.service";
+import { LoggerService } from "src/logger/logger.service";
 
 @Injectable()
 export class PlacesService {
@@ -11,7 +12,8 @@ export class PlacesService {
   constructor(
     private config: ConfigService,
     private prisma: PrismaService,
-    private categoriesService: CategoriesService
+    private categoriesService: CategoriesService,
+    private logger: LoggerService
   ) {
     this.clientID = this.config.get("KAKAO_CLIENT_ID");
   }
@@ -106,7 +108,7 @@ export class PlacesService {
       }
     } catch (error) {
       // 예외 처리 코드
-      console.error("Error in processItems:", error);
+      this.logger.error("Error in processItems:", error);
     }
   }
 
@@ -134,7 +136,6 @@ export class PlacesService {
       }
       return data; // 수정: 각 작업의 결과 반환
     });
-
     const results = await Promise.all(promises);
     return results; // 모든 작업의 결과 반환
   }
@@ -187,7 +188,7 @@ export class PlacesService {
         resolve(response);
       } else {
         const errorMessage = `checkQueryInResponsePlaces: "${query}" 문자열이 응답 데이터 안에 포함되어 있지 않습니다.`;
-        console.error(errorMessage);
+        this.logger.error(errorMessage);
         reject(new Error(errorMessage)); // 에러 발생 시 에러를 내보냅니다.
       }
     });
@@ -197,16 +198,19 @@ export class PlacesService {
    *
    */
   extractGu(place_address: string) {
-    const array = place_address.split(" ");
+    try {
+      const array = place_address.split(" ");
 
-    if (array.length >= 2 && array[1].match(/구$/)) {
-      return array[1];
-    } else {
-      return "기타";
+      if (array.length >= 2 && array[1].match(/구$/)) {
+        return array[1];
+      } else {
+        return "기타";
+      }
+    } catch (err) {
+      this.logger.error(err);
+      // 추출 실패 시 에러 메시지 반환
+      throw new Error("구 이름을 추출할 수 없습니다.");
     }
-
-    // 추출 실패 시 에러 메시지 반환
-    throw new Error("구 이름을 추출할 수 없습니다.");
   }
   /**
    *
@@ -217,7 +221,7 @@ export class PlacesService {
       return payload.road_address_name || payload.address_name || "";
     } catch (error) {
       const errorMessage = `addAddress 에러: ${error.message}`;
-      console.error(errorMessage);
+      this.logger.error(errorMessage);
       throw new Error(errorMessage); // 에러 발생 시 에러를 내보냅니다.
     }
   }
@@ -290,9 +294,9 @@ export class PlacesService {
         const createManyResult = await this.prisma.mapPlaceCategory.createMany({
           data: placeCategoryMapData,
         });
-        console.log("createManyResult:", createManyResult);
+        this.logger.log("createManyResult:", createManyResult);
       } catch (error) {
-        console.error("createManyError:", error);
+        this.logger.error("createManyError:", error);
       }
 
       return createdPlace;
