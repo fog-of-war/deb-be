@@ -66,6 +66,7 @@ export class PlacesService {
         y: y, //latitude
         radius: 20000,
         query: query,
+        size: 1,
       },
     };
     try {
@@ -91,19 +92,36 @@ export class PlacesService {
   async processItems(items) {
     try {
       for (const item of items) {
+        console.log(
+          "🚀 ~ file: places.service.ts:96 ~ PlacesService ~ processItems ~ item:",
+          item
+        );
+
         item.naver_place_url =
           "https://map.naver.com/p/search/" + item.place_name;
 
         if (item.place_category_map.length == 0) {
-          const categoryId = this.setCategory(item);
+          const categoryIdArray = this.setCategoryId(item);
+          console.log(
+            "🚀 ~ file: places.service.ts:105 ~ PlacesService ~ processItems ~ categoryIdArray:",
+            categoryIdArray
+          );
           // categoryId 배열의 각 요소에 대해 비동기적으로 처리
-          const categoryPromises = categoryId.map(async (categoryIdItem) => {
-            return await this.categoriesService.findCategoryName(
-              categoryIdItem.categoryId
-            );
-          });
+          const categoryPromises = categoryIdArray.map(
+            async (categoryIdItem) => {
+              const category = await this.categoriesService.findCategoryName(
+                categoryIdItem.categoryId
+              );
+              item.place_category_map.push(category);
+            }
+          );
+
           const categoryResults = await Promise.all(categoryPromises);
-          item.place_category_map = categoryResults;
+          console.log(
+            "🚀 ~ file: places.service.ts:120 ~ PlacesService ~ processItems ~ categoryResults:",
+            categoryResults
+          );
+          // item.place_category_map = categoryResults;
         }
       }
     } catch (error) {
@@ -160,7 +178,7 @@ export class PlacesService {
     try {
       const response: AxiosResponse<any> = await axios.get(api_url, options);
       const place_address = this.addAddress(response.data.documents[0]);
-      const place_category = this.setCategory(response.data.documents[0]);
+      const place_category = this.setCategoryId(response.data.documents[0]);
       return {
         response: response.data,
         place_address: place_address,
@@ -229,7 +247,7 @@ export class PlacesService {
    *
    *
    */
-  setCategory(payload: any): any | undefined {
+  setCategoryId(payload: any): any | undefined {
     const categoryArray = [{ categoryId: 1 }];
     const categoryMappings = {
       음식점: 2,

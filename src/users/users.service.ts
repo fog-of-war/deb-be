@@ -85,28 +85,6 @@ export class UsersService {
     });
   }
 
-  async leanUserInfo(user: any) {
-    const result = await this.prisma.user.findFirst({
-      where: { user_id: user.user_id },
-      select: {
-        user_id: true,
-        user_image_url: true,
-        user_nickname: true,
-        user_points: true,
-        user_level: true,
-        user_is_admin: true,
-        user_is_deleted: true,
-        user_badges: true,
-        user_selected_badge: true,
-        user_visited_places: true,
-        user_authored_posts: true,
-      },
-    });
-    // 랭킹 업데이트 로직 호출
-    await this.ranksService.getUserRank(user.user_id);
-    return result;
-  }
-
   async findUserBadges(userId: number) {
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId },
