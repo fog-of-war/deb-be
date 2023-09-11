@@ -9,6 +9,7 @@ export class RanksService {
 
   async updateRanks() {
     const users = await this.prisma.user.findMany({
+      where: { user_is_deleted: false },
       orderBy: {
         user_points: "desc",
       },
@@ -43,6 +44,7 @@ export class RanksService {
           const user = await this.prisma.user.findUnique({
             where: {
               user_id: userRank.user_id,
+              user_is_deleted: false,
             },
             select: {
               user_id: true,
@@ -86,6 +88,7 @@ export class RanksService {
   async getRegionRanksByRegion() {
     // 1. 모든 유저의 지역 방문 정보 조회
     const allUsers = await this.prisma.user.findMany({
+      where: { user_is_deleted: false },
       include: { user_visited_places: { include: { visited_place: true } } },
     });
 
@@ -115,6 +118,7 @@ export class RanksService {
   async generateUserRankingForRegion(regionId) {
     // 1. 모든 유저의 지역 방문 정보 조회
     const allUsers = await this.prisma.user.findMany({
+      where: { user_is_deleted: false },
       include: {
         user_visited_places: { include: { visited_place: true } },
         user_badges: true,
