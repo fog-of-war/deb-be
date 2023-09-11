@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "user_delete_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

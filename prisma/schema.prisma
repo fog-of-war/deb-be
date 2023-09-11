@@ -25,6 +25,7 @@ model User {
   user_is_deleted        Boolean          @default(false)
   user_created_at        DateTime         @default(now())
   user_updated_at        DateTime         @updatedAt
+  user_delete_at         DateTime         @default(now())
   user_search_history    SearchHistory[]
   user_activities        UserActivities[]
   user_refresh_token     String?
