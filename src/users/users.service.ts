@@ -111,7 +111,7 @@ export class UsersService {
   async getMyVisitedRegionCount(userId: number) {
     try {
       const result = await this.prisma.user.findFirst({
-        where: { user_id: userId, user_is_deleted: false },
+        where: { user_id: userId },
         select: { user_visited_places: { include: { visited_place: true } } },
       });
       const regions = await this.prisma.region.findMany({});
