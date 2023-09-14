@@ -120,17 +120,12 @@ export class PlacesService {
         where: { place_name: data.place_name },
         include: {
           place_posts: true,
-          place_category_map: {
-            include: {
-              category: true, // Include related category with its name
-            },
-          },
         },
       });
       if (result) {
         data.place_posts = result.place_posts;
         data.place_star_rating = result.place_star_rating;
-        data.place_category_map = result.place_category_map;
+        data.place_category_map = [];
       } else {
         data.place_posts = [];
         data.place_star_rating = null;
