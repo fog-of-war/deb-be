@@ -123,7 +123,7 @@ export class PostsService {
       const result = await this.compareUserStates(userId, userStateBefore);
       return result;
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error) {
         // Prisma에서 발생한 에러 처리
         throw new BadRequestException("게시물 생성 중 오류가 발생했습니다.");
       }
