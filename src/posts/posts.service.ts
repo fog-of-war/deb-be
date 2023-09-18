@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
-  Inject
+  Inject,
 } from "@nestjs/common";
 import { CreatePostDto, EditPostDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
@@ -15,8 +15,9 @@ import { LevelsService } from "src/levels/levels.service";
 import { UsersService } from "src/users/users.service";
 import { RanksService } from "src/ranks/ranks.service";
 import { Prisma } from "@prisma/client";
-import { ClientProxy, EventPattern } from '@nestjs/microservices';
-import { Observable, interval, of, throwError } from 'rxjs';
+import { ClientProxy, EventPattern } from "@nestjs/microservices";
+import { Observable, interval, of, throwError } from "rxjs";
+import { EventsGateway } from "src/events/events.gateway";
 
 @Injectable()
 export class PostsService {
@@ -28,7 +29,7 @@ export class PostsService {
     private readonly levelsService: LevelsService,
     private readonly usersService: UsersService,
     private readonly ranksService: RanksService,
-    @Inject('GREETING_SERVICE') private alertClient: ClientProxy
+    private readonly eventsGateway: EventsGateway // @Inject("GREETING_SERVICE") private alertClient: ClientProxy
   ) {}
   /** 여러 개의 게시물 가져오기 */
   async getPosts() {
@@ -76,7 +77,7 @@ export class PostsService {
   private async createPostActions(
     userId: number,
     placeId: number
-  ):Promise<any>{
+  ): Promise<any> {
     try {
       await this.placesService.createPlaceVisit(userId, placeId);
       await this.placesService.updatePlaceStarRating(placeId);
@@ -84,12 +85,17 @@ export class PostsService {
       await this.levelsService.updateLevel(userId);
       await this.badgesService.checkAndAssignBadge(userId);
       await this.ranksService.updateRanks();
+      await this.eventsGateway.handleAlertEvent(placeId);
+
       // const messageObservable = this.alertClient.send({ cmd: 'greeting-async' }, 'Progressive Coder');
       // const message = await messageObservable.toPromise();
-      const eventObservable = this.alertClient.emit('event_created','Event created: John Doe' );
-      const message = await eventObservable.toPromise();
-      console.log(message)
-      return message;
+      // const eventObservable = this.alertClient.emit(
+      //   "event_created",
+      //   "Event created: John Doe"
+      // );
+      // const message = await eventObservable.toPromise();
+      // console.log(message);
+      // return message;
     } catch (error) {
       // 각 서비스의 에러를 적절하게 처리할 수 있도록 코드를 추가합니다.
       console.error("Error in createPostActions:", error);

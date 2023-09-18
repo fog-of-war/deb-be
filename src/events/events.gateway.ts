@@ -18,7 +18,9 @@ import {
   EventPattern,
   MessagePattern,
 } from "@nestjs/microservices";
-import { Inject } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
+import { EventsService } from "./events.service";
+import { PrismaService } from "src/prisma/prisma.service";
 
 //ws://localhost:5000/v1/ws-alert postman 으로 성공
 
@@ -30,43 +32,36 @@ export const onlineMap = {};
   },
   namespace: /\/ws-.+/, // "options" 대신 "namespace"를 사용
 })
+@Injectable()
 export class EventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
   public server: Server;
 
-  constructor(
-    @Inject("ALERT") private readonly alertClient: ClientProxy,
-    private logger: LoggerService
-  ) {}
+  constructor(private logger: LoggerService, private prisma: PrismaService) {}
 
   @SubscribeMessage("send_message")
-  handleEvent(
-    @MessageBody() data: string
-  ): Observable<WsResponse<number>> | any {
-    this.logger.log("🐤웹소켓 send_message 라우터 호출됨", data);
+  async handleEvent(@MessageBody() data: any): Promise<any> {
+    this.logger.log("🐤웹소켓 send_message 이벤트 구독되는중", data);
     this.server.emit("receive_message", { message: data }); // 모든 클라이언트에게 메시지 전송
   }
 
   @SubscribeMessage("send_alert")
-  handleAlertEvent(
-    @MessageBody() data: string
-  ): Observable<WsResponse<number>> | any {
+  async handleAlertEvent(@MessageBody() data: any): Promise<any> {
     console.log("Received alert event:", data);
-
-    // this.logger.log("🐤웹소켓 send_alert 라우터 호출됨", "안녕");
-    this.server.emit("receive_alert", { message: data });
+    const result = await this.makeAlertMessage(data);
+    this.server.emit("receive_alert", { message: result });
   }
 
   @SubscribeMessage("error")
   handleErrorMessage(@MessageBody() error: string): void {
-    console.error("🥺WebSocket 오류:", error);
+    console.error("🐤웹소켓 오류:", error);
     this.server.emit("🥺error", error);
   }
 
   afterInit(server: Server): any {
-    this.logger.log("🐤웹소켓 초기화 안녕");
+    this.logger.log("🐤웹소켓 초기화");
   }
 
   handleConnection(@ConnectedSocket() socket: Socket) {
@@ -79,19 +74,38 @@ export class EventsGateway
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
-    this.logger.log("🐤웹소켓 연결해제 빠잉");
-    // socket.emit("Disconnect", socket.nsp.name);
-    // socket.emit("Disconnect", "🐤웹소켓 연결해제 빠잉");
+    this.logger.log("🐤웹소켓 연결해제");
     const newNamespace = socket.nsp;
     delete onlineMap[socket.nsp.name][socket.id];
     newNamespace.emit("onlineList", Object.values(onlineMap[socket.nsp.name]));
   }
-}
-// const numbers = [1, 2, 3, 4, 5];
-// return from(numbers).pipe(map((item) => ({ event: "events", data: item })));
 
-// const numbers = [1, 2, 3, 4, 5];
-// return from(numbers).pipe(
-//   map((item) => ({ event: "receive_alert", message: "hi" }))
-// );
-// 모든 클라이언트에게 메시지 전송
+  async makeAlertMessage(placeId) {
+    const place = await this.prisma.place.findFirst({
+      where: { place_id: placeId },
+      select: { place_id: true, place_name: true, place_region: true },
+    });
+    // 가장 최신 게시물 조회
+    const latestPost = await this.prisma.post.findFirst({
+      where: { post_place_id: placeId, post_is_deleted: false },
+      select: {
+        post_id: true,
+        post_created_at: true,
+        post_updated_at: true,
+        post_image_url: true,
+      },
+      orderBy: {
+        post_created_at: "desc", // post_created_at을 내림차순으로 정렬하여 최신 게시물을 선택
+      },
+    });
+    const message = {
+      place_id: place["place_id"],
+      place_name: place["place_name"],
+      region_name: place["place_region"]["region_name"],
+      post_id: latestPost["post_id"],
+      post_created_at: latestPost["post_created_at"],
+      post_image_url: latestPost["post_image_url"],
+    };
+    return message;
+  }
+}

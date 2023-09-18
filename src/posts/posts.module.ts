@@ -12,6 +12,8 @@ import { LoggerModule } from "src/logger/logger.module";
 import { APP_FILTER } from "@nestjs/core";
 import { UnauthorizedExceptionFilter } from "../filters";
 import { ClientsModule, Transport } from "@nestjs/microservices";
+import { EventsModule } from "src/events/events.module";
+import { EventsGateway } from "src/events/events.gateway";
 @Module({
   imports: [
     PrismaModule,
@@ -21,15 +23,18 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
     PointsModule,
     LevelsModule,
     UsersModule,
-    LoggerModule,    
-    ClientsModule.register([
-      {name: 'GREETING_SERVICE',transport: Transport.TCP,
-      options : {
-        host: '127.0.0.1',
-        port: 5001
-      }
-    }
-    ])
+    LoggerModule,
+    // EventsModule,
+    // ClientsModule.register([
+    //   {
+    //     name: "GREETING_SERVICE",
+    //     transport: Transport.TCP,
+    //     options: {
+    //       host: "127.0.0.1",
+    //       port: 5001,
+    //     },
+    //   },
+    // ]),
   ],
   controllers: [PostsController],
   providers: [
@@ -39,6 +44,7 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
       scope: Scope.REQUEST,
       useClass: UnauthorizedExceptionFilter,
     },
+    EventsGateway,
   ],
 })
 export class PostsModule {}

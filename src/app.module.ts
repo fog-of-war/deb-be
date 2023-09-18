@@ -25,8 +25,8 @@ import { EventsModule } from "./events/events.module";
 import { UnauthorizedExceptionFilter } from "./filters";
 import { APP_FILTER } from "@nestjs/core";
 import { ClientsModule, Transport } from "@nestjs/microservices";
-import { AppService } from './app.service';
-import {AppController}from './app.controller';
+import { AppService } from "./app.service";
+import { AppController } from "./app.controller";
 
 @Module({
   imports: [
@@ -46,13 +46,15 @@ import {AppController}from './app.controller';
     LoggerModule,
     EventsModule,
     ClientsModule.register([
-      {name: 'GREETING_SERVICE',transport: Transport.TCP,
-      options : {
-        host: '127.0.0.1',
-        port: 5001
-      }
-    }
-    ])
+      {
+        name: "GREETING_SERVICE",
+        transport: Transport.TCP,
+        options: {
+          host: "127.0.0.1",
+          port: 5001,
+        },
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [
