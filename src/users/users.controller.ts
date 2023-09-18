@@ -156,10 +156,6 @@ export class UsersController {
       this.logger.log(
         `user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`
       );
-      console.log(
-        "🚀 ~ file: users.controller.ts:156 ~ UsersController ~ result:",
-        result
-      );
       res.status(HttpStatus.OK).json(result);
     } catch (err) {
       return res

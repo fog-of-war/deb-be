@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
+  Inject
 } from "@nestjs/common";
 import { CreatePostDto, EditPostDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
@@ -14,6 +15,8 @@ import { LevelsService } from "src/levels/levels.service";
 import { UsersService } from "src/users/users.service";
 import { RanksService } from "src/ranks/ranks.service";
 import { Prisma } from "@prisma/client";
+import { ClientProxy, EventPattern } from '@nestjs/microservices';
+import { Observable, interval, of, throwError } from 'rxjs';
 
 @Injectable()
 export class PostsService {
@@ -24,7 +27,8 @@ export class PostsService {
     private readonly pointsService: PointsService,
     private readonly levelsService: LevelsService,
     private readonly usersService: UsersService,
-    private readonly ranksService: RanksService
+    private readonly ranksService: RanksService,
+    @Inject('ALERT') private alertClient: ClientProxy
   ) {}
   /** 여러 개의 게시물 가져오기 */
   async getPosts() {
@@ -68,10 +72,11 @@ export class PostsService {
 
     return post;
   }
+  /** 게시물 생성 후처리 */
   private async createPostActions(
     userId: number,
     placeId: number
-  ): Promise<void> {
+  ):Promise<void>{
     try {
       await this.placesService.createPlaceVisit(userId, placeId);
       await this.placesService.updatePlaceStarRating(placeId);
@@ -79,6 +84,12 @@ export class PostsService {
       await this.levelsService.updateLevel(userId);
       await this.badgesService.checkAndAssignBadge(userId);
       await this.ranksService.updateRanks();
+      // const pattern = { cmd: 'sum' };
+      // const payload = [1, 2, 3];
+      // return this.alertClient.send<number>(pattern, payload);
+      // const message = await this.alertClient.send({cmd:'greeting-async'}, "Progressive Coder");
+      // return message;
+
     } catch (error) {
       // 각 서비스의 에러를 적절하게 처리할 수 있도록 코드를 추가합니다.
       console.error("Error in createPostActions:", error);
