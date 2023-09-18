@@ -18,7 +18,7 @@ import {
   EventPattern,
   MessagePattern,
 } from "@nestjs/microservices";
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { EventsService } from "./events.service";
 import { PrismaService } from "src/prisma/prisma.service";
 
@@ -47,11 +47,25 @@ export class EventsGateway
     this.server.emit("receive_message", { message: data }); // 모든 클라이언트에게 메시지 전송
   }
 
-  @SubscribeMessage("send_alert")
+  @SubscribeMessage("send_post_alert")
   async handleAlertEvent(@MessageBody() data: any): Promise<any> {
-    console.log("Received alert event:", data);
-    const result = await this.makeAlertMessage(data);
-    this.server.emit("receive_alert", { message: result });
+    console.log("Received post alert event:", data);
+    const result = await this.makePostAlertMessage(data);
+    this.server.emit("receive_post_alert", { message: result });
+  }
+
+  @SubscribeMessage("send_activity_alert")
+  async handleCommentAlertEvent(@MessageBody() data: any): Promise<any> {
+    try {
+      console.log("Received activity alert event:", data);
+      const result = await this.makeCommentAlertMessage(data);
+      console.log("Before", result);
+      this.server.emit("receive_activity", { message: result });
+      console.log("After", result);
+    } catch (error) {
+      // 예외 처리
+      console.error("Error in handleCommentAlertEvent:", error);
+    }
   }
 
   @SubscribeMessage("error")
@@ -80,7 +94,7 @@ export class EventsGateway
     newNamespace.emit("onlineList", Object.values(onlineMap[socket.nsp.name]));
   }
 
-  async makeAlertMessage(placeId) {
+  async makePostAlertMessage(placeId) {
     const place = await this.prisma.place.findFirst({
       where: { place_id: placeId },
       select: { place_id: true, place_name: true, place_region: true },
@@ -107,5 +121,36 @@ export class EventsGateway
       post_image_url: latestPost["post_image_url"],
     };
     return message;
+  }
+
+  async makeCommentAlertMessage(commentId) {
+    try {
+      if (typeof commentId !== "number" || commentId <= 0) {
+        throw new NotFoundException("Invalid comment ID");
+      }
+
+      const comment = await this.prisma.comment.findFirst({
+        where: { comment_id: commentId },
+        include: { comment_author: true },
+      });
+
+      if (!comment) {
+        // 댓글을 찾지 못한 경우 예외 throw
+        throw new NotFoundException("Comment not found");
+      }
+
+      const message = {
+        user_nickname: comment.comment_author.user_nickname,
+        user_image_url: comment.comment_author.user_image_url,
+        comment_id: comment.comment_id,
+        comment_text: comment.comment_text,
+        comment_created_at: comment.comment_created_at,
+      };
+
+      return message;
+    } catch (error) {
+      // 예외 처리
+      throw error; // 예외를 다시 던지거나, 에러 메시지를 로깅하거나, 적절한 에러 응답을 반환할 수 있습니다.
+    }
   }
 }

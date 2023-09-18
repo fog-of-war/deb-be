@@ -28,8 +28,9 @@ export class CommentsController {
     @GetCurrentUserId() userId: number,
     @Body() createCommentDto: CreateCommentDto
   ) {
+    const result = this.commentsService.create(userId["sub"], createCommentDto);
     this.logger.log("댓글 작성한 사람", userId["user_email"]);
-    return this.commentsService.create(userId["sub"], createCommentDto);
+    return result;
   }
 
   @Get(":id")
@@ -44,16 +45,20 @@ export class CommentsController {
     @Param("id") commentId: number,
     @Body() updateCommentDto: UpdateCommentDto
   ) {
-    return this.commentsService.update(
+    const result = this.commentsService.update(
       userId["sub"],
       commentId,
       updateCommentDto
     );
+    this.logger.log("댓글 수정한 사람", userId["user_email"]);
+    return result;
   }
 
   @Delete(":id")
   @UseGuards(ATGuard)
-  remove(@Param("id") id: string) {
-    return this.commentsService.remove(+id);
+  remove(@GetCurrentUserId() userId: number, @Param("id") commentId: number) {
+    const result = this.commentsService.remove(commentId);
+    this.logger.log("댓글 삭제하는 사람", userId["user_email"]);
+    return result;
   }
 }
