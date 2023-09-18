@@ -84,14 +84,12 @@ export class PostsService {
       await this.levelsService.updateLevel(userId);
       await this.badgesService.checkAndAssignBadge(userId);
       await this.ranksService.updateRanks();
-      // const pattern = { cmd: 'sum' };
-      // const payload = [1, 2, 3];
-      // return this.alertClient.send<number>(pattern, payload);
-      const messageObservable = this.alertClient.send({ cmd: 'greeting-async' }, 'Progressive Coder');
-      const message = await messageObservable.toPromise();
+      // const messageObservable = this.alertClient.send({ cmd: 'greeting-async' }, 'Progressive Coder');
+      // const message = await messageObservable.toPromise();
+      const eventObservable = this.alertClient.emit('event_created','Event created: John Doe' );
+      const message = await eventObservable.toPromise();
       console.log(message)
       return message;
-
     } catch (error) {
       // 각 서비스의 에러를 적절하게 처리할 수 있도록 코드를 추가합니다.
       console.error("Error in createPostActions:", error);
