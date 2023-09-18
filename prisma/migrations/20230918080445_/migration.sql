@@ -69,6 +69,19 @@ CREATE TABLE "Post" (
 );
 
 -- CreateTable
+CREATE TABLE "Comment" (
+    "comment_id" SERIAL NOT NULL,
+    "comment_text" TEXT NOT NULL,
+    "comment_created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "comment_updated_at" TIMESTAMP(3) NOT NULL,
+    "comment_author_id" INTEGER NOT NULL,
+    "commented_post_id" INTEGER NOT NULL,
+    "comment_is_deleted" BOOLEAN NOT NULL DEFAULT false,
+
+    CONSTRAINT "Comment_pkey" PRIMARY KEY ("comment_id")
+);
+
+-- CreateTable
 CREATE TABLE "PlaceVisit" (
     "visited_id" SERIAL NOT NULL,
     "visited_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -201,6 +214,12 @@ ALTER TABLE "Post" ADD CONSTRAINT "Post_post_author_id_fkey" FOREIGN KEY ("post_
 ALTER TABLE "Post" ADD CONSTRAINT "Post_post_place_id_fkey" FOREIGN KEY ("post_place_id") REFERENCES "Place"("place_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_comment_author_id_fkey" FOREIGN KEY ("comment_author_id") REFERENCES "User"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_commented_post_id_fkey" FOREIGN KEY ("commented_post_id") REFERENCES "Post"("post_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "PlaceVisit" ADD CONSTRAINT "PlaceVisit_visited_place_id_fkey" FOREIGN KEY ("visited_place_id") REFERENCES "Place"("place_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -223,48 +242,3 @@ ALTER TABLE "_BadgeToUser" ADD CONSTRAINT "_BadgeToUser_A_fkey" FOREIGN KEY ("A"
 
 -- AddForeignKey
 ALTER TABLE "_BadgeToUser" ADD CONSTRAINT "_BadgeToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
-
-CREATE OR REPLACE FUNCTION alert_post_created() RETURNS trigger AS $$
-DECLARE
-   new_post_place_id INT;
-   new_place_region_id INT;
-BEGIN
-    IF TG_OP = 'INSERT' THEN
-        SELECT post_place_id INTO new_post_place_id
-        FROM "Post"
-        WHERE post_id = NEW.post_id;
-
-        IF new_post_place_id IS NOT NULL THEN
-            SELECT place_region_id INTO new_place_region_id
-            FROM "Place"
-            WHERE place_id = new_post_place_id;
-        END IF;
-        
-        IF new_place_region_id IS NOT NULL THEN
-            INSERT INTO "Alerts" (alert_post_id, alert_region_id, alert_place_id) VALUES (NEW.post_id, new_place_region_id, new_post_place_id);
-        END IF;
-    END IF;
-    
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_alert_post_created
-AFTER INSERT
-ON "Post"
-FOR EACH ROW
-EXECUTE FUNCTION alert_post_created();
-
-
-CREATE OR REPLACE FUNCTION notify_alert_insert() RETURNS TRIGGER AS $$
-BEGIN
-    PERFORM pg_notify('alert_insert', NEW.alert_id::TEXT);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_alert_insert
-AFTER INSERT
-ON "Alert"
-FOR EACH ROW
-EXECUTE FUNCTION notify_alert_insert();

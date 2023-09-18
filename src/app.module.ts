@@ -27,6 +27,7 @@ import { APP_FILTER } from "@nestjs/core";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { AppService } from "./app.service";
 import { AppController } from "./app.controller";
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { AppController } from "./app.controller";
         },
       },
     ]),
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [
