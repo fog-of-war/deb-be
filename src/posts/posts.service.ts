@@ -28,7 +28,7 @@ export class PostsService {
     private readonly levelsService: LevelsService,
     private readonly usersService: UsersService,
     private readonly ranksService: RanksService,
-    @Inject('ALERT') private alertClient: ClientProxy
+    @Inject('GREETING_SERVICE') private alertClient: ClientProxy
   ) {}
   /** 여러 개의 게시물 가져오기 */
   async getPosts() {
@@ -76,7 +76,7 @@ export class PostsService {
   private async createPostActions(
     userId: number,
     placeId: number
-  ):Promise<void>{
+  ):Promise<any>{
     try {
       await this.placesService.createPlaceVisit(userId, placeId);
       await this.placesService.updatePlaceStarRating(placeId);
@@ -87,8 +87,10 @@ export class PostsService {
       // const pattern = { cmd: 'sum' };
       // const payload = [1, 2, 3];
       // return this.alertClient.send<number>(pattern, payload);
-      // const message = await this.alertClient.send({cmd:'greeting-async'}, "Progressive Coder");
-      // return message;
+      const messageObservable = this.alertClient.send({ cmd: 'greeting-async' }, 'Progressive Coder');
+      const message = await messageObservable.toPromise();
+      console.log(message)
+      return message;
 
     } catch (error) {
       // 각 서비스의 에러를 적절하게 처리할 수 있도록 코드를 추가합니다.
@@ -130,8 +132,9 @@ export class PostsService {
         placeId = newPlace.place_id;
       }
       // Create PlaceVisit
-      await this.createPostActions(userId, placeId);
+      const message = await this.createPostActions(userId, placeId);
       const result = await this.compareUserStates(userId, userStateBefore);
+      result.message = message;
       return result;
     } catch (error) {
       if (error) {

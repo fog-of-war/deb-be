@@ -23,15 +23,13 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
     UsersModule,
     LoggerModule,    
     ClientsModule.register([
-      {
-        name: "ALERT", // 마이크로서비스의 이름
-        transport: Transport.TCP, // 원하는 트랜스포트 설정
-        options: {
-          host: "127.0.0.1", // 마이크로서비스 호스트
-          port: 5001, // 마이크로서비스 포트
-        },
-      },
-    ]),
+      {name: 'GREETING_SERVICE',transport: Transport.TCP,
+      options : {
+        host: '127.0.0.1',
+        port: 5001
+      }
+    }
+    ])
   ],
   controllers: [PostsController],
   providers: [
