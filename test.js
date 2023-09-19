@@ -255,7 +255,7 @@ async function fetchData(placeObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk1MjA1Mjc1LCJleHAiOjE2OTUyMDg4NzV9.KXQ6XjEf6JYdam2g9A4tsec-1t-AqrkDEeKgHo2SdO8",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk1MTAwNTQ1LCJleHAiOjE2OTUxMDQxNDV9.b-ELCZir6uSav-xzWoPoQwSw-PiJa8gPpb074lJ8BW4",
     },
     body: body,
   };

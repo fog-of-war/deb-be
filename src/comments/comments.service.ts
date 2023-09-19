@@ -16,13 +16,22 @@ export class CommentsService {
 
   async create(userId, CreateCommentDto) {
     const { comment_text, commented_post_id } = CreateCommentDto;
+    const post = await this.prisma.post.findFirst({
+      where: { post_id: commented_post_id },
+    });
+    if (!post) {
+      throw new HttpException(
+        "해당 게시물이 존재하지 않습니다",
+        HttpStatus.NOT_FOUND
+      );
+    }
     const data = {
       comment_text: comment_text,
       comment_author_id: userId,
       commented_post_id: commented_post_id,
     };
     const result = await this.prisma.comment.create({ data: data });
-    await this.eventsGateway.handleCommentAlertEvent(result.comment_id);
+    await this.eventsGateway.handleAlert(result.comment_id);
     return "댓글 작성에 성공하였습니다";
   }
 

@@ -51,22 +51,18 @@ export class EventsGateway
   async handleAlertEvent(@MessageBody() data: any): Promise<any> {
     console.log("Received post alert event:", data);
     const result = await this.makePostAlertMessage(data);
-    console.log("Before", result);
-
-    this.server.emit("receive_post_alert", { message: result });
+    this.server.emit("receive_post_alert", {
+      message: result,
+    });
   }
 
   @SubscribeMessage("send_activity_alert")
-  async handleCommentAlertEvent(@MessageBody() data: any): Promise<any> {
-    try {
-      console.log("Received activity alert event:", data);
-      const result = await this.makeCommentAlertMessage(data);
-      console.log("Before", result);
-      this.server.emit("receive_activity_alert", { message: "hi" });
-    } catch (error) {
-      // 예외 처리
-      console.error("Error in handleCommentAlertEvent:", error);
-    }
+  async handleAlert(@MessageBody() data: any): Promise<any> {
+    console.log("Received activity alert event:", typeof data);
+    const result = await this.makeCommentAlertMessage(parseInt(data));
+    this.server.emit("receive_activity_alert", {
+      message: result,
+    });
   }
 
   @SubscribeMessage("error")
@@ -121,6 +117,8 @@ export class EventsGateway
       post_created_at: latestPost["post_created_at"],
       post_image_url: latestPost["post_image_url"],
     };
+
+    console.log(message);
     return message;
   }
 
@@ -147,7 +145,7 @@ export class EventsGateway
         comment_text: comment.comment_text,
         comment_created_at: comment.comment_created_at,
       };
-
+      console.log(message);
       return message;
     } catch (error) {
       // 예외 처리
