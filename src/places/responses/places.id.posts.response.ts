@@ -28,4 +28,15 @@ export class PlaceWithPostsResponse {
     user_nickname: string;
     user_image_url: string;
   };
+
+  @ApiProperty()
+  post_comments: {
+    comment_id: number;
+    comment_text: string;
+    comment_created_at: string;
+    comment_updated_at: string;
+    comment_author_id: number;
+    commented_post_id: number;
+    comment_is_deleted: boolean;
+  };
 }

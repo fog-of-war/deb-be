@@ -360,6 +360,7 @@ export class PlacesService {
         post_image_url: true,
         post_author_id: true,
         post_star_rating: true,
+        post_comments: true,
       },
     });
     const postsWithUserInfo = [];

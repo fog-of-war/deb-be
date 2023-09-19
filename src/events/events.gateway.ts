@@ -51,6 +51,8 @@ export class EventsGateway
   async handleAlertEvent(@MessageBody() data: any): Promise<any> {
     console.log("Received post alert event:", data);
     const result = await this.makePostAlertMessage(data);
+    console.log("Before", result);
+
     this.server.emit("receive_post_alert", { message: result });
   }
 
@@ -60,8 +62,7 @@ export class EventsGateway
       console.log("Received activity alert event:", data);
       const result = await this.makeCommentAlertMessage(data);
       console.log("Before", result);
-      this.server.emit("receive_activity", { message: result });
-      console.log("After", result);
+      this.server.emit("receive_activity_alert", { message: "hi" });
     } catch (error) {
       // 예외 처리
       console.error("Error in handleCommentAlertEvent:", error);
