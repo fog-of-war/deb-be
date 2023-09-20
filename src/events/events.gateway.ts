@@ -54,6 +54,7 @@ export class EventsGateway
     this.server.emit("receive_post_alert", {
       message: result,
     });
+    console.log("result post alert event:", result);
   }
 
   @SubscribeMessage("send_activity_alert")
@@ -122,7 +123,7 @@ export class EventsGateway
       post_image_url: latestPost["post_image_url"],
     };
 
-    console.log(message);
+    // console.log(message);
     return message;
   }
 
