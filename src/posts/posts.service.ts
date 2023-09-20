@@ -18,6 +18,7 @@ import { Prisma } from "@prisma/client";
 import { ClientProxy, EventPattern } from "@nestjs/microservices";
 import { Observable, interval, of, throwError } from "rxjs";
 import { EventsGateway } from "src/events/events.gateway";
+import { AlertService } from "src/alert/alert.service";
 
 @Injectable()
 export class PostsService {
@@ -29,6 +30,7 @@ export class PostsService {
     private readonly levelsService: LevelsService,
     private readonly usersService: UsersService,
     private readonly ranksService: RanksService,
+    private readonly alertService: AlertService,
     private readonly eventsGateway: EventsGateway // @Inject("GREETING_SERVICE") private alertClient: ClientProxy
   ) {}
   /** 여러 개의 게시물 가져오기 */
@@ -85,11 +87,11 @@ export class PostsService {
       await this.levelsService.updateLevel(userId);
       await this.badgesService.checkAndAssignBadge(userId);
       await this.ranksService.updateRanks();
-      await this.eventsGateway.handleAlertEvent(placeId);
-
+      // await this.eventsGateway.handleAlertEvent(placeId);
+      await this.alertService.createNotifyAlert(placeId);
       // const messageObservable = this.alertClient.send({ cmd: 'greeting-async' }, 'Progressive Coder');
       // const message = await messageObservable.toPromise();
-      // const eventObservable = this.alertClient.emit(
+      // const eventObservabl e= this.alertClient.emit(
       //   "event_created",
       //   "Event created: John Doe"
       // );
@@ -205,13 +207,13 @@ export class PostsService {
       },
     });
   }
-
+  /** 새로운 장소와 함께 게시물 생성하기*/
   private async createPostWithNewPlace(
     newPlace: any,
     userId: number,
     dto: CreatePostDto
   ) {
-    return this.prisma.post.create({
+    const result = this.prisma.post.create({
       data: {
         post_star_rating: dto.post_star_rating,
         post_description: dto.post_description,
@@ -226,6 +228,8 @@ export class PostsService {
         },
       },
     });
+    // await this.eventsGateway.handleAlertEvent(newPlace.place_id);
+    return result;
   }
 
   /** 게시물 수정하기 */

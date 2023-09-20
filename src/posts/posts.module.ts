@@ -14,6 +14,7 @@ import { UnauthorizedExceptionFilter } from "../filters";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { EventsModule } from "src/events/events.module";
 import { EventsGateway } from "src/events/events.gateway";
+import { AlertModule } from "src/alert/alert.module";
 @Module({
   imports: [
     PrismaModule,
@@ -24,6 +25,7 @@ import { EventsGateway } from "src/events/events.gateway";
     LevelsModule,
     UsersModule,
     LoggerModule,
+    AlertModule,
     // EventsModule,
     // ClientsModule.register([
     //   {

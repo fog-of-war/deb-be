@@ -22,13 +22,15 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { CommentResponse } from "./responses";
+import { EventsGateway } from "src/events/events.gateway";
 
 @ApiTags("comments")
 @Controller("comments")
 export class CommentsController {
   constructor(
     private readonly commentsService: CommentsService,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private readonly eventsGateway: EventsGateway
   ) {}
 
   @Post()
@@ -42,11 +44,15 @@ export class CommentsController {
     status: 201,
     description: "",
   })
-  create(
+  async create(
     @GetCurrentUserId() userId: number,
     @Body() createCommentDto: CreateCommentDto
   ) {
-    const result = this.commentsService.create(userId["sub"], createCommentDto);
+    const result = await this.commentsService.create(
+      userId["sub"],
+      createCommentDto
+    );
+    // await this.eventsGateway.handleAlert(result["comment_id"]);
     this.logger.log("댓글 작성한 사람", userId["user_email"]);
     return result;
   }

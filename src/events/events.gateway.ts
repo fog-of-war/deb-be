@@ -48,18 +48,22 @@ export class EventsGateway
   }
 
   @SubscribeMessage("send_post_alert")
-  async handleAlertEvent(@MessageBody() data: any): Promise<any> {
+  async handleNotifyAlert(@MessageBody() data: any): Promise<any> {
     console.log("Received post alert event:", data);
-    const result = await this.makePostAlertMessage(data);
+    const result = await this.makePostAlertMessage(data.alert_place_id);
     this.server.emit("receive_post_alert", {
       message: result,
     });
   }
 
   @SubscribeMessage("send_activity_alert")
-  async handleAlert(@MessageBody() data: any): Promise<any> {
+  async handleActivityAlert(@MessageBody() data: any): Promise<any> {
     console.log("Received activity alert event:", typeof data);
-    const result = await this.makeCommentAlertMessage(parseInt(data));
+    console.log("Received activity alert event:", data);
+    const result = await this.makeCommentAlertMessage(
+      parseInt(data.alert_comment_id)
+    );
+    console.log(result);
     this.server.emit("receive_activity_alert", {
       message: result,
     });

@@ -6,12 +6,14 @@ import {
 } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { EventsGateway } from "src/events/events.gateway";
+import { AlertService } from "src/alert/alert.service";
 
 @Injectable()
 export class CommentsService {
   constructor(
     private prisma: PrismaService,
-    private readonly eventsGateway: EventsGateway
+    private readonly eventsGateway: EventsGateway,
+    private readonly alertService: AlertService
   ) {}
 
   async create(userId, CreateCommentDto) {
@@ -31,8 +33,11 @@ export class CommentsService {
       commented_post_id: commented_post_id,
     };
     const result = await this.prisma.comment.create({ data: data });
-    await this.eventsGateway.handleAlert(result.comment_id);
-    return "댓글 작성에 성공하였습니다";
+    await this.alertService.createActivityAlert(result.comment_id);
+
+    // await this.eventsGateway.handleAlert(result.comment_id);
+    return result;
+    // return "댓글 작성에 성공하였습니다";
   }
 
   findAll() {

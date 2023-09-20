@@ -20,7 +20,6 @@ import { LevelsModule } from "./levels/levels.module";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { RanksModule } from "./ranks/ranks.module";
 import { LoggerModule } from "./logger/logger.module";
-// import { AlertsModule } from "./alerts/alerts.module";
 import { EventsModule } from "./events/events.module";
 import { UnauthorizedExceptionFilter } from "./filters";
 import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
@@ -30,6 +29,8 @@ import { AppController } from "./app.controller";
 import { CommentsModule } from "./comments/comments.module";
 import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
 import * as redisStore from "cache-manager-redis-store";
+import { AlertModule } from "./alert/alert.module";
+
 @Module({
   imports: [
     CacheModule.register({
@@ -64,6 +65,7 @@ import * as redisStore from "cache-manager-redis-store";
       },
     ]),
     CommentsModule,
+    AlertModule,
   ],
   controllers: [AppController],
   providers: [
