@@ -4,3 +4,4 @@ export * from "./naver.guard";
 export * from "./kakao.guard";
 export * from "./at.guard";
 export * from "./rt.guard";
+export * from "./ws.guard";

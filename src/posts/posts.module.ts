@@ -37,6 +37,7 @@ import { AlertModule } from "src/alert/alert.module";
     //     },
     //   },
     // ]),
+    EventsModule,
   ],
   controllers: [PostsController],
   providers: [

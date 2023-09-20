@@ -9,6 +9,7 @@ import {
   NaverStrategy,
   AtStrategy,
   RtStrategy,
+  WsJwtStrategy,
 } from "./strategy";
 import { UsersModule } from "src/users/users.module";
 import { HttpModule } from "@nestjs/axios";
@@ -36,7 +37,9 @@ import { LoggerModule } from "src/logger/logger.module";
     AtStrategy,
     RtStrategy,
     Logger,
+    WsJwtStrategy,
   ],
   controllers: [AuthController],
+  exports: [AtStrategy, WsJwtStrategy],
 })
 export class AuthModule {}

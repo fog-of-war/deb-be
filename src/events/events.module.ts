@@ -4,6 +4,8 @@ import { LoggerModule } from "src/logger/logger.module";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { PlacesModule } from "src/places/places.module";
 import { PrismaModule } from "src/prisma/prisma.module";
+import { AtStrategy } from "src/auth/strategy";
+import { AuthModule } from "src/auth/auth.module";
 
 @Module({
   providers: [EventsGateway],
@@ -21,7 +23,8 @@ import { PrismaModule } from "src/prisma/prisma.module";
         },
       },
     ]),
+    AuthModule,
   ],
-  exports: [EventsGateway],
+  exports: [EventsGateway, AuthModule], // AuthModule을 export
 })
 export class EventsModule {}
