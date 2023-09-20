@@ -1,7 +1,5 @@
-# 라즈베리 파이용 Node.js 이미지를 사용
-FROM arm32v7/node:18-alpine AS development
-
-RUN apk add --no-cache python3 py3-pip make g++
+# 개발용 스테이지
+FROM node:18-alpine AS development
 
 WORKDIR /app
 
@@ -14,17 +12,52 @@ RUN npm install
 # 생성된 Prisma 파일 복사
 COPY prisma ./prisma/
 
+# 환경 변수 복사
+ARG DB_HOST
+ARG DB_USER
+ARG DB_PASSWORD
+ARG DB_NAME
+ARG DB_PORT
+ARG DATABASE_URL
+ARG JWT_SECRET
+ARG GOOGLE_OAUTH_ID
+ARG GOOGLE_OAUTH_SECRET
+ARG KAKAO_CLIENT_ID
+ARG NAVER_CLIENT_ID
+ARG NAVER_CLIENT_PW
+ARG GOOGLE_REDIRECT_URL
+ARG KAKAO_REDIRECT_URL
+ARG NAVER_REDIRECT_URL
+ENV DB_HOST=$DB_HOST
+ENV DB_USER=$DB_USER
+ENV DB_PASSWORD=$DB_PASSWORD
+ENV DB_NAME=$DB_NAME
+ENV DB_PORT=$DB_PORT
+ENV DATABASE_URL=$DATABASE_URL
+ENV JWT_SECRET=$JWT_SECRET
+ENV GOOGLE_OAUTH_ID=$GOOGLE_OAUTH_ID
+ENV GOOGLE_OAUTH_SECRET=$GOOGLE_OAUTH_SECRET
+ENV KAKAO_CLIENT_ID=$KAKAO_CLIENT_ID
+ENV NAVER_CLIENT_ID=$NAVER_CLIENT_ID
+ENV NAVER_CLIENT_PW=$NAVER_CLIENT_PW
+ENV GOOGLE_REDIRECT_URL=$GOOGLE_REDIRECT_URL
+ENV KAKAO_REDIRECT_URL=$KAKAO_REDIRECT_URL
+ENV NAVER_REDIRECT_URL=$NAVER_REDIRECT_URL
+
 # tsconfig.json 파일 복사
 COPY tsconfig.json ./
 
 # 소스 코드 복사
 COPY . .
 
-# Prisma 파일 생성
-# RUN npx prisma migrate deploy
+# # Prisma 파일 생성
+# RUN npx prisma generate
+
+# # Prisma 파일 생성
+# RUN npx prisma migrate dev 
 
 # 서버를 포트 5000으로 실행하도록 설정
 EXPOSE 5000
 
 # 마이그레이션을 포함하여 시작 스크립트 실행
-CMD ["npm", "run", "build"]
+CMD ["npm", "run", "start:migrate:prod"]
