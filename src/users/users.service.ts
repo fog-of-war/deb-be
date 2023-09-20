@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, UseInterceptors } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import {
   ChangeUserTitleDto,
@@ -9,13 +9,16 @@ import {
 import { BadgesService } from "../badges/badges.service";
 // import { User } from "@prisma/client";
 import { RanksService } from "src/ranks/ranks.service";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly badgesService: BadgesService,
-    private readonly ranksService: RanksService
+    private readonly ranksService: RanksService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
   ) {}
   async editUser(userId: number, dto: EditUserDto) {
     const user = await this.prisma.user.update({
@@ -52,6 +55,14 @@ export class UsersService {
     return user;
   }
   async findUserById(user_id: number): Promise<any | null> {
+    // 먼저 캐시에서 데이터를 가져오려고 시도합니다.
+    const cachedItem = await this.cacheManager.get(`cached_item_${user_id}`);
+    console.log("Cached result found", cachedItem);
+    // 캐시에서 데이터가 있으면 해당 데이터를 반환합니다.
+    if (cachedItem) {
+      console.log("Cached result found", cachedItem);
+      return cachedItem;
+    }
     const user = await this.prisma.user.findFirst({
       where: { user_id: user_id, user_is_deleted: false },
       select: {
@@ -68,8 +79,16 @@ export class UsersService {
         user_authored_posts: true,
       },
     });
-    // 랭킹 업데이트 로직 호출
-    // await this.ranksService.getUserRank(user_id);
+
+    // 데이터를 캐시에 저장합니다.
+    if (user) {
+      const cache = await this.cacheManager.set(
+        `cached_item_${user_id}`,
+        user,
+        30
+      );
+      console.log("캐시저장완료", cache);
+    }
     return user;
   }
 
@@ -105,6 +124,12 @@ export class UsersService {
   }
 
   async findUserBadges(userId: number) {
+    const cachedItem = await this.cacheManager.get(`user_badges_${userId}`);
+    if (cachedItem) {
+      console.log("Cached badges found", cachedItem);
+      return cachedItem;
+    }
+
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId, user_is_deleted: false },
       select: {
@@ -112,6 +137,13 @@ export class UsersService {
         user_selected_badge: true,
       },
     });
+
+    // 데이터를 캐시에 저장합니다.
+    if (user) {
+      await this.cacheManager.set(`user_badges_${userId}`, user, 10);
+      console.log("캐시 저장", user);
+    }
+
     return user;
   }
 
@@ -129,6 +161,14 @@ export class UsersService {
 
   async getMyVisitedRegionCount(userId: number) {
     try {
+      const cachedItem = await this.cacheManager.get(
+        `user_visited_regions_${userId}`
+      );
+      if (cachedItem) {
+        console.log("Cached visited regions found", cachedItem);
+        return cachedItem;
+      }
+
       const result = await this.prisma.user.findFirst({
         where: { user_id: userId },
         select: { user_visited_places: { include: { visited_place: true } } },
@@ -148,6 +188,15 @@ export class UsersService {
           regionToUpdate.region_visited_count++;
         }
       });
+
+      // 데이터를 캐시에 저장합니다.
+      await this.cacheManager.set(
+        `user_visited_regions_${userId}`,
+        regionsWithVisitedCount,
+        30
+      );
+      console.log("캐시 저장", regionsWithVisitedCount);
+
       return regionsWithVisitedCount;
     } catch (err) {
       console.log(err);

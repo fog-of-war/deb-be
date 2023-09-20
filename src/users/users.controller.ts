@@ -8,10 +8,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Patch,
-  Post,
   Res,
   UnprocessableEntityException,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 // import { User } from "@prisma/client";
 import { GetCurrentUserId, GetUser } from "../auth/decorator";
@@ -32,7 +32,16 @@ import {
   RegionWithVisitedCountDto,
 } from "./responses";
 import { LoggerService } from "src/logger/logger.service";
+import {
+  CACHE_MANAGER,
+  CacheInterceptor,
+  CacheKey,
+  CacheTTL,
+} from "@nestjs/cache-manager";
 
+@UseInterceptors(CacheInterceptor)
+@CacheKey("users_route")
+@CacheTTL(60)
 @ApiTags("users")
 @UseGuards(ATGuard)
 @Controller("users")
@@ -53,7 +62,7 @@ export class UsersController {
   async getMe(@GetCurrentUserId() userId: number) {
     const result = await this.userService.findUserById(userId["sub"]);
     this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
-    this.logger.log("자신의 회원정보 호출 결과", result);
+    // this.logger.log("자신의 회원정보 호출 결과", result);
     return result;
   }
 
@@ -68,7 +77,7 @@ export class UsersController {
   async getMyPage(@GetCurrentUserId() userId: number) {
     const result = await this.userService.findUserById(userId["sub"]);
     this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
-    this.logger.log("자신의 회원정보 호출 결과", result);
+    // this.logger.log("자신의 회원정보 호출 결과", result);
     return result;
   }
 

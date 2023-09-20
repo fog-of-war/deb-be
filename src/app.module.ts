@@ -23,14 +23,19 @@ import { LoggerModule } from "./logger/logger.module";
 // import { AlertsModule } from "./alerts/alerts.module";
 import { EventsModule } from "./events/events.module";
 import { UnauthorizedExceptionFilter } from "./filters";
-import { APP_FILTER } from "@nestjs/core";
+import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { AppService } from "./app.service";
 import { AppController } from "./app.controller";
-import { CommentsModule } from './comments/comments.module';
-
+import { CommentsModule } from "./comments/comments.module";
+import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
+import * as redisStore from "cache-manager-redis-store";
 @Module({
   imports: [
+    CacheModule.register({
+      store: redisStore,
+      socket: { host: "redis_container", port: 6379 },
+    }),
     ConfigModule.forRoot({ isGlobal: true }),
     PlacesModule,
     UsersModule,
@@ -65,6 +70,10 @@ import { CommentsModule } from './comments/comments.module';
       provide: APP_FILTER,
       scope: Scope.REQUEST,
       useClass: UnauthorizedExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
     },
     AppService,
   ],
