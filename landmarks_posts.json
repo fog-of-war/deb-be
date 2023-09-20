@@ -1,41 +1,22 @@
 {
     "코엑스": {
         "state": {
-            "new_level": 1,
             "new_badges": []
         }
     },
     "일자산허브천문공원": {
         "state": {
-            "new_level": 2,
             "new_badges": []
         }
     },
     "국립4.19민주묘지": {
         "state": {
-            "new_badges": [
-                {
-                    "badge_id": 2,
-                    "badge_name": "시민",
-                    "badge_category_id": 1,
-                    "badge_criteria": 3,
-                    "badge_points": 100,
-                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/시민.png"
-                },
-                {
-                    "badge_id": 15,
-                    "badge_name": "석기시대",
-                    "badge_category_id": 5,
-                    "badge_criteria": 1,
-                    "badge_points": 100,
-                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/석기시대.png"
-                }
-            ]
+            "new_badges": []
         }
     },
     "서울식물원": {
         "state": {
-            "new_level": 3,
+            "new_level": 5,
             "new_badges": []
         }
     },
@@ -56,17 +37,7 @@
     },
     "금천체육공원": {
         "state": {
-            "new_level": 4,
-            "new_badges": [
-                {
-                    "badge_id": 9,
-                    "badge_name": "줄넘기",
-                    "badge_category_id": 3,
-                    "badge_criteria": 1,
-                    "badge_points": 100,
-                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/줄넘기.png"
-                }
-            ]
+            "new_badges": []
         }
     },
     "경춘선숲길": {
@@ -100,7 +71,6 @@
     },
     "월드컵공원": {
         "state": {
-            "new_level": 5,
             "new_badges": []
         }
     },
@@ -116,6 +86,7 @@
     },
     "서울숲": {
         "state": {
+            "new_level": 6,
             "new_badges": []
         }
     },
@@ -170,7 +141,6 @@
     },
     "용마폭포공원": {
         "state": {
-            "new_level": 6,
             "new_badges": []
         }
     }

@@ -60,7 +60,6 @@ export class RanksController {
   }
   @Get("/region")
   @ApiOperation({ summary: "모든 구별 랭킹 가져오기" })
-  @ApiParam({ name: "id", description: "해당 구의 아이디" })
   @ApiResponse({
     status: 200,
     description: "",
