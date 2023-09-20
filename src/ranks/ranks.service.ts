@@ -1,11 +1,14 @@
-import { Injectable } from "@nestjs/common";
-import { CreateRankDto } from "./dto/create-rank.dto";
-import { UpdateRankDto } from "./dto/update-rank.dto";
+import { Inject, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
 
 @Injectable()
 export class RanksService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
+  ) {}
 
   async updateRanks() {
     const users = await this.prisma.user.findMany({
@@ -158,15 +161,56 @@ export class RanksService {
   }
 
   async generateUserRankingByAllRegions() {
-    const result = [];
-    for (let i = 1; i <= 25; i++) {
-      const test = { region: undefined, ranking: undefined };
-      test.ranking = (await this.generateUserRankingForRegion(i)).userRanking;
-      test.region = await this.prisma.region.findFirst({
-        where: { region_id: i },
-      });
-      result.push(test); // Store the test result in the result array
+    try {
+      const cachedItem = await this.cacheManager.get(`cached_item_region_rank`);
+
+      if (cachedItem) {
+        console.log("Cached result found");
+        return cachedItem;
+      }
+
+      const result = [];
+
+      for (let i = 1; i <= 25; i++) {
+        const rankItem = { region: undefined, ranking: undefined };
+        rankItem.ranking = (
+          await this.generateUserRankingForRegion(i)
+        ).userRanking;
+        rankItem.region = await this.prisma.region.findFirst({
+          where: { region_id: i },
+        });
+
+        const firstPost = await this.prisma.region.findFirst({
+          where: { region_id: i },
+          include: {
+            region_place: {
+              include: {
+                place_posts: {
+                  take: 1,
+                },
+              },
+            },
+          },
+        });
+
+        if (firstPost?.region_place[0]?.place_posts[0]?.post_image_url) {
+          rankItem.region.region_thumbnail_url =
+            firstPost.region_place[0].place_posts[0].post_image_url;
+        }
+
+        result.push(rankItem);
+      }
+
+      if (result.length > 0) {
+        await this.cacheManager.set(`cached_item_region_rank`, result, 30);
+        console.log("캐시 저장 완료");
+      }
+
+      return result;
+    } catch (error) {
+      console.error("에러 발생:", error);
+      // 에러 처리 로직 추가
+      throw error;
     }
-    return result;
   }
 }
