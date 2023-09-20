@@ -53,6 +53,7 @@ export class UsersController {
   async getMe(@GetCurrentUserId() userId: number) {
     const result = await this.userService.findUserById(userId["sub"]);
     this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
+    this.logger.log("자신의 회원정보 호출 결과", result);
     return result;
   }
 

@@ -1,1 +1,177 @@
-{}
+{
+    "코엑스": {
+        "state": {
+            "new_level": 1,
+            "new_badges": []
+        }
+    },
+    "일자산허브천문공원": {
+        "state": {
+            "new_level": 2,
+            "new_badges": []
+        }
+    },
+    "국립4.19민주묘지": {
+        "state": {
+            "new_badges": [
+                {
+                    "badge_id": 2,
+                    "badge_name": "시민",
+                    "badge_category_id": 1,
+                    "badge_criteria": 3,
+                    "badge_points": 100,
+                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/시민.png"
+                },
+                {
+                    "badge_id": 15,
+                    "badge_name": "석기시대",
+                    "badge_category_id": 5,
+                    "badge_criteria": 1,
+                    "badge_points": 100,
+                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/석기시대.png"
+                }
+            ]
+        }
+    },
+    "서울식물원": {
+        "state": {
+            "new_level": 3,
+            "new_badges": []
+        }
+    },
+    "서울대학교 관악캠퍼스": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "어린이대공원": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "신도림테크노마트": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "금천체육공원": {
+        "state": {
+            "new_level": 4,
+            "new_badges": [
+                {
+                    "badge_id": 9,
+                    "badge_name": "줄넘기",
+                    "badge_category_id": 3,
+                    "badge_criteria": 1,
+                    "badge_points": 100,
+                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/줄넘기.png"
+                }
+            ]
+        }
+    },
+    "경춘선숲길": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "도봉산": {
+        "state": {
+            "new_badges": [
+                {
+                    "badge_id": 3,
+                    "badge_name": "모험가",
+                    "badge_category_id": 1,
+                    "badge_criteria": 10,
+                    "badge_points": 100,
+                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/모험가.png"
+                }
+            ]
+        }
+    },
+    "세종대왕기념관": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "노량진 수산시장": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "월드컵공원": {
+        "state": {
+            "new_level": 5,
+            "new_badges": []
+        }
+    },
+    "독립문": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "예술의전당": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "서울숲": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "정릉": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "롯데월드타워": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "목동아이스링크": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "63스퀘어": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "남산타워": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "진관사": {
+        "state": {
+            "new_badges": [
+                {
+                    "badge_id": 16,
+                    "badge_name": "한능검",
+                    "badge_category_id": 5,
+                    "badge_criteria": 5,
+                    "badge_points": 100,
+                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/한능검.png"
+                }
+            ]
+        }
+    },
+    "광화문": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "숭례문": {
+        "state": {
+            "new_badges": []
+        }
+    },
+    "용마폭포공원": {
+        "state": {
+            "new_level": 6,
+            "new_badges": []
+        }
+    }
+}
