@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   ParseIntPipe,
+  UseInterceptors,
 } from "@nestjs/common";
 import { RanksService } from "./ranks.service";
 import { CreateRankDto } from "./dto/create-rank.dto";
@@ -27,6 +28,12 @@ import {
   RegionRanking,
 } from "./responses";
 import { identity } from "rxjs";
+import {
+  CACHE_MANAGER,
+  CacheInterceptor,
+  CacheKey,
+  CacheTTL,
+} from "@nestjs/cache-manager";
 
 @ApiTags("ranks")
 @Controller("ranks")
@@ -58,7 +65,8 @@ export class RanksController {
     const result = await this.ranksService.getUserRank(userId["sub"]);
     return result;
   }
-
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(5)
   @Get("/region")
   @ApiOperation({ summary: "모든 구별 랭킹 가져오기" })
   @ApiResponse({
@@ -71,6 +79,8 @@ export class RanksController {
     return result;
   }
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(5)
   @Get("/region/:id")
   @ApiOperation({ summary: "구별 랭킹 가져오기" })
   @ApiParam({ name: "id", description: "해당 구의 아이디" })

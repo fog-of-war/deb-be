@@ -71,10 +71,10 @@ import * as redisStore from "cache-manager-redis-store";
       scope: Scope.REQUEST,
       useClass: UnauthorizedExceptionFilter,
     },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: CacheInterceptor,
+    // },
     AppService,
   ],
 })
