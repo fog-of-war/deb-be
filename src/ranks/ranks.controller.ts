@@ -58,6 +58,7 @@ export class RanksController {
     const result = await this.ranksService.getUserRank(userId["sub"]);
     return result;
   }
+
   @Get("/region")
   @ApiOperation({ summary: "모든 구별 랭킹 가져오기" })
   @ApiResponse({

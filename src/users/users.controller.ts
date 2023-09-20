@@ -57,6 +57,21 @@ export class UsersController {
     return result;
   }
 
+  @Get("me/mypage")
+  @ApiOperation({ summary: "나의 정보 가져오기/ 마이페이지, 메인페이지 사용" })
+  @ApiBearerAuth("access_token")
+  @ApiResponse({
+    status: 200,
+    description: "",
+    type: GetUserResponse, // 반환 모델을 지정
+  })
+  async getMyPage(@GetCurrentUserId() userId: number) {
+    const result = await this.userService.findUserById(userId["sub"]);
+    this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
+    this.logger.log("자신의 회원정보 호출 결과", result);
+    return result;
+  }
+
   @Patch("me")
   @UseGuards(ATGuard)
   @ApiOperation({
