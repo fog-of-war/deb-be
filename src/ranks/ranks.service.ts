@@ -51,6 +51,7 @@ export class RanksService {
               user_nickname: true,
               user_image_url: true,
               user_points: true,
+              user_badges: true,
             },
           });
           return {
@@ -58,6 +59,7 @@ export class RanksService {
             user_nickname: user.user_nickname,
             user_image_url: user.user_image_url,
             user_points: user.user_points,
+            user_badges_count: user.user_badges.length,
             rank: userRank.rank,
           };
         })
