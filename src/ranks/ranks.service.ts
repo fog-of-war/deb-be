@@ -160,12 +160,33 @@ export class RanksService {
   async generateUserRankingByAllRegions() {
     const result = [];
     for (let i = 1; i <= 25; i++) {
-      const test = { region: undefined, ranking: undefined };
-      test.ranking = (await this.generateUserRankingForRegion(i)).userRanking;
-      test.region = await this.prisma.region.findFirst({
+      const rankItem = { region: undefined, ranking: undefined };
+      rankItem.ranking = (
+        await this.generateUserRankingForRegion(i)
+      ).userRanking;
+      rankItem.region = await this.prisma.region.findFirst({
         where: { region_id: i },
       });
-      result.push(test); // Store the test result in the result array
+
+      const firstPost = await this.prisma.region.findFirst({
+        where: { region_id: i },
+        include: {
+          region_place: {
+            include: {
+              place_posts: {
+                take: 1,
+              },
+            },
+          },
+        },
+      });
+
+      if (firstPost?.region_place[0]?.place_posts[0]?.post_image_url) {
+        rankItem.region.region_thumbnail_url =
+          firstPost.region_place[0].place_posts[0].post_image_url;
+      }
+
+      result.push(rankItem);
     }
     return result;
   }
