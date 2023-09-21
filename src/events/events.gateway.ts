@@ -29,36 +29,44 @@ import { EventsService } from "./events.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { onlineMap } from "./online";
 import { WsAuthGuard } from "src/auth/guard";
+import { ServerToClientEvents } from "./types";
 
 //ws://localhost:5000/v1/ws-alert postman 으로 성공
-
-@UseGuards(WsAuthGuard)
-@WebSocketGateway({
-  cors: {
-    origin: "*",
-  },
-  namespace: /\/ws-.+/,
-  // "namespace" 는 게임으로 따지면 채널, "room"은 방
-  // 슬랙 워크스페이스같은걸 네임스페이스로 쓰고, room 을 채널로 쓸거당
-})
+@WebSocketGateway()
 @Injectable()
-// implements 붙여주면 아래 메서드를  필수로 구현할수 있게 검사해주는 용도로 좋다
 export class EventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()
-  public server: Server;
+  public server: Server<any, ServerToClientEvents>;
   // socket.io 서버로 웹소켓 서버를 하나 만든다(프로퍼티로)
-  constructor(
-    private logger: LoggerService,
-    private prisma: PrismaService // private atStrategy: AtStrategy, // private atGuard: ATGuard
-  ) {}
+  constructor(private logger: LoggerService) {}
 
   afterInit(server: Server): any {
-    this.logger.log("🐤웹소켓 초기화");
+    this.logger.log("웹소켓 초기화");
   }
 
-  /** 초기화 코드 */
+  @SubscribeMessage("message")
+  handleMessage(client: any, @MessageBody() payload: any): any {
+    return "hello";
+  }
+
+  sendMessage(message?: any): void {
+    this.server.emit("message", message);
+  }
+
+  /**
+   *
+   *
+   *
+   *
+   * 초기화 코드
+   *
+   *
+   *
+   *
+   *
+   */
   handleConnection(@ConnectedSocket() socket: Socket) {
     this.logger.log(
       `🐤웹소켓 연결 현재 네임스페이스: ${socket.nsp.name}, ${socket.id}`
@@ -79,22 +87,10 @@ export class EventsGateway
     newNamespace.emit("onlineList", Object.values(onlineMap[socket.nsp.name]));
   }
 
-  @SubscribeMessage("error")
-  handleErrorMessage(@MessageBody() error: string): void {
-    console.error("🐤웹소켓 오류:", error);
-    this.server.emit("🥺error", error);
-  }
-
-  @SubscribeMessage("login")
-  async handleLogin(
-    @MessageBody() data,
-    @ConnectedSocket() socket: Socket
-  ): Promise<any> {
-    console.log(socket.handshake.headers);
-    const user = socket?.handshake as any;
-    console.log(user);
-    console.log("유효한 토큰입니다. 연결 허용");
-  }
+  // @SubscribeMessage("error")
+  // handleErrorMessage(@MessageBody() error: string): void {
+  //   this.server.emit("error", error);
+  // }
 }
 
 /** ------------------ */
@@ -121,7 +117,16 @@ export class EventsGateway
 //   });
 //   console.log("result post alert event:", result);
 // }
-
+// @SubscribeMessage("login")
+// async handleLogin(
+//   @MessageBody() data,
+//   @ConnectedSocket() socket: Socket
+// ): Promise<any> {
+//   console.log(socket.handshake.headers);
+//   const user = socket?.handshake as any;
+//   console.log(user);
+//   console.log("유효한 토큰입니다. 연결 허용");
+// }
 // @SubscribeMessage("send_activity_alert")
 // async handleActivityAlert(@MessageBody() data: any): Promise<any> {
 //   console.log("Received activity alert event:", typeof data);
@@ -194,5 +199,57 @@ export class EventsGateway
 //   } catch (error) {
 //     // 예외 처리
 //     throw error; // 예외를 다시 던지거나, 에러 메시지를 로깅하거나, 적절한 에러 응답을 반환할 수 있습니다.
+//   }
+// }
+// @UseGuards(WsAuthGuard)
+// @WebSocketGateway({
+//   cors: {
+//     origin: "*",
+//   },
+//   namespace: /\/ws-.+/,
+//   // "namespace" 는 게임으로 따지면 채널, "room"은 방
+//   // 슬랙 워크스페이스같은걸 네임스페이스로 쓰고, room 을 채널로 쓸거당
+// })
+// @Injectable()
+// // implements 붙여주면 아래 메서드를  필수로 구현할수 있게 검사해주는 용도로 좋다
+// export class EventsGateway
+//   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+// {
+//   @WebSocketServer()
+//   public server: Server;
+//   // socket.io 서버로 웹소켓 서버를 하나 만든다(프로퍼티로)
+//   constructor(
+//     private logger: LoggerService,
+//     private prisma: PrismaService // private atStrategy: AtStrategy, // private atGuard: ATGuard
+//   ) {}
+
+//   afterInit(server: Server): any {
+//     this.logger.log("🐤웹소켓 초기화");
+//   }
+
+//   /** 초기화 코드 */
+//   handleConnection(@ConnectedSocket() socket: Socket) {
+//     this.logger.log(
+//       `🐤웹소켓 연결 현재 네임스페이스: ${socket.nsp.name}, ${socket.id}`
+//     );
+//     if (!onlineMap[socket.nsp.name]) {
+//       onlineMap[socket.nsp.name] = {};
+//     }
+//     socket.emit(
+//       `🐤웹소켓 연결 현재 네임스페이스: ${socket.nsp.name}, ${socket.id}`,
+//       socket.nsp.name
+//     );
+//   }
+
+//   handleDisconnect(@ConnectedSocket() socket: Socket) {
+//     this.logger.log("🐤웹소켓 연결해제");
+//     const newNamespace = socket.nsp;
+//     delete onlineMap[socket.nsp.name][socket.id];
+//     newNamespace.emit("onlineList", Object.values(onlineMap[socket.nsp.name]));
+//   }
+
+//   @SubscribeMessage("error")
+//   handleErrorMessage(@MessageBody() error: string): void {
+//     this.server.emit("error", error);
 //   }
 // }

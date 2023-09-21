@@ -11,16 +11,18 @@ export class AlertService {
 
   async createNotifyAlert(id: number) {
     const data = { alert_place_id: id, alert_type: "NOTIFY" as Type };
-    const result = await this.prisma.alert.create({ data: data });
-    await this.makePostAlertMessage(result);
-    console.log(result);
+    const alert = await this.prisma.alert.create({ data: data });
+    const result = await this.makePostAlertMessage(id);
+    this.eventsGateway.sendMessage(result);
+    return result;
   }
 
   async createActivityAlert(id: number) {
     const data = { alert_comment_id: id, alert_type: "ACTIVITY" as Type };
-    const result = await this.prisma.alert.create({ data: data });
-    await this.makeCommentAlertMessage(id);
-    console.log(result);
+    const alert = await this.prisma.alert.create({ data: data });
+    const result = await this.makeCommentAlertMessage(id);
+    this.eventsGateway.sendMessage(result);
+    return result;
   }
 
   async makePostAlertMessage(placeId) {

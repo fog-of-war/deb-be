@@ -11,6 +11,7 @@ import * as passport from "passport";
 import { PrismaService } from "./prisma/prisma.service";
 import { LoggerService } from "./logger/logger.service";
 import { UnauthorizedExceptionFilter } from "./filters";
+import { EventsGateway } from "./events/events.gateway";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -57,6 +58,9 @@ async function bootstrap() {
   const prismaService = app.get(PrismaService);
   await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
   app.use(passport.initialize());
+
+  const eventGateway = app.get(EventsGateway);
+  setInterval(() => eventGateway.sendMessage(), 2000);
 
   const config = new DocumentBuilder()
     .setTitle("fog of war example")
