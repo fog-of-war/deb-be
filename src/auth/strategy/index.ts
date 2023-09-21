@@ -4,4 +4,4 @@ export * from "./kakao.strategy";
 export * from "./naver.strategy";
 export * from "./at.strategy";
 export * from "./rt.strategy";
-export * from "./ws-at.strategy";
+export * from "./ws.strategy";

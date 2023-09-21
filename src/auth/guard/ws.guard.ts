@@ -1,26 +1,35 @@
-import { CanActivate, ExecutionContext, Logger } from "@nestjs/common";
+import { ExecutionContext, Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { AuthGuard } from "@nestjs/passport";
+import { verify } from "jsonwebtoken";
 import { Socket } from "socket.io";
 
-// export class WsAuthGuard extends AuthGuard("wsjwt") {
-//   constructor() {
-//     super();
-//   }
+@Injectable() // 이 데코레이터를 추가하여 싱글톤으로 등록
+export class WsAuthGuard extends AuthGuard("jwt") {
+  private secretKey: string;
 
-//   getRequest(context: ExecutionContext) {
+  constructor(private config: ConfigService) {
+    super();
+    this.secretKey = config.get("AT_SECRET");
+  }
 
-//     console.log("ws-at.guard", context.switchToWs().getClient().handshake);
-//     return context.switchToWs().getClient().handshake;
-//   }
-// }
-export class WsAuthGuard implements CanActivate {
-  canActivate(context: ExecutionContext): any | Promise<any> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     if (context.getType() !== "ws") {
       return true;
     }
     const client: Socket = context.switchToWs().getClient();
+    await WsAuthGuard.validateToken(client); // 인증 메서드에 secretKey를 전달
+    return false;
+  }
+
+  static async validateToken(client: Socket) {
     const { authorization } = client.handshake.headers;
 
-    Logger.log({ authorization }, "i got the auth");
+    if (authorization) {
+      const token: string = authorization.split(" ")[1];
+      const payload = verify(token, "SAMPLE_FOR_COMMIT");
+      console.log("validateToken", payload);
+      return payload;
+    }
   }
 }

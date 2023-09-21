@@ -30,9 +30,16 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { onlineMap } from "./online";
 import { WsAuthGuard } from "src/auth/guard";
 import { ServerToClientEvents } from "./types";
+import { SocketAuthMiddleware } from "src/auth/middlewares";
 
 //ws://localhost:5000/v1/ws-alert postman 으로 성공
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: "*",
+  },
+  namespace: /\/ws-.+/,
+})
+@UseGuards(WsAuthGuard)
 @Injectable()
 export class EventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -42,8 +49,9 @@ export class EventsGateway
   // socket.io 서버로 웹소켓 서버를 하나 만든다(프로퍼티로)
   constructor(private logger: LoggerService) {}
 
-  afterInit(server: Server): any {
+  afterInit(client: Socket): any {
     this.logger.log("웹소켓 초기화");
+    client.use(SocketAuthMiddleware() as any);
   }
 
   @SubscribeMessage("message")
@@ -67,6 +75,7 @@ export class EventsGateway
    *
    *
    */
+
   handleConnection(@ConnectedSocket() socket: Socket) {
     this.logger.log(
       `🐤웹소켓 연결 현재 네임스페이스: ${socket.nsp.name}, ${socket.id}`
@@ -203,9 +212,9 @@ export class EventsGateway
 // }
 // @UseGuards(WsAuthGuard)
 // @WebSocketGateway({
-//   cors: {
-//     origin: "*",
-//   },
+// cors: {
+//   origin: "*",
+// },
 //   namespace: /\/ws-.+/,
 //   // "namespace" 는 게임으로 따지면 채널, "room"은 방
 //   // 슬랙 워크스페이스같은걸 네임스페이스로 쓰고, room 을 채널로 쓸거당
