@@ -48,8 +48,6 @@ export class UsersController {
     private logger: LoggerService
   ) {}
 
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(10)
   @Get("me")
   @ApiOperation({ summary: "나의 정보 가져오기/ 마이페이지, 메인페이지 사용" })
   @ApiBearerAuth("access_token")
@@ -161,8 +159,7 @@ export class UsersController {
       throw new InternalServerErrorException();
     }
   }
-  @UseInterceptors(CacheInterceptor)
-  @CacheTTL(10)
+
   @Get("me/region")
   @ApiOperation({ summary: "사용자가 방문한 구역 정보 및 횟수 전달" }) // API 설명
   @ApiBearerAuth("access_token")

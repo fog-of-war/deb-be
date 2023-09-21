@@ -60,7 +60,12 @@ export class UsersService {
     // 캐시에서 데이터가 있으면 해당 데이터를 반환합니다.
     if (cachedItem) {
       console.log("Cached result found", cachedItem);
-      return cachedItem;
+      if (
+        cachedItem["user_nickname"] !== null &&
+        cachedItem["user_image_url"] !== null
+      ) {
+        return cachedItem;
+      }
     }
     const user = await this.prisma.user.findFirst({
       where: { user_id: user_id, user_is_deleted: false },
@@ -84,7 +89,7 @@ export class UsersService {
       const cache = await this.cacheManager.set(
         `cached_item_${user_id}`,
         user,
-        30
+        5
       );
       console.log("캐시저장완료");
     }
@@ -126,7 +131,12 @@ export class UsersService {
     const cachedItem = await this.cacheManager.get(`user_badges_${userId}`);
     if (cachedItem) {
       console.log("Cached badges found", cachedItem);
-      return cachedItem;
+      if (
+        cachedItem["user_nickname"] !== null &&
+        cachedItem["user_image_url"] !== null
+      ) {
+        return cachedItem;
+      }
     }
 
     const user = await this.prisma.user.findUnique({
@@ -165,7 +175,13 @@ export class UsersService {
       );
       if (cachedItem) {
         console.log("Cached visited regions found");
-        return cachedItem;
+        if (
+          cachedItem["user_nickname"] !== null &&
+          cachedItem["user_image_url"] !== null &&
+          cachedItem["user_visited_regions"] !== null
+        ) {
+          return cachedItem;
+        }
       }
 
       const result = await this.prisma.user.findFirst({
@@ -192,7 +208,7 @@ export class UsersService {
       await this.cacheManager.set(
         `user_visited_regions_${userId}`,
         regionsWithVisitedCount,
-        30
+        5
       );
       console.log("캐시 저장");
 
