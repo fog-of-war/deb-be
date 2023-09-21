@@ -162,12 +162,11 @@ export class RanksService {
 
   async generateUserRankingByAllRegions() {
     try {
-      const cachedItem = await this.cacheManager.get(`cached_item_region_rank`);
-
-      if (cachedItem) {
-        console.log("Cached result found");
-        return cachedItem;
-      }
+      // const cachedItem = await this.cacheManager.get(`cached_item_region_rank`);
+      // if (cachedItem) {
+      //   console.log("Cached result found");
+      //   return cachedItem;
+      // }
 
       const result = [];
 
@@ -201,10 +200,10 @@ export class RanksService {
         result.push(rankItem);
       }
 
-      if (result.length > 0) {
-        await this.cacheManager.set(`cached_item_region_rank`, result, 30);
-        console.log("캐시 저장 완료");
-      }
+      // if (result.length > 0) {
+      //   await this.cacheManager.set(`cached_item_region_rank`, result, 30);
+      //   console.log("캐시 저장 완료");
+      // }
 
       return result;
     } catch (error) {

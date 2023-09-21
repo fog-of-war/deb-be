@@ -59,6 +59,7 @@ export class UsersController {
   async getMe(@GetCurrentUserId() userId: number) {
     const result = await this.userService.findUserById(userId["sub"]);
     this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
+    this.logger.log("자신의 회원정보 호출 결과", result);
     return result;
   }
 
@@ -116,7 +117,6 @@ export class UsersController {
   }
 
   @UseInterceptors(CacheInterceptor)
-  @CacheTTL(10)
   @Get("me/badges")
   @ApiOperation({ summary: "사용자의 소유한 뱃지 조회" }) // API 설명
   @ApiBearerAuth("access_token")

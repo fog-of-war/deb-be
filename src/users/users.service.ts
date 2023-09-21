@@ -59,7 +59,7 @@ export class UsersService {
     const cachedItem = await this.cacheManager.get(`cached_item_${user_id}`);
     // 캐시에서 데이터가 있으면 해당 데이터를 반환합니다.
     if (cachedItem) {
-      console.log("Cached result found");
+      console.log(`cached_item_${user_id}` + "Cached result found");
       if (
         cachedItem["user_nickname"] !== null &&
         cachedItem["user_image_url"] !== null
@@ -89,7 +89,7 @@ export class UsersService {
       const cache = await this.cacheManager.set(
         `cached_item_${user_id}`,
         user,
-        5
+        1000
       );
       console.log("캐시저장완료");
     }
@@ -149,7 +149,7 @@ export class UsersService {
 
     // 데이터를 캐시에 저장합니다.
     if (user) {
-      await this.cacheManager.set(`user_badges_${userId}`, user, 10);
+      await this.cacheManager.set(`user_badges_${userId}`, user, 1000);
       console.log("캐시 저장");
     }
 
@@ -208,7 +208,7 @@ export class UsersService {
       await this.cacheManager.set(
         `user_visited_regions_${userId}`,
         regionsWithVisitedCount,
-        5
+        1000
       );
       console.log("캐시 저장");
 
