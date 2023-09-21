@@ -59,8 +59,8 @@ async function bootstrap() {
   await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
   app.use(passport.initialize());
 
-  const eventGateway = app.get(EventsGateway);
-  setInterval(() => eventGateway.sendMessage(), 2000);
+  // const eventGateway = app.get(EventsGateway);
+  // setInterval(() => eventGateway.sendMessage(), 2000);
 
   const config = new DocumentBuilder()
     .setTitle("fog of war example")
