@@ -35,7 +35,7 @@ import * as redisStore from "cache-manager-redis-store";
     CacheModule.register({
       store: redisStore,
       // socket: { host: "redis://redis", port: 6379 },
-      socket: { host: "localhost", port: 6379 },
+      socket: { host: "redis", port: 6379 },
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     PlacesModule,
