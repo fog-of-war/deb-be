@@ -8,10 +8,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Patch,
-  Post,
   Res,
   UnprocessableEntityException,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 // import { User } from "@prisma/client";
 import { GetCurrentUserId, GetUser } from "../auth/decorator";
@@ -32,6 +32,12 @@ import {
   RegionWithVisitedCountDto,
 } from "./responses";
 import { LoggerService } from "src/logger/logger.service";
+import {
+  CACHE_MANAGER,
+  CacheInterceptor,
+  CacheKey,
+  CacheTTL,
+} from "@nestjs/cache-manager";
 
 @ApiTags("users")
 @UseGuards(ATGuard)
@@ -42,6 +48,8 @@ export class UsersController {
     private logger: LoggerService
   ) {}
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(10)
   @Get("me")
   @ApiOperation({ summary: "나의 정보 가져오기/ 마이페이지, 메인페이지 사용" })
   @ApiBearerAuth("access_token")
@@ -53,7 +61,6 @@ export class UsersController {
   async getMe(@GetCurrentUserId() userId: number) {
     const result = await this.userService.findUserById(userId["sub"]);
     this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
-    this.logger.log("자신의 회원정보 호출 결과", result);
     return result;
   }
 
@@ -68,7 +75,7 @@ export class UsersController {
   async getMyPage(@GetCurrentUserId() userId: number) {
     const result = await this.userService.findUserById(userId["sub"]);
     this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
-    this.logger.log("자신의 회원정보 호출 결과", result);
+    // this.logger.log("자신의 회원정보 호출 결과", result);
     return result;
   }
 
@@ -110,6 +117,8 @@ export class UsersController {
     }
   }
 
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(10)
   @Get("me/badges")
   @ApiOperation({ summary: "사용자의 소유한 뱃지 조회" }) // API 설명
   @ApiBearerAuth("access_token")
@@ -152,7 +161,8 @@ export class UsersController {
       throw new InternalServerErrorException();
     }
   }
-
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(10)
   @Get("me/region")
   @ApiOperation({ summary: "사용자가 방문한 구역 정보 및 횟수 전달" }) // API 설명
   @ApiBearerAuth("access_token")

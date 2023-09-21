@@ -7,7 +7,8 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: shinyubin/fog-be
+
+  IMAGE_NAME: shinyubin/fow-be
 
 jobs:
   build-rasp:
@@ -30,6 +31,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/arm64
+          platforms: linux/amd64
           push: true
-          tags: ${{ env.IMAGE_NAME }}:${{ github.ref_slug }}
+          tags: shinyubin/fow-be:redis
+
