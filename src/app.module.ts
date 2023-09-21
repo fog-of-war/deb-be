@@ -35,7 +35,8 @@ import * as redisStore from "cache-manager-redis-store";
     CacheModule.register({
       store: redisStore,
       // socket: { host: "redis://redis", port: 6379 },
-      socket: { host: "redis", port: 6379 },
+      host: "redis",
+      port: 6379,
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     PlacesModule,
@@ -80,3 +81,4 @@ import * as redisStore from "cache-manager-redis-store";
   ],
 })
 export class AppModule {}
+//  Error: connect ECONNREFUSED 127.0.0.1:6379 at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
