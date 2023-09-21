@@ -1,14 +1,17 @@
 import { Socket } from "socket.io";
-import { WsAuthGuard } from "../guard";
+import { WsStrategy } from "../strategy";
 
 export type SocketIOMiddleware = {
   (client: Socket, next: (err?: Error) => void);
 };
 
-export const SocketAuthMiddleware = (): SocketIOMiddleware => {
+export const SocketAuthMiddleware = (
+  wsStrategy: WsStrategy
+): SocketIOMiddleware => {
   return (client, next) => {
     try {
-      WsAuthGuard.validateToken(client);
+      const { authorization } = client.handshake.headers;
+      wsStrategy.validateToken(authorization);
       next();
     } catch (error) {
       next(error);

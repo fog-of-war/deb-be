@@ -31,6 +31,7 @@ import { onlineMap } from "./online";
 import { WsAuthGuard } from "src/auth/guard";
 import { ServerToClientEvents } from "./types";
 import { SocketAuthMiddleware } from "src/auth/middlewares";
+import { WsStrategy } from "src/auth/strategy";
 
 //ws://localhost:5000/v1/ws-alert postman 으로 성공
 @WebSocketGateway({
@@ -47,11 +48,11 @@ export class EventsGateway
   @WebSocketServer()
   public server: Server<any, ServerToClientEvents>;
   // socket.io 서버로 웹소켓 서버를 하나 만든다(프로퍼티로)
-  constructor(private logger: LoggerService) {}
+  constructor(private logger: LoggerService, private wsStrategy: WsStrategy) {}
 
   afterInit(client: Socket): any {
     this.logger.log("웹소켓 초기화");
-    client.use(SocketAuthMiddleware() as any);
+    client.use(SocketAuthMiddleware(this.wsStrategy) as any);
   }
 
   @SubscribeMessage("message")

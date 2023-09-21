@@ -1,5 +1,5 @@
 import { ExecutionContext, Injectable, Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { WsStrategy } from "../strategy";
 import { AuthGuard } from "@nestjs/passport";
 import { verify } from "jsonwebtoken";
 import { Socket } from "socket.io";
@@ -8,9 +8,8 @@ import { Socket } from "socket.io";
 export class WsAuthGuard extends AuthGuard("jwt") {
   private secretKey: string;
 
-  constructor(private config: ConfigService) {
+  constructor(private wsStrategy: WsStrategy) {
     super();
-    this.secretKey = config.get("AT_SECRET");
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -18,18 +17,17 @@ export class WsAuthGuard extends AuthGuard("jwt") {
       return true;
     }
     const client: Socket = context.switchToWs().getClient();
-    await WsAuthGuard.validateToken(client); // 인증 메서드에 secretKey를 전달
+    const { authorization } = client.handshake.headers;
+    await this.wsStrategy.validateToken(authorization); // 인증 메서드에 secretKey를 전달
     return false;
   }
 
-  static async validateToken(client: Socket) {
-    const { authorization } = client.handshake.headers;
-
-    if (authorization) {
-      const token: string = authorization.split(" ")[1];
-      const payload = verify(token, "SAMPLE_FOR_COMMIT");
-      console.log("validateToken", payload);
-      return payload;
-    }
-  }
+  // static async validateToken(client: Socket) {
+  //   if (authorization) {
+  //     const token: string = authorization.split(" ")[1];
+  //     const payload = verify(token, "SAMPLE_FOR_COMMIT");
+  //     console.log("validateToken", payload);
+  //     return payload;
+  //   }
+  // }
 }

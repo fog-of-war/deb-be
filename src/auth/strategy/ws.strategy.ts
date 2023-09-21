@@ -8,7 +8,7 @@ export class WsStrategy {
   validateToken(authorization: string) {
     if (authorization) {
       const token: string = authorization.split(" ")[1];
-      const payload = verify(token, this.configService.get("JWT_SECRET_KEY"), {
+      const payload = verify(token, this.configService.get("AT_SECRET"), {
         ignoreExpiration: true,
       });
       return payload;
