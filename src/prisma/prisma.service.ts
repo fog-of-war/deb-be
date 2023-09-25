@@ -151,25 +151,29 @@ export class PrismaService extends PrismaClient {
   }
 
   async insertAdminUser() {
-    const user: any = {
-      user_email: "admin@admin.com",
-      user_providerId: "admin",
-      user_image_url: "https://avatars.githubusercontent.com/u/68121478?v=4",
-      user_nickname: "admin",
-      user_points: 0,
-      user_level: 0,
-      user_is_admin: "ADMIN", // BASIC 또는 다른 사용자 역할 값
-      user_selected_badge_id: 1, // 선택한 뱃지 ID
-      user_is_deleted: false,
-    };
-    const createdUser = await this.user.create({
-      data: user,
-    });
+    const user = await this.user.findMany();
+    console.log(user);
+    if (!user) {
+      const admin: any = {
+        user_email: "admin@admin.com",
+        user_providerId: "admin",
+        user_image_url: "https://avatars.githubusercontent.com/u/68121478?v=4",
+        user_nickname: "admin",
+        user_points: 0,
+        user_level: 0,
+        user_is_admin: "ADMIN", // BASIC 또는 다른 사용자 역할 값
+        user_selected_badge_id: 1, // 선택한 뱃지 ID
+        user_is_deleted: false,
+      };
+      const createdUser = await this.user.create({
+        data: admin,
+      });
 
-    if (createdUser) {
-      console.log(
-        `Database has been seeded!\n${JSON.stringify(createdUser, null, 2)}`
-      );
+      if (createdUser) {
+        console.log(
+          `Database has been seeded!\n${JSON.stringify(createdUser, null, 2)}`
+        );
+      }
     }
   }
 }
