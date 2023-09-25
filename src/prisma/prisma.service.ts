@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaClient } from "@prisma/client";
 import * as placesData from "./landmarks.json";
@@ -7,6 +7,7 @@ import * as categories from "./categories.json";
 import * as levels from "./levels.json";
 import * as regions from "./regions.json";
 import * as posts from "./posts.json";
+import { PostsService } from "src/posts/posts.service";
 @Injectable()
 export class PrismaService extends PrismaClient {
   constructor(config: ConfigService) {
@@ -35,6 +36,8 @@ export class PrismaService extends PrismaClient {
         await this.insertBadges();
         // 레벨 삽입 작업
         await this.insertLevels();
+        await this.insertAdminUser();
+        // await this.insertAdminPosts();
       });
     } catch (error) {
       // 트랜잭션 내에서 오류가 발생한 경우 처리
@@ -144,6 +147,29 @@ export class PrismaService extends PrismaClient {
           },
         });
       }
+    }
+  }
+
+  async insertAdminUser() {
+    const user: any = {
+      user_email: "admin@admin.com",
+      user_providerId: "admin",
+      user_image_url: "https://avatars.githubusercontent.com/u/68121478?v=4",
+      user_nickname: "admin",
+      user_points: 0,
+      user_level: 0,
+      user_is_admin: "ADMIN", // BASIC 또는 다른 사용자 역할 값
+      user_selected_badge_id: 1, // 선택한 뱃지 ID
+      user_is_deleted: false,
+    };
+    const createdUser = await this.user.create({
+      data: user,
+    });
+
+    if (createdUser) {
+      console.log(
+        `Database has been seeded!\n${JSON.stringify(createdUser, null, 2)}`
+      );
     }
   }
 }

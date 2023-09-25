@@ -12,6 +12,8 @@ import { PrismaService } from "./prisma/prisma.service";
 import { LoggerService } from "./logger/logger.service";
 import { UnauthorizedExceptionFilter } from "./filters";
 import { EventsGateway } from "./events/events.gateway";
+import { PostsService } from "./posts/posts.service";
+import * as posts from "./prisma/posts.json";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -57,6 +59,22 @@ async function bootstrap() {
   app.use(cookieParser());
   const prismaService = app.get(PrismaService);
   await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
+
+  async function insertAdminPosts() {
+    const postsData = posts as Array<any>; // JSON 파일을 배열로 변환
+
+    const isExist = await postsService.getPosts();
+    if (isExist.length == 0) {
+      for (const post of postsData) {
+        await postsService.createPost(1, post);
+      }
+    }
+  }
+
+  const postsService = app.get(PostsService);
+
+  insertAdminPosts();
+
   app.use(passport.initialize());
 
   // const eventGateway = app.get(EventsGateway);

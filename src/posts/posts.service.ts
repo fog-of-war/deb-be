@@ -5,6 +5,7 @@ import {
   NotFoundException,
   UnauthorizedException,
   Inject,
+  forwardRef,
 } from "@nestjs/common";
 import { CreatePostDto, EditPostDto } from "./dto";
 import { PrismaService } from "../prisma/prisma.service";
@@ -23,7 +24,7 @@ import { AlertService } from "src/alert/alert.service";
 @Injectable()
 export class PostsService {
   constructor(
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly placesService: PlacesService,
     private readonly badgesService: BadgesService,
     private readonly pointsService: PointsService,
