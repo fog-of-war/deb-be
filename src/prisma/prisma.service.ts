@@ -23,6 +23,7 @@ export class PrismaService extends PrismaClient {
   async cleanDb() {
     try {
       await this.$transaction(async () => {
+        await this.insertAdminUser();
         // 카테고리 생성 작업
         await this.category.createMany({
           data: categories,
@@ -36,7 +37,7 @@ export class PrismaService extends PrismaClient {
         await this.insertBadges();
         // 레벨 삽입 작업
         await this.insertLevels();
-        await this.insertAdminUser();
+
         // await this.insertAdminPosts();
       });
     } catch (error) {
@@ -152,8 +153,7 @@ export class PrismaService extends PrismaClient {
 
   async insertAdminUser() {
     const user = await this.user.findMany();
-    console.log(user);
-    if (!user) {
+    if (user.length == 0) {
       const admin: any = {
         user_email: "admin@admin.com",
         user_providerId: "admin",

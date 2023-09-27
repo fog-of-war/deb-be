@@ -56,21 +56,25 @@ async function bootstrap() {
     })
   );
   app.useGlobalFilters(new UnauthorizedExceptionFilter());
-  app.use(cookieParser());
   const prismaService = app.get(PrismaService);
   await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
 
   async function insertAdminPosts() {
-    const postsData = posts as Array<any>; // JSON 파일을 배열로 변환
+    try {
+      const postsData = posts as Array<any>; // JSON 파일을 배열로 변환
 
-    const isExist = await postsService.getPosts();
-    if (isExist.length == 0) {
-      for (const post of postsData) {
-        await postsService.createPost(1, post);
+      const isExist = await postsService.getPosts();
+      if (isExist.length == 0) {
+        for (const post of postsData) {
+          await postsService.createPost(1, post);
+        }
       }
+    } catch (error) {
+      // 에러 처리 코드를 여기에 추가합니다.
+      console.error("insertAdminPosts 함수에서 에러 발생:", error);
+      // 필요한 경우 에러를 더 자세히 처리할 수 있습니다.
     }
   }
-
   const postsService = app.get(PostsService);
 
   insertAdminPosts();

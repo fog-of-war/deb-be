@@ -89,7 +89,7 @@ export class PostsService {
       await this.badgesService.checkAndAssignBadge(userId);
       await this.ranksService.updateRanks();
       // await this.eventsGateway.handleAlertEvent(placeId);
-      await this.alertService.createNotifyAlert(placeId);
+      // await this.alertService.createNotifyAlert(placeId);
       // const messageObservable = this.alertClient.send({ cmd: 'greeting-async' }, 'Progressive Coder');
       // const message = await messageObservable.toPromise();
       // const eventObservabl e= this.alertClient.emit(
@@ -115,16 +115,13 @@ export class PostsService {
       const user = await this.prisma.user.findFirst({
         where: { user_id: userId, user_is_deleted: false },
       });
-
       if (!user) {
         throw new UnauthorizedException();
       }
-
       const userStateBefore = await this.usersService.findUserById(userId);
       const existingPlace = await this.findPlaceByCoordinates(dto.place_name);
       let post;
       let placeId;
-
       if (existingPlace) {
         await this.createPostWithExistingPlace(existingPlace, userId, dto);
         placeId = existingPlace.place_id;
@@ -145,7 +142,6 @@ export class PostsService {
       return result;
     } catch (error) {
       if (error) {
-        // Prisma에서 발생한 에러 처리
         throw new BadRequestException("게시물 생성 중 오류가 발생했습니다.");
       }
       throw error; // 다른 예외는 그대로 던짐
