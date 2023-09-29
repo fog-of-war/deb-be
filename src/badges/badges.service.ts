@@ -71,7 +71,7 @@ export class BadgesService {
   /**
    *  유저가 방문한 장소 아이디 추출하여 배열 생성
    */
-  extractVisitedPlacesId(user) {
+  async extractVisitedPlacesId(user) {
     try {
       const result = user.user_visited_places.map((item) => {
         return item.visited_place_id;
@@ -159,7 +159,7 @@ export class BadgesService {
   /**
    *  유저가 해당 뱃지를 이미 보유하고 있는지 확인
    */
-  checkUserBadges(user) {
+  async checkUserBadges(user) {
     try {
       const result = user.user_badges.map((badge) => badge.badge_id);
       return result;
@@ -227,7 +227,9 @@ export class BadgesService {
       const user = await this.getUsersBadgesAndVisitedPlaceInfo(userId);
 
       // 2 유저가 방문한 장소 아이디 추출하여 배열 생성
-      const user_visited_places_id_lists = this.extractVisitedPlacesId(user);
+      const user_visited_places_id_lists = await this.extractVisitedPlacesId(
+        user
+      );
       this.logger.log(user_visited_places_id_lists);
 
       // 3 유저가 방문한 장소 아이디 배열을 사용하여 장소 정보 조회
@@ -238,19 +240,20 @@ export class BadgesService {
 
       // 4 유저가 방문한 각 장소의 categoryId를 기반으로 카운트 증가
       const categoryIdCountsFromUserVisitedPlaces =
-        this.countPlacesCategory(user_visited_places);
+        await this.countPlacesCategory(user_visited_places);
       this.logger.log(categoryIdCountsFromUserVisitedPlaces);
 
       // 5 장소의 카테고리와 관련된 뱃지 정보 가져오기
-      const badgeIdsByCategoryId = this.getBadgesIdByCategoryId(
+      const badgeIdsByCategoryId = await this.getBadgesIdByCategoryId(
         categoryIdCountsFromUserVisitedPlaces,
         user_visited_places
       );
       this.logger.log(badgeIdsByCategoryId);
 
       // 6 유저가 뱃지를 이미 보유하고 있는지 확인
-      const userBadgeIds = this.checkUserBadges(user);
+      const userBadgeIds = await this.checkUserBadges(user);
       this.logger.log(userBadgeIds);
+
       // 7
       await this.processBadgeAwards(
         badgeIdsByCategoryId,

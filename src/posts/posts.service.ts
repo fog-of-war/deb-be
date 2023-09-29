@@ -87,9 +87,8 @@ export class PostsService {
       await this.placesService.updatePlaceStarRating(placeId);
       await this.pointsService.assignPoints(userId, placeId);
       await this.levelsService.updateLevel(userId);
-      const result = await this.badgesService.checkAndAssignBadge(userId);
-      console.log("hiu");
-      console.log(result);
+      await this.badgesService.checkAndAssignBadge(userId);
+
       await this.ranksService.updateRanks();
       // await this.eventsGateway.handleAlertEvent(placeId);
       await this.alertService.createNotifyAlert(placeId);
