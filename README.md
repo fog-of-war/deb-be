@@ -2,7 +2,7 @@
 
 docker-compose.yml 로 postgresql 과 redis 컨테이너 실행가능합니다.
 
-env 목록
+## env 목록
 
 ```
 DB_HOST={}
@@ -22,4 +22,12 @@ KAKAO_REDIRECT_URL={}
 NAVER_REDIRECT_URL={}
 AT_SECRET={}
 RT_SECRET={}
+```
+
+## 게시물 및 댓글 작성 방법
+
+```
+// 각각의 파일에서 "Bearer YOUR_ACCESS_TOKEN" 에 엑세스 토큰을 채워주세요
+node send_posts.js
+node send_comments.js
 ```
