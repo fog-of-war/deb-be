@@ -17,9 +17,9 @@ import * as redisStore from "cache-manager-redis-store";
     LoggerModule,
     CacheModule.register({
       store: redisStore,
-      socket: { host: "redis", port: 6379 },
-      // host: "redis",
-      // port: 6379,
+      // socket: { host: "redis", port: 6379 },
+      host: "redis",
+      port: 6379,
     }),
   ],
   controllers: [UsersController],

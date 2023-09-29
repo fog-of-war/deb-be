@@ -35,9 +35,9 @@ import { AlertModule } from "./alert/alert.module";
   imports: [
     CacheModule.register({
       store: redisStore,
-      socket: { host: "redis", port: 6379 },
-      // host: "redis",
-      // port: 6379,
+      // socket: { host: "redis", port: 6379 },
+      host: "redis",
+      port: 6379,
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     PlacesModule,
