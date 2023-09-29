@@ -4,6 +4,8 @@ docker-compose.yml 로 postgresql 과 redis 컨테이너 실행가능합니다.
 
 ## env 목록
 
+env.development 를 생성한 후 환경변수 추가
+
 ```
 DB_HOST={}
 DB_USER={}

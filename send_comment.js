@@ -62,7 +62,7 @@ async function main() {
     }
   }
 
-  const filename = "landmarks_posts.json";
+  const filename = "send_posts.json";
   fs.writeFileSync(filename, JSON.stringify(dataToSave, null, 4), "utf-8");
   console.log(`All data saved to ${filename}`);
 }

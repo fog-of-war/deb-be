@@ -45,12 +45,12 @@ async function main() {
   for (const commentObj of commentsArray) {
     const data = await fetchData(commentObj);
     if (data) {
-      dataToSave[commentObj.comment_text] = data; // place_name 대신 comment_text를 사용
+      dataToSave[commentObj.comment_text] = data;
       console.log(`Fetched data for ${commentObj.comment_text}`);
     }
   }
 
-  const filename = "comments.json";
+  const filename = "send_comments.json";
   fs.writeFileSync(filename, JSON.stringify(dataToSave, null, 4), "utf-8");
   console.log(`All data saved to ${filename}`);
 }
