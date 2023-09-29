@@ -89,7 +89,7 @@ export class PostsService {
       await this.badgesService.checkAndAssignBadge(userId);
       await this.ranksService.updateRanks();
       // await this.eventsGateway.handleAlertEvent(placeId);
-      // await this.alertService.createNotifyAlert(placeId);
+      await this.alertService.createNotifyAlert(placeId);
       // const messageObservable = this.alertClient.send({ cmd: 'greeting-async' }, 'Progressive Coder');
       // const message = await messageObservable.toPromise();
       // const eventObservabl e= this.alertClient.emit(

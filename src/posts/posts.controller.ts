@@ -96,7 +96,7 @@ export class PostsController {
   ) {
     try {
       const result = await this.postService.createPost(userId["sub"], dto);
-      this.logger.log(userId["user_email"], "가 게시물 작성");
+      // this.logger.log(userId["user_email"], "가 게시물 작성");
       res.status(HttpStatus.CREATED).json(result);
     } catch (error) {
       throw new HttpException(
