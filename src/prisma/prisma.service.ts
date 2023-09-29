@@ -23,7 +23,6 @@ export class PrismaService extends PrismaClient {
   async cleanDb() {
     try {
       await this.$transaction(async () => {
-        await this.insertAdminUser();
         // 카테고리 생성 작업
         await this.category.createMany({
           data: categories,
@@ -37,8 +36,8 @@ export class PrismaService extends PrismaClient {
         await this.insertBadges();
         // 레벨 삽입 작업
         await this.insertLevels();
-
-        // await this.insertAdminPosts();
+        // 어드민 유저 삽입 작업
+        await this.insertAdminUser();
       });
     } catch (error) {
       // 트랜잭션 내에서 오류가 발생한 경우 처리
