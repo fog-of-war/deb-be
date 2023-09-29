@@ -6,7 +6,6 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
-import * as cookieParser from "cookie-parser";
 import * as passport from "passport";
 import { PrismaService } from "./prisma/prisma.service";
 import { LoggerService } from "./logger/logger.service";
@@ -16,11 +15,18 @@ import { PostsService } from "./posts/posts.service";
 import * as posts from "./prisma/posts.json";
 
 async function bootstrap() {
+  /** app 초기화 */
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
+  //  bufferLogs 를 true 로 만들면 로그 메시지가 일정량만큼 쌓였을 때 한 번에 출력되므로 로그의 수가 줄어들어 성능에 도움이 될 수 있습니다.
+  /** -------------------- */
 
+  /** logger 설정 */
   app.useLogger(app.get(LoggerService));
+  /** -------------------- */
+
+  /** cors 설정 */
   app.enableCors({
     origin: [
       "http://localhost:3000",
@@ -32,8 +38,13 @@ async function bootstrap() {
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // 인증 정보 허용
   });
+  /** -------------------- */
+
+  /** api 주소 버전을 url 에 바인딩 */
   app.setGlobalPrefix("v1");
-  // app.useGlobalFilters(new UnauthorizedExceptionFilter());
+  /** -------------------- */
+
+  /** classValidator 예외 필터 */
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -55,10 +66,15 @@ async function bootstrap() {
       },
     })
   );
+  /** -------------------- */
+
+  /** 글로벌 예외 필터 */
   app.useGlobalFilters(new UnauthorizedExceptionFilter());
+  /** -------------------- */
+
+  /** Prisma 로 DB에 seeding */
   const prismaService = app.get(PrismaService);
   await prismaService.cleanDb(); // 기존 데이터 삭제 (선택사항)
-
   async function insertAdminPosts() {
     try {
       const postsData = posts as Array<any>; // JSON 파일을 배열로 변환
@@ -76,14 +92,17 @@ async function bootstrap() {
     }
   }
   const postsService = app.get(PostsService);
-
   insertAdminPosts();
+  /** -------------------- */
 
+  /** Passport 설정 */
   app.use(passport.initialize());
+  /** -------------------- */
 
   // const eventGateway = app.get(EventsGateway);
   // setInterval(() => eventGateway.sendMessage(), 2000);
 
+  /** 스웨거 설정 */
   const config = new DocumentBuilder()
     .setTitle("fog of war example")
     .setDescription("The fog of war API description")
@@ -101,6 +120,8 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);
+  /** -------------------- */
+
   await app.listen(5000);
 }
 bootstrap();

@@ -18,16 +18,12 @@ export class WsAuthGuard extends AuthGuard("jwt") {
     }
     const client: Socket = context.switchToWs().getClient();
     const { authorization } = client.handshake.headers;
-    await this.wsStrategy.validateToken(authorization); // 인증 메서드에 secretKey를 전달
-    return false;
+    try {
+      await this.wsStrategy.validateToken(authorization, client); // 인증 메서드에 secretKey를 전달
+      return true; // 인증 성공
+    } catch (error) {
+      console.log(error);
+      return false; // 인증 실패
+    }
   }
-
-  // static async validateToken(client: Socket) {
-  //   if (authorization) {
-  //     const token: string = authorization.split(" ")[1];
-  //     const payload = verify(token, "SAMPLE_FOR_COMMIT");
-  //     console.log("validateToken", payload);
-  //     return payload;
-  //   }
-  // }
 }

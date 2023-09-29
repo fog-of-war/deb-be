@@ -33,10 +33,10 @@ export class CommentsService {
       commented_post_id: commented_post_id,
     };
     const result = await this.prisma.comment.create({ data: data });
-    const message = await this.alertService.createActivityAlert(
-      result.comment_id
-    );
-    await this.eventsGateway.server.to("/ws-react").emit("message", message);
+    // const message = await this.alertService.createActivityAlert(
+    //   result.comment_id
+    // );
+    // await this.eventsGateway.server.to("/ws-react").emit("message", message);
     return result;
     // return "댓글 작성에 성공하였습니다";
   }

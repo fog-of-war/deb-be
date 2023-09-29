@@ -55,14 +55,12 @@ export class UsersService {
     return user;
   }
   async findUserById(user_id: number): Promise<any | null> {
-    console.log(`findUserById 58 user_id ${user_id}`);
+    // console.log(`findUserById 58 user_id ${user_id}`);
     // 먼저 캐시에서 데이터를 가져오려고 시도합니다.
     const cachedItem = await this.cacheManager.get(`cached_item_${user_id}`);
     // 캐시에서 데이터가 있으면 해당 데이터를 반환합니다.
     if (cachedItem) {
-      console.log(
-        `findUserById 64 cached_item_${user_id} ` + "Cached result found"
-      );
+      // console.log(`findUserById 64 cached_item_${user_id} ` + "Cached result found");
       if (
         cachedItem["user_nickname"] !== null &&
         cachedItem["user_image_url"] !== null
@@ -86,8 +84,8 @@ export class UsersService {
         user_authored_posts: true,
       },
     });
-    console.log(`findUserById 89 user`);
-    console.log(user);
+    // console.log(`findUserById 89 user`);
+    // console.log(user);
     // 데이터를 캐시에 저장합니다.
     if (user) {
       const cache = await this.cacheManager.set(

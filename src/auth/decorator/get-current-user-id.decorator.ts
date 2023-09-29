@@ -6,7 +6,7 @@ export const GetCurrentUserId = createParamDecorator(
     const request = context.switchToHttp().getRequest();
     if (!data) {
       const userId = request.user["sub"];
-      console.log("GetCurrentUserId - User ID:", userId); // 사용자 ID를 로깅
+      // console.log("GetCurrentUserId - User ID:", userId); // 사용자 ID를 로깅
       return request.user;
     }
     return request.user["sub"];

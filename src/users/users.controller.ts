@@ -57,11 +57,11 @@ export class UsersController {
     type: GetUserResponse, // 반환 모델을 지정
   })
   async getMe(@GetCurrentUserId() userId: number) {
-    this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
-    this.logger.log("자신의 회원정보 호출한 사람", userId["sub"]);
+    // this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
+    // this.logger.log("자신의 회원정보 호출한 사람", userId["sub"]);
     const result = await this.userService.findUserById(userId["sub"]);
 
-    this.logger.log("자신의 회원정보 호출 결과", result);
+    // this.logger.log("자신의 회원정보 호출 결과", result);
     return result;
   }
 
@@ -75,7 +75,7 @@ export class UsersController {
   })
   async getMyPage(@GetCurrentUserId() userId: number) {
     const result = await this.userService.findUserById(userId["sub"]);
-    this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
+    // this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
     // this.logger.log("자신의 회원정보 호출 결과", result);
     return result;
   }
@@ -178,9 +178,9 @@ export class UsersController {
       const result = await this.userService.getMyVisitedRegionCount(
         userId["sub"]
       );
-      this.logger.log(
-        `user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`
-      );
+      // this.logger.log(
+      //   `user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`
+      // );
       res.status(HttpStatus.OK).json(result);
     } catch (err) {
       return res
