@@ -1,12 +1,14 @@
-import { Injectable } from "@nestjs/common";
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { Inject, Injectable } from "@nestjs/common";
 import { LoggerService } from "src/logger/logger.service";
 import { PrismaService } from "src/prisma/prisma.service";
-
+import { Cache } from "cache-manager";
 @Injectable()
 export class BadgesService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
   ) {}
 
   /** 유저에게 뱃지를 부여하는 메서드 */
@@ -20,13 +22,19 @@ export class BadgesService {
           },
         },
       });
+
+      const cachedItem = await this.cacheManager.get(`user_badges_${userId}`);
+
+      if (cachedItem) {
+        await this.cacheManager.del(`user_badges_${userId}`);
+      }
+
       return user;
     } catch (error) {
-      // Handle the error here, you can log it or take appropriate action
       this.logger.error(
         `Error while assigning badge to user ${userId}: ${error.message}`
       );
-      throw error; // Rethrow the error to propagate it further if needed
+      throw error;
     }
   }
 
@@ -41,11 +49,10 @@ export class BadgesService {
       });
       return categoryBadges.map((badge) => badge.badge_id);
     } catch (error) {
-      // Handle the error here, you can log it or take appropriate action
       this.logger.error(
         `Error while getting badge IDs by category ${categoryId}: ${error.message}`
       );
-      throw error; // Rethrow the error to propagate it further if needed
+      throw error;
     }
   }
 
@@ -60,11 +67,10 @@ export class BadgesService {
       });
       return user;
     } catch (error) {
-      // Handle the error here, you can log it or take appropriate action
       this.logger.error(
         `Error while getting user badges and visited places for user ${userId}: ${error.message}`
       );
-      throw error; // Rethrow the error to propagate it further if needed
+      throw error;
     }
   }
 
@@ -78,11 +84,10 @@ export class BadgesService {
       });
       return result;
     } catch (error) {
-      // Handle the error here, you can log it or take appropriate action
       this.logger.error(
         `Error while extracting visited places IDs: ${error.message}`
       );
-      throw error; // Rethrow the error to propagate it further if needed
+      throw error;
     }
   }
   /**
@@ -97,11 +102,10 @@ export class BadgesService {
       });
       return result;
     } catch (error) {
-      // Handle the error here, you can log it or take appropriate action
       this.logger.error(
         `Error while getting visited places info by IDs: ${error.message}`
       );
-      throw error; // Rethrow the error to propagate it further if needed
+      throw error;
     }
   }
   /**
@@ -120,11 +124,10 @@ export class BadgesService {
       }
       return result;
     } catch (error) {
-      // Handle the error here, you can log it or take appropriate action
       this.logger.error(
         `Error while counting places by category: ${error.message}`
       );
-      throw error; // Rethrow the error to propagate it further if needed
+      throw error;
     }
   }
 
@@ -148,11 +151,10 @@ export class BadgesService {
       }
       return result;
     } catch (error) {
-      // Handle the error here, you can log it or take appropriate action
       this.logger.error(
         `Error while getting badges by category: ${error.message}`
       );
-      throw error; // Rethrow the error to propagate it further if needed
+      throw error;
     }
   }
 
@@ -164,9 +166,8 @@ export class BadgesService {
       const result = user.user_badges.map((badge) => badge.badge_id);
       return result;
     } catch (error) {
-      // Handle the error here, you can log it or take appropriate action
       this.logger.error(`Error while checking user badges: ${error.message}`);
-      throw error; // Rethrow the error to propagate it further if needed
+      throw error;
     }
   }
 
@@ -213,11 +214,10 @@ export class BadgesService {
         }
       }
     } catch (error) {
-      // Handle the error here, you can log it or take appropriate action
       this.logger.error(
         `Error while processing badge awards for user ${userId}: ${error.message}`
       );
-      throw error; // Rethrow the error to propagate it further if needed
+      throw error;
     }
   }
 
@@ -230,29 +230,24 @@ export class BadgesService {
       const user_visited_places_id_lists = await this.extractVisitedPlacesId(
         user
       );
-      this.logger.log(user_visited_places_id_lists);
 
       // 3 유저가 방문한 장소 아이디 배열을 사용하여 장소 정보 조회
       const user_visited_places = await this.getVisitedPlacesInfoByIds(
         user_visited_places_id_lists
       );
-      this.logger.log(user_visited_places);
 
       // 4 유저가 방문한 각 장소의 categoryId를 기반으로 카운트 증가
       const categoryIdCountsFromUserVisitedPlaces =
         await this.countPlacesCategory(user_visited_places);
-      this.logger.log(categoryIdCountsFromUserVisitedPlaces);
 
       // 5 장소의 카테고리와 관련된 뱃지 정보 가져오기
       const badgeIdsByCategoryId = await this.getBadgesIdByCategoryId(
         categoryIdCountsFromUserVisitedPlaces,
         user_visited_places
       );
-      this.logger.log(badgeIdsByCategoryId);
 
       // 6 유저가 뱃지를 이미 보유하고 있는지 확인
       const userBadgeIds = await this.checkUserBadges(user);
-      this.logger.log(userBadgeIds);
 
       // 7
       await this.processBadgeAwards(
@@ -261,13 +256,11 @@ export class BadgesService {
         userBadgeIds,
         userId
       );
-      return userBadgeIds;
     } catch (error) {
-      // Handle the error here, you can log it or take appropriate action
       this.logger.error(
         `Error while checking and assigning badges for user ${userId}: ${error.message}`
       );
-      throw error; // Rethrow the error to propagate it further if needed
+      throw error;
     }
   }
 }

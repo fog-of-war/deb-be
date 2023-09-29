@@ -88,9 +88,7 @@ export class PostsService {
       await this.pointsService.assignPoints(userId, placeId);
       await this.levelsService.updateLevel(userId);
       await this.badgesService.checkAndAssignBadge(userId);
-
       await this.ranksService.updateRanks();
-      // await this.eventsGateway.handleAlertEvent(placeId);
       await this.alertService.createNotifyAlert(placeId);
       // const messageObservable = this.alertClient.send({ cmd: 'greeting-async' }, 'Progressive Coder');
       // const message = await messageObservable.toPromise();

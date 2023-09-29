@@ -58,11 +58,14 @@ export class UsersService {
     const cachedItem = await this.cacheManager.get(`cached_item_${user_id}`);
     // 캐시에서 데이터가 있으면 해당 데이터를 반환합니다.
     if (cachedItem) {
-      // console.log(`findUserById 64 cached_item_${user_id} ` + "Cached result found");
+      console.log(
+        `findUserById 64 cached_item_${user_id} ` + "Cached result found"
+      );
       if (
         cachedItem["user_nickname"] !== null &&
         cachedItem["user_image_url"] !== null
       ) {
+        this.refreshUserCache(user_id);
         return cachedItem;
       }
     }
@@ -89,8 +92,9 @@ export class UsersService {
       const cache = await this.cacheManager.set(
         `cached_item_${user_id}`,
         user,
-        1000
+        1
       );
+      this.refreshUserCache(user_id);
       console.log("캐시저장완료");
     }
     return user;
@@ -149,8 +153,9 @@ export class UsersService {
 
     // 데이터를 캐시에 저장합니다.
     if (user) {
-      await this.cacheManager.set(`user_badges_${userId}`, user, 1000);
-      console.log("캐시 저장");
+      await this.cacheManager.set(`user_badges_${userId}`, user, 3);
+      this.refreshUserCache(userId);
+      // console.log("캐시 저장");
     }
 
     return user;
@@ -208,9 +213,10 @@ export class UsersService {
       await this.cacheManager.set(
         `user_visited_regions_${userId}`,
         regionsWithVisitedCount,
-        1000
+        1
       );
-      console.log("캐시 저장");
+      this.refreshUserCache(userId);
+      // // console.log("캐시 저장");
 
       return regionsWithVisitedCount;
     } catch (err) {
@@ -230,5 +236,31 @@ export class UsersService {
       },
     });
     return result;
+  }
+  // 백그라운드에서 캐시를 갱신하는 메서드
+  private async refreshUserCache(userId: number) {
+    setTimeout(async () => {
+      const user = await this.prisma.user.findFirst({
+        where: { user_id: userId, user_is_deleted: false },
+        select: {
+          user_id: true,
+          user_image_url: true,
+          user_nickname: true,
+          user_points: true,
+          user_level: true,
+          user_is_admin: true,
+          user_is_deleted: true,
+          user_badges: true,
+          user_selected_badge: true,
+          user_visited_places: true,
+          user_authored_posts: true,
+        },
+      });
+
+      if (user) {
+        await this.cacheManager.set(`cached_item_${userId}`, user, 1);
+        console.log(`Refreshed cached_item_${userId}`);
+      }
+    }, 1000); // 1초 후에 캐시를 갱신
   }
 }
