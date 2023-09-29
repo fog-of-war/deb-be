@@ -50,8 +50,6 @@ export class UsersService {
         user_authored_posts: true,
       },
     });
-    // 랭킹 업데이트 로직 호출
-    // await this.ranksService.getUserRank(user_id);
     return user;
   }
   async findUserById(user_id: number): Promise<any | null> {

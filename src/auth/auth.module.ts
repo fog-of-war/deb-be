@@ -20,13 +20,13 @@ import { LoggerModule } from "src/logger/logger.module";
 @Module({
   imports: [
     PrismaModule,
-    JwtModule.register({}),
-    UsersModule,
     HttpModule,
+    JwtModule.register({}),
     PassportModule.register({
       passReqToCallback: true, // 이 옵션을 추가하여 Request 객체를 Strategy로 전달
       session: false,
     }),
+    UsersModule,
     RanksModule,
     LoggerModule,
   ],
@@ -37,7 +37,6 @@ import { LoggerModule } from "src/logger/logger.module";
     NaverStrategy,
     AtStrategy,
     RtStrategy,
-    Logger,
     WsStrategy,
   ],
   controllers: [AuthController],
