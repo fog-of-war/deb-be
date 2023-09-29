@@ -58,6 +58,6 @@ REACT_APP_SOCKET_URL=ws://localhost:5000/v1/ws-alert
 각각의 파일에서 "Bearer YOUR_ACCESS_TOKEN" 에 엑세스 토큰을 채워주세요
 
 ```
-$ node send_posts.js
+$ node send_post.js
 $ node send_comments.js
 ```

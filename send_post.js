@@ -29,7 +29,8 @@ async function fetchData(placeObj) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk1OTkyOTQxLCJleHAiOjE2OTU5OTY1NDF9.HXV2Ri1PnC84RuqGg74q9DBU0NlxqViziS55LAaE4cI",
     },
     body: body,
   };
