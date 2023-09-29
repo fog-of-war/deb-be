@@ -132,7 +132,7 @@ export class UsersService {
   }
 
   async findUserBadges(userId: number) {
-    const cachedItem = await this.cacheManager.get(`user_badges_${userId}`);
+    const cachedItem = await this.cacheManager.get(`cached_item_${userId}`);
     if (cachedItem) {
       console.log("Cached badges found", cachedItem);
       if (
@@ -153,7 +153,7 @@ export class UsersService {
 
     // 데이터를 캐시에 저장합니다.
     if (user) {
-      await this.cacheManager.set(`user_badges_${userId}`, user, 3);
+      await this.cacheManager.set(`cached_item_${userId}`, user, 3);
       this.refreshUserCache(userId);
       // console.log("캐시 저장");
     }
@@ -175,9 +175,7 @@ export class UsersService {
 
   async getMyVisitedRegionCount(userId: number) {
     try {
-      const cachedItem = await this.cacheManager.get(
-        `user_visited_regions_${userId}`
-      );
+      const cachedItem = await this.cacheManager.get(`cached_item_${userId}`);
       if (cachedItem) {
         console.log("Cached visited regions found");
         if (
@@ -211,7 +209,7 @@ export class UsersService {
 
       // 데이터를 캐시에 저장합니다.
       await this.cacheManager.set(
-        `user_visited_regions_${userId}`,
+        `cached_item_${userId}`,
         regionsWithVisitedCount,
         1
       );
@@ -259,7 +257,7 @@ export class UsersService {
 
       if (user) {
         await this.cacheManager.set(`cached_item_${userId}`, user, 1);
-        console.log(`Refreshed cached_item_${userId}`);
+        // console.log(`Refreshed cached_item_${userId}`);
       }
     }, 1000); // 1초 후에 캐시를 갱신
   }

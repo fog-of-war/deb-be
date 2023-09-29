@@ -23,10 +23,10 @@ export class BadgesService {
         },
       });
 
-      const cachedItem = await this.cacheManager.get(`user_badges_${userId}`);
+      const cachedItem = await this.cacheManager.get(`cached_item_${userId}`);
 
       if (cachedItem) {
-        await this.cacheManager.del(`user_badges_${userId}`);
+        await this.cacheManager.del(`cached_item_${userId}`);
       }
 
       return user;
