@@ -13,7 +13,7 @@ const placesArray = [
   },
 ];
 
-const baseUrl = "http://localhost:5000/v1/comments";
+const baseUrl = "http://localhost:5000/v1/posts";
 
 async function fetchData(placeObj) {
   const url = baseUrl;

@@ -76,6 +76,7 @@ export class PostsService {
 
     return post;
   }
+
   /** 게시물 생성 후처리 */
   private async createPostActions(
     userId: number,
@@ -86,7 +87,9 @@ export class PostsService {
       await this.placesService.updatePlaceStarRating(placeId);
       await this.pointsService.assignPoints(userId, placeId);
       await this.levelsService.updateLevel(userId);
-      await this.badgesService.checkAndAssignBadge(userId);
+      const result = await this.badgesService.checkAndAssignBadge(userId);
+      console.log("hiu");
+      console.log(result);
       await this.ranksService.updateRanks();
       // await this.eventsGateway.handleAlertEvent(placeId);
       await this.alertService.createNotifyAlert(placeId);

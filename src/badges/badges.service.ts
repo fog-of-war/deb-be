@@ -258,6 +258,7 @@ export class BadgesService {
         userBadgeIds,
         userId
       );
+      return userBadgeIds;
     } catch (error) {
       // Handle the error here, you can log it or take appropriate action
       this.logger.error(

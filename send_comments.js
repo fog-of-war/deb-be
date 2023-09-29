@@ -8,7 +8,7 @@ const commentsArray = [
   },
 ];
 
-const baseUrl = "http://localhost:5000/v1/posts";
+const baseUrl = "http://localhost:5000/v1/comments";
 
 async function fetchData(commentObj) {
   const url = baseUrl;
