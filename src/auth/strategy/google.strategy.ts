@@ -2,16 +2,12 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, VerifyCallback } from "passport-google-oauth20";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { PrismaService } from "../../prisma/prisma.service";
 import { UsersService } from "../../users/users.service";
 
+/** 구글 oauth 를 사용한 인증 전략 */
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
-  constructor(
-    config: ConfigService,
-    private prisma: PrismaService,
-    private usersService: UsersService
-  ) {
+  constructor(config: ConfigService, private usersService: UsersService) {
     super({
       clientID: config.get("GOOGLE_OAUTH_ID"),
       clientSecret: config.get("GOOGLE_OAUTH_SECRET"),

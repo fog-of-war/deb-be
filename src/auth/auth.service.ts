@@ -5,15 +5,17 @@ import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { Request } from "express";
 import { Tokens } from "./types";
+import { LoggerService } from "src/logger/logger.service";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
-    private jwt: JwtService,
-    private config: ConfigService
+    private readonly prisma: PrismaService,
+    private readonly jwt: JwtService,
+    private readonly config: ConfigService,
+    private readonly logger: LoggerService
   ) {}
-
+  /** 구글 oauth 로그인 */
   async googleLogin(req: Request): Promise<any> {
     try {
       const user = req.user;
@@ -21,11 +23,13 @@ export class AuthService {
       await this.updateRtHash(user["user_id"], tokens.refresh_token);
       return tokens;
     } catch (error) {
-      console.error("Google login error:", error);
+      this.logger.error("Google login error:", error);
       throw new ForbiddenException("Google login failed");
     }
   }
+  /** -------------------- */
 
+  /** 카카오 oauth 로그인 */
   async kakaoLogin(req: Request): Promise<any> {
     try {
       const user = req.user;
@@ -33,11 +37,13 @@ export class AuthService {
       await this.updateRtHash(user["user_id"], tokens.refresh_token);
       return tokens;
     } catch (error) {
-      console.error("Kakao login error:", error);
+      this.logger.error("Kakao login error:", error);
       throw new ForbiddenException("Kakao login failed");
     }
   }
+  /** -------------------- */
 
+  /** 네이버 oauth 로그인 */
   async naverLogin(req: Request): Promise<any> {
     try {
       const user = req.user;
@@ -45,11 +51,13 @@ export class AuthService {
       await this.updateRtHash(user["user_id"], tokens.refresh_token);
       return tokens;
     } catch (error) {
-      console.error("Naver login error:", error);
+      this.logger.error("Naver login error:", error);
       throw new ForbiddenException("Naver login failed");
     }
   }
+  /** -------------------- */
 
+  /** 토큰에 사인 */
   async signToken(userId: number, user_email: string): Promise<Tokens> {
     try {
       const payload = {
@@ -70,31 +78,15 @@ export class AuthService {
       ]);
       return { access_token: at, refresh_token: rt };
     } catch (error) {
-      console.error("Sign token error:", error);
+      this.logger.error("Sign token error:", error);
       throw new ForbiddenException("Token signing failed");
     }
   }
 
-  async updateRtHash(userId: number, rt: string): Promise<void> {
-    try {
-      const hash = await argon.hash(rt);
-      await this.prisma.user.update({
-        where: {
-          user_id: userId,
-        },
-        data: {
-          user_refresh_token: hash,
-        },
-      });
-    } catch (error) {
-      console.error("Update refresh token hash error:", error);
-      throw new ForbiddenException("Refresh token update failed");
-    }
-  }
-
+  /** 로그아웃 */
   async logout(userId: number): Promise<any> {
     try {
-      console.log(userId);
+      this.logger.log(userId);
       await this.prisma.user.updateMany({
         where: {
           user_id: userId["sub"],
@@ -107,11 +99,13 @@ export class AuthService {
         },
       });
     } catch (error) {
-      console.error("Logout error:", error);
+      this.logger.error("Logout error:", error);
       throw new ForbiddenException("Logout failed");
     }
   }
+  /** -------------------- */
 
+  /** 리프레시 토큰을 사용하여 엑세스토큰 재발급 */
   async refreshTokens(userId: number, rt: any): Promise<Tokens> {
     try {
       const user = await this.prisma.user.findUnique({
@@ -119,23 +113,39 @@ export class AuthService {
           user_id: userId,
         },
       });
-
       if (!user || !user.user_refresh_token) {
         throw new ForbiddenException("Access Denied");
       }
-
       const rtMatches = await argon.verify(user.user_refresh_token, rt);
       if (!rtMatches) {
         throw new ForbiddenException("Access Denied");
       }
-
       const tokens = await this.signToken(user.user_id, user.user_email);
       await this.updateRtHash(user.user_id, tokens.refresh_token);
-
       return tokens;
     } catch (error) {
-      console.error("Refresh tokens error:", error);
+      this.logger.error("Refresh tokens error:", error);
       throw new ForbiddenException("Token refresh failed");
     }
   }
+  /** -------------------- */
+
+  /** 리프레시 토큰을 데이터베이스에 업데이트 */
+  async updateRtHash(userId: number, rt: string): Promise<void> {
+    try {
+      const hash = await argon.hash(rt);
+      await this.prisma.user.update({
+        where: {
+          user_id: userId,
+        },
+        data: {
+          user_refresh_token: hash,
+        },
+      });
+    } catch (error) {
+      this.logger.error("Update refresh token hash error:", error);
+      throw new ForbiddenException("Refresh token update failed");
+    }
+  }
+  /** -------------------- */
 }

@@ -6,6 +6,7 @@ import { UsersService } from "../../users/users.service";
 import { PrismaService } from "../../prisma/prisma.service";
 import { HttpService } from "@nestjs/axios";
 
+/** 카카오 oauth 를 사용한 인증 전략 */
 @Injectable()
 export class KakaoStrategy extends PassportStrategy(Strategy, "kakao") {
   constructor(

@@ -4,14 +4,12 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  InternalServerErrorException,
   Post,
   Req,
   Res,
   UseGuards,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { AuthGuard } from "@nestjs/passport";
 import {
   ApiProperty,
   ApiCreatedResponse,
@@ -29,7 +27,7 @@ import {
   RtGuard,
 } from "./guard";
 import { Tokens } from "./types";
-import { GetCurrentUser, GetCurrentUserId, GetUser } from "./decorator";
+import { GetCurrentUser, GetCurrentUserId } from "./decorator";
 import { TokensResponse } from "./response";
 import { LoggerService } from "src/logger/logger.service";
 
@@ -43,9 +41,10 @@ export class AuthRes {
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private logger: LoggerService
+    private readonly logger: LoggerService
   ) {}
 
+  /** 구글 oauth 로그인 */
   @Get("google")
   @ApiOAuth2(["profile"])
   @ApiOperation({ summary: "구글 oauth" })
@@ -66,13 +65,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ): Promise<Tokens> {
     const result = await this.authService.googleLogin(req);
-    // 응답 헤더에 액세스 토큰을 추가
     console.log(`Bearer ${result.access_token}`);
     console.log(`Refresh ${result.refresh_token}`);
     res.header("Authorization", `Bearer ${result.access_token}`);
     return result;
   }
+  /** -------------------- */
 
+  /** 네이버 oauth 로그인 */
   @Get("naver")
   @UseGuards(NaverAuthGuard)
   @ApiOperation({ summary: "네이버 oauth" })
@@ -85,13 +85,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ) {
     const result = await this.authService.naverLogin(req);
-    // 응답 헤더에 액세스 토큰을 추가
     console.log(`Bearer ${result.access_token}`);
     console.log(`Refresh ${result.refresh_token}`);
     res.header("Authorization", `Bearer ${result.access_token}`);
     return result;
   }
+  /** -------------------- */
 
+  /** 카카오 oauth 로그인 */
   @Get("kakao")
   @UseGuards(KakaoAuthGuard)
   @ApiOperation({ summary: "[승인전 사용불가]카카오 oauth" })
@@ -104,13 +105,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ) {
     const result = await this.authService.kakaoLogin(req);
-    // 응답 헤더에 액세스 토큰을 추가
     console.log(`Bearer ${result.access_token}`);
     console.log(`Refresh ${result.refresh_token}`);
     res.header("Authorization", `Bearer ${result.access_token}`);
     return result;
   }
+  /** -------------------- */
 
+  /** 로그아웃 */
   @UseGuards(ATGuard)
   @Post("logout")
   @ApiOperation({
@@ -133,10 +135,12 @@ export class AuthController {
       return result;
     } catch (error) {
       console.error("Logout error:", error);
-      throw new ForbiddenException("Logout failed"); // 예외를 던집니다.
+      throw new ForbiddenException("Logout failed");
     }
   }
+  /** -------------------- */
 
+  /** 토큰 리프레시 */
   @UseGuards(RtGuard)
   @ApiOperation({
     summary:
@@ -158,4 +162,5 @@ export class AuthController {
       throw new ForbiddenException("Access Denied");
     }
   }
+  /** -------------------- */
 }

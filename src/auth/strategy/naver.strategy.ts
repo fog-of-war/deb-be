@@ -6,6 +6,7 @@ import { PrismaService } from "../../prisma/prisma.service";
 import { UsersService } from "../../users/users.service";
 import { HttpService } from "@nestjs/axios";
 
+/** 네이버 oauth 를 사용한 인증 전략 */
 @Injectable()
 export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
   constructor(
@@ -30,7 +31,6 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
     done: (error: any, user?: any, info?: any) => void
   ): Promise<any> {
     // 사용자 프로필 정보 요청을 위한 옵션 설정
-
     const options = {
       url: "https://openapi.naver.com/v1/nid/me",
       headers: {
@@ -46,7 +46,6 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
     const profileInfo = response.data.response;
     const { id, email } = profileInfo;
     let user = await this.usersService.findUserByEmail(email);
-
     if (!user) {
       const userDto = {
         user_providerId: id,
@@ -55,7 +54,6 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
       try {
         user = await this.usersService.createUser(userDto);
       } catch (error) {
-        // 오류 발생 시 UnauthorizedException 던지기
         throw new UnauthorizedException("Failed to create user");
       }
     }
