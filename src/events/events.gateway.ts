@@ -41,19 +41,21 @@ export class EventsGateway
 
   /** 웹소켓 연결시 */
   handleConnection(@ConnectedSocket() socket: Socket, client: any) {
-    // const interval = setInterval(() => {
-    //   const userInfo = socket.userInfo;
-    //   this.sendMessage(userInfo);
-    // }, 5000);
-    // socket.on("disconnect", () => {
-    //   clearInterval(interval);
-    // });
+    const interval = setInterval(() => {
+      const userInfo = socket.userInfo;
+      this.sendMessage(userInfo);
+    }, 5000);
+    socket.on("disconnect", () => {
+      clearInterval(interval);
+    });
   }
 
   /** 메시지 전송 */
-  sendMessage(message?: any) {
+  sendMessage(message?: any, @ConnectedSocket() socket?: Socket) {
     console.log(" \n 🌠 sendMessage \n", message);
-    this.server.emit("message", message);
+    const stringMessage = JSON.stringify(message);
+    console.log(stringMessage);
+    socket.broadcast.emit("message", stringMessage);
     return Promise.resolve("Message sent successfully");
   }
 
