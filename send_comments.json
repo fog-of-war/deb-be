@@ -1,1 +1,11 @@
-{}
+{
+    "댓글보내기예시": {
+        "comment_id": 1,
+        "comment_text": "댓글보내기예시",
+        "comment_created_at": "2023-10-01T00:34:07.572Z",
+        "comment_updated_at": "2023-10-01T00:34:07.572Z",
+        "comment_author_id": 2,
+        "commented_post_id": 1,
+        "comment_is_deleted": false
+    }
+}
