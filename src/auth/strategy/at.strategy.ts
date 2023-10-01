@@ -10,11 +10,7 @@ import { Request as RequestType } from "express";
 /** Access Token 인증 전략 */
 @Injectable()
 export class AtStrategy extends PassportStrategy(Strategy, "jwt-access") {
-  constructor(
-    config: ConfigService,
-    private usersService: UsersService,
-    private readonly loggerService: LoggerService
-  ) {
+  constructor(config: ConfigService, private usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         AtStrategy.extractJWT,
