@@ -87,7 +87,6 @@ export class AuthService {
   /** 로그아웃 */
   async logout(userId: number): Promise<any> {
     try {
-      this.logger.log(userId);
       await this.prisma.user.updateMany({
         where: {
           user_id: userId["sub"],
@@ -109,8 +108,6 @@ export class AuthService {
   /** 리프레시 토큰을 사용하여 엑세스토큰 재발급 */
   async refreshTokens(userId: number, rt: any): Promise<Tokens> {
     try {
-      console.log(userId);
-
       const user = await this.prisma.user.findUnique({
         where: {
           user_id: userId,
@@ -119,15 +116,15 @@ export class AuthService {
       if (!user || !user.user_refresh_token) {
         throw new ForbiddenException("Access Denied");
       }
-      console.log("refreshTokens", user.user_refresh_token);
-      console.log("refreshTokens", rt.refreshToken);
+      // this.logger.log("refreshTokens", user.user_refresh_token);
+      // this.logger.log("refreshTokens", rt.refreshToken);
       const rtMatches = await argon.verify(
         user.user_refresh_token,
         rt.refreshToken
       );
 
       if (!rtMatches) {
-        console.log("rtMatches", "Access Denied");
+        this.logger.log("rtMatches", "Access Denied");
         throw new ForbiddenException("Access Denied");
       }
 

@@ -161,7 +161,7 @@ export class AuthController {
       );
       return result;
     } catch (error) {
-      console.error("Logout error:", error);
+      this.logger.error("Logout error:", error);
       throw new ForbiddenException("Logout failed");
     }
   }
@@ -199,7 +199,7 @@ export class AuthController {
       });
       return result;
     } catch (error) {
-      console.error("Token refresh error:", error);
+      this.logger.error("Token refresh error:", error);
       throw new ForbiddenException("Access Denied");
     }
   }
