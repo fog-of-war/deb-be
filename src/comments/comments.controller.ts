@@ -22,15 +22,13 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { CommentResponse } from "./responses";
-import { EventsGateway } from "src/events/events.gateway";
 
 @ApiTags("comments")
 @Controller("comments")
 export class CommentsController {
   constructor(
     private readonly commentsService: CommentsService,
-    private logger: LoggerService,
-    private readonly eventsGateway: EventsGateway
+    private logger: LoggerService
   ) {}
 
   @Post()

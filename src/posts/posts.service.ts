@@ -31,9 +31,9 @@ export class PostsService {
     private readonly levelsService: LevelsService,
     private readonly usersService: UsersService,
     private readonly ranksService: RanksService,
-    private readonly alertService: AlertService,
-    private readonly eventsGateway: EventsGateway // @Inject("GREETING_SERVICE") private alertClient: ClientProxy
-  ) {}
+    private readonly alertService: AlertService
+  ) // @Inject("GREETING_SERVICE") private alertClient: ClientProxy
+  {}
   /** 여러 개의 게시물 가져오기 */
   async getPosts() {
     const result = await this.prisma.post.findMany({

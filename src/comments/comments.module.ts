@@ -9,8 +9,8 @@ import { EventsModule } from "src/events/events.module";
 import { AlertModule } from "src/alert/alert.module";
 
 @Module({
-  imports: [PrismaModule, LoggerModule, AuthModule, EventsModule, AlertModule], // EventsModule 추가
+  imports: [PrismaModule, LoggerModule, AuthModule, AlertModule], // EventsModule 추가
   controllers: [CommentsController],
-  providers: [CommentsService, EventsGateway], // EventsGateway를 providers에 추가
+  providers: [CommentsService],
 })
 export class CommentsModule {}

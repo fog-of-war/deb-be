@@ -5,14 +5,12 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { EventsGateway } from "src/events/events.gateway";
 import { AlertService } from "src/alert/alert.service";
 
 @Injectable()
 export class CommentsService {
   constructor(
     private prisma: PrismaService,
-    private readonly eventsGateway: EventsGateway,
     private readonly alertService: AlertService
   ) {}
 

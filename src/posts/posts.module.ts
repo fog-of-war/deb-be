@@ -37,7 +37,6 @@ import { AlertModule } from "src/alert/alert.module";
     //     },
     //   },
     // ]),
-    EventsModule,
   ],
   controllers: [PostsController],
   providers: [
@@ -47,7 +46,6 @@ import { AlertModule } from "src/alert/alert.module";
       scope: Scope.REQUEST,
       useClass: UnauthorizedExceptionFilter,
     },
-    EventsGateway,
   ],
 })
 export class PostsModule {}

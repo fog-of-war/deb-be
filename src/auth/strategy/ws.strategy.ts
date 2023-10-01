@@ -9,6 +9,7 @@ declare module "socket.io" {
     userInfo?: any;
   }
 }
+
 /** 웹소켓 인증 전략 */
 @Injectable()
 export class WsStrategy {
