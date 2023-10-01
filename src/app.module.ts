@@ -56,7 +56,6 @@ import { AlertModule } from "./alert/alert.module";
       },
       inject: [ConfigService],
     }),
-    ConfigModule.forRoot({ isGlobal: true }),
     PlacesModule,
     UsersModule,
     BadgesModule,
