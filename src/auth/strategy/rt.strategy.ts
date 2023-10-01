@@ -26,15 +26,14 @@ export class RtStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
         ?.get("authorization")
         ?.replace("Bearer", "")
         .trim();
+
       if (!refreshToken) {
         this.loggerService.error("Refresh token malformed");
         throw new ForbiddenException("Refresh token malformed");
       }
 
-      this.loggerService.log(
-        "Refresh token validation successful:",
-        refreshToken
-      );
+      this.loggerService.log("Refresh token refreshToken:", refreshToken);
+      this.loggerService.log("Refresh token payload:", payload);
 
       return {
         ...payload,

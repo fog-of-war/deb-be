@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import * as argon from "argon2";
+import bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { Request } from "express";
@@ -76,6 +77,8 @@ export class AuthService {
           secret: rt_secret,
         }),
       ]);
+      console.log("Bearer", at);
+      console.log("Bearer", rt);
       return { access_token: at, refresh_token: rt };
     } catch (error) {
       this.logger.error("Sign token error:", error);
@@ -118,16 +121,20 @@ export class AuthService {
       if (!user || !user.user_refresh_token) {
         throw new ForbiddenException("Access Denied");
       }
-      console.log(
-        "user.user_refresh_token",
-        JSON.stringify(user.user_refresh_token)
-      );
+
+      const hash = await argon.hash(user.user_refresh_token);
+      console.log("user.user_refresh_token", user.user_refresh_token);
+      console.log("rt", rt.refreshToken);
+      console.log("hash", hash);
+
       const rtMatches = await argon.verify(
-        JSON.stringify(user.user_refresh_token),
-        rt
+        user.user_refresh_token,
+        rt.refreshToken
       );
+      console.log("rtMatches", rtMatches);
 
       if (!rtMatches) {
+        console.log("rtMatches", "Access Denied");
         throw new ForbiddenException("Access Denied");
       }
 
@@ -145,6 +152,7 @@ export class AuthService {
   async updateRtHash(userId: number, rt: string): Promise<void> {
     try {
       const hash = await argon.hash(rt);
+      console.log("updateRtHash : ", hash);
       await this.prisma.user.update({
         where: {
           user_id: userId,
