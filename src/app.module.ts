@@ -13,7 +13,7 @@ import { PostsModule } from "./posts/posts.module";
 import { AuthModule } from "./auth/auth.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { JwtModule } from "@nestjs/jwt";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { CategoriesModule } from "./categories/categories.module";
 import { PointsModule } from "./points/points.module";
 import { LevelsModule } from "./levels/levels.module";
@@ -33,11 +33,28 @@ import { AlertModule } from "./alert/alert.module";
 
 @Module({
   imports: [
-    CacheModule.register({
-      store: redisStore,
-      // socket: { host: "redis", port: 6379 },
-      host: "redis",
-      port: 6379,
+    ConfigModule.forRoot({ isGlobal: true }),
+    // 다른 모듈들을 여기에 추가
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const environment = configService.get<string>("ENVIRONMENT");
+        const redisConfig =
+          environment === "production"
+            ? {
+                store: redisStore,
+                host: "redis",
+                port: 6379,
+              }
+            : {
+                store: redisStore,
+                socket: { host: "redis", port: 6379 },
+              };
+        return {
+          ...redisConfig,
+        };
+      },
+      inject: [ConfigService],
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     PlacesModule,
