@@ -68,7 +68,7 @@ export class AuthController {
     console.log(`Bearer ${result.access_token}`);
     console.log(`Refresh ${result.refresh_token}`);
     res.cookie("access_token", result.access_token, {
-      sameSite: "strict",
+      sameSite: "none",
       secure: true,
       httpOnly: true,
     });
@@ -97,7 +97,7 @@ export class AuthController {
     console.log(`Bearer ${result.access_token}`);
     console.log(`Refresh ${result.refresh_token}`);
     res.cookie("access_token", result.access_token, {
-      sameSite: "strict",
+      sameSite: "none",
       secure: true,
       httpOnly: true,
     });
@@ -126,7 +126,7 @@ export class AuthController {
     console.log(`AT : Bearer ${result.access_token}`);
     console.log(`RT : Bearer ${result.refresh_token}`);
     res.cookie("access_token", result.access_token, {
-      sameSite: "strict",
+      sameSite: "none",
       secure: true,
       httpOnly: true,
     });
@@ -178,7 +178,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async refreshTokens(
     @GetCurrentUserId() userId: any,
-    @GetCurrentUser("user_refresh_token") refreshToken: string
+    @GetCurrentUser("user_refresh_token") refreshToken: string,
+    @Res({ passthrough: true }) res: Response
   ) {
     try {
       const result = await this.authService.refreshTokens(
@@ -186,6 +187,16 @@ export class AuthController {
         refreshToken
       );
       this.logger.log(`user_id : ${userId["user_email"]} 토큰 리프레시`);
+      res.cookie("access_token", result.access_token, {
+        sameSite: "none",
+        secure: true,
+        httpOnly: true,
+      });
+      res.cookie("refresh_token", result.refresh_token, {
+        sameSite: "none",
+        secure: true,
+        httpOnly: true,
+      });
       return result;
     } catch (error) {
       console.error("Token refresh error:", error);
