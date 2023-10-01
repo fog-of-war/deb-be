@@ -77,8 +77,6 @@ export class AuthService {
           secret: rt_secret,
         }),
       ]);
-      console.log("Bearer", at);
-      console.log("Bearer", rt);
       return { access_token: at, refresh_token: rt };
     } catch (error) {
       this.logger.error("Sign token error:", error);

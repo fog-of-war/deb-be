@@ -13,6 +13,7 @@ import { UnauthorizedExceptionFilter } from "./filters";
 import { EventsGateway } from "./events/events.gateway";
 import { PostsService } from "./posts/posts.service";
 import * as posts from "./prisma/posts.json";
+import * as cookieParser from "cookie-parser";
 
 async function bootstrap() {
   /** app 초기화 */
@@ -101,6 +102,14 @@ async function bootstrap() {
 
   // const eventGateway = app.get(EventsGateway);
   // setInterval(() => eventGateway.sendMessage(), 2000);
+
+  /** cookieParser 설정 */
+  app.use(cookieParser());
+  app.enableCors({
+    origin: ["http://localhost"],
+    credentials: true,
+  });
+  /** -------------------- */
 
   /** 스웨거 설정 */
   const config = new DocumentBuilder()

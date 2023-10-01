@@ -67,7 +67,16 @@ export class AuthController {
     const result = await this.authService.googleLogin(req);
     console.log(`Bearer ${result.access_token}`);
     console.log(`Refresh ${result.refresh_token}`);
-    res.header("Authorization", `Bearer ${result.access_token}`);
+    res.cookie("access_token", result.access_token, {
+      sameSite: "strict",
+      secure: true,
+      httpOnly: true,
+    });
+    res.cookie("refresh_token", result.refresh_token, {
+      sameSite: "none",
+      secure: true,
+      httpOnly: true,
+    });
     return result;
   }
   /** -------------------- */
@@ -87,7 +96,16 @@ export class AuthController {
     const result = await this.authService.naverLogin(req);
     console.log(`Bearer ${result.access_token}`);
     console.log(`Refresh ${result.refresh_token}`);
-    res.header("Authorization", `Bearer ${result.access_token}`);
+    res.cookie("access_token", result.access_token, {
+      sameSite: "strict",
+      secure: true,
+      httpOnly: true,
+    });
+    res.cookie("refresh_token", result.refresh_token, {
+      sameSite: "none",
+      secure: true,
+      httpOnly: true,
+    });
     return result;
   }
   /** -------------------- */
@@ -105,9 +123,18 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ) {
     const result = await this.authService.kakaoLogin(req);
-    console.log(`Bearer ${result.access_token}`);
-    console.log(`Refresh ${result.refresh_token}`);
-    res.header("Authorization", `Bearer ${result.access_token}`);
+    console.log(`AT : Bearer ${result.access_token}`);
+    console.log(`RT : Bearer ${result.refresh_token}`);
+    res.cookie("access_token", result.access_token, {
+      sameSite: "strict",
+      secure: true,
+      httpOnly: true,
+    });
+    res.cookie("refresh_token", result.refresh_token, {
+      sameSite: "none",
+      secure: true,
+      httpOnly: true,
+    });
     return result;
   }
   /** -------------------- */
