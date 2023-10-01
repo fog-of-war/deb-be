@@ -15,11 +15,11 @@ export class RtStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
     private readonly loggerService: LoggerService
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        RtStrategy.extractJWT,
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ]),
-      // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // jwtFromRequest: ExtractJwt.fromExtractors([
+      //   RtStrategy.extractJWT,
+      //   ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // ]),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.get<string>("RT_SECRET"),
       passReqToCallback: true,
     });

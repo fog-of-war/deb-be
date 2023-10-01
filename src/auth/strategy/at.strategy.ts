@@ -12,11 +12,11 @@ import { Request as RequestType } from "express";
 export class AtStrategy extends PassportStrategy(Strategy, "jwt-access") {
   constructor(config: ConfigService, private usersService: UsersService) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        AtStrategy.extractJWT,
-        ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ]),
-      // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // jwtFromRequest: ExtractJwt.fromExtractors([
+      //   AtStrategy.extractJWT,
+      //   ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // ]),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.get<string>("AT_SECRET"),
     });
   }
