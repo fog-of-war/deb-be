@@ -5,6 +5,7 @@ import { ForbiddenException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtPayload, JwtPayloadWithRt } from "../types";
 import { LoggerService } from "src/logger/logger.service";
+import { Request as RequestType } from "express";
 
 /** Refresh Token 인증 전략 */
 @Injectable()
@@ -14,10 +15,25 @@ export class RtStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
     private readonly loggerService: LoggerService
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        RtStrategy.extractJWT,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
+      // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.get<string>("RT_SECRET"),
       passReqToCallback: true,
     });
+  }
+  private static extractJWT(req: RequestType): string | null {
+    if (
+      req.cookies &&
+      "refresh_token" in req.cookies &&
+      req.cookies.refresh_token.length > 0
+    ) {
+      console.log("extractJWT RT", req.cookies.refresh_token);
+      return req.cookies.refresh_token;
+    }
+    return null;
   }
 
   validate(req: Request, payload: JwtPayload): JwtPayloadWithRt {
