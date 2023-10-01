@@ -175,17 +175,17 @@ export class UsersService {
 
   async getMyVisitedRegionCount(userId: number) {
     try {
-      const cachedItem = await this.cacheManager.get(`cached_item_${userId}`);
-      if (cachedItem) {
-        console.log("Cached visited regions found");
-        if (
-          cachedItem["user_nickname"] !== null &&
-          cachedItem["user_image_url"] !== null &&
-          cachedItem["user_visited_regions"] !== null
-        ) {
-          return cachedItem;
-        }
-      }
+      // const cachedItem = await this.cacheManager.get(`cached_item_${userId}`);
+      // if (cachedItem) {
+      //   console.log("Cached visited regions found");
+      //   if (
+      //     cachedItem["user_nickname"] !== null &&
+      //     cachedItem["user_image_url"] !== null &&
+      //     cachedItem["user_visited_regions"] !== null
+      //   ) {
+      //     return cachedItem;
+      //   }
+      // }
 
       const result = await this.prisma.user.findFirst({
         where: { user_id: userId },
@@ -208,14 +208,13 @@ export class UsersService {
       });
 
       // 데이터를 캐시에 저장합니다.
-      await this.cacheManager.set(
-        `cached_item_${userId}`,
-        regionsWithVisitedCount,
-        1
-      );
-      this.refreshUserCache(userId);
+      // await this.cacheManager.set(
+      //   `cached_item_${userId}`,
+      //   regionsWithVisitedCount,
+      //   1
+      // );
+      // this.refreshUserCache(userId);
       // // console.log("캐시 저장");
-
       return regionsWithVisitedCount;
     } catch (err) {
       console.log(err);

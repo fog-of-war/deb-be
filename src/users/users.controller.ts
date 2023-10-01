@@ -178,9 +178,10 @@ export class UsersController {
       const result = await this.userService.getMyVisitedRegionCount(
         userId["sub"]
       );
-      // this.logger.log(
-      //   `user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`
-      // );
+      this.logger.log(
+        `user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`
+      );
+      // this.logger.log(JSON.stringify(result));
       res.status(HttpStatus.OK).json(result);
     } catch (err) {
       return res
