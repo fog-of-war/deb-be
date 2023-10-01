@@ -121,17 +121,12 @@ export class AuthService {
       if (!user || !user.user_refresh_token) {
         throw new ForbiddenException("Access Denied");
       }
-
-      const hash = await argon.hash(user.user_refresh_token);
-      console.log("user.user_refresh_token", user.user_refresh_token);
-      console.log("rt", rt.refreshToken);
-      console.log("hash", hash);
-
+      console.log("refreshTokens", user.user_refresh_token);
+      console.log("refreshTokens", rt.refreshToken);
       const rtMatches = await argon.verify(
         user.user_refresh_token,
         rt.refreshToken
       );
-      console.log("rtMatches", rtMatches);
 
       if (!rtMatches) {
         console.log("rtMatches", "Access Denied");
@@ -151,8 +146,8 @@ export class AuthService {
   /** 리프레시 토큰을 데이터베이스에 업데이트 */
   async updateRtHash(userId: number, rt: string): Promise<void> {
     try {
+      console.log("updateRtHash", rt);
       const hash = await argon.hash(rt);
-      console.log("updateRtHash : ", hash);
       await this.prisma.user.update({
         where: {
           user_id: userId,

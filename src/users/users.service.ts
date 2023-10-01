@@ -196,17 +196,20 @@ export class UsersService {
         ...region,
         region_visited_count: 0,
       }));
-      result.user_visited_places.forEach((item) => {
-        const regionId = item.visited_place.place_region_id;
+      if (result.user_visited_places.length != 0) {
+        result.user_visited_places.forEach((item) => {
+          const regionId = item.visited_place.place_region_id;
 
-        const regionToUpdate = regionsWithVisitedCount.find(
-          (region) => region.region_id === regionId
-        );
-        if (regionToUpdate) {
-          regionToUpdate.region_visited_count++;
-        }
-      });
-
+          const regionToUpdate = regionsWithVisitedCount.find(
+            (region) => region.region_id === regionId
+          );
+          if (regionToUpdate) {
+            regionToUpdate.region_visited_count++;
+          }
+        });
+      } else {
+        return [];
+      }
       // 데이터를 캐시에 저장합니다.
       // await this.cacheManager.set(
       //   `cached_item_${userId}`,

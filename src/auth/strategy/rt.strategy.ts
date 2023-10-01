@@ -31,10 +31,6 @@ export class RtStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
         this.loggerService.error("Refresh token malformed");
         throw new ForbiddenException("Refresh token malformed");
       }
-
-      this.loggerService.log("Refresh token refreshToken:", refreshToken);
-      this.loggerService.log("Refresh token payload:", payload);
-
       return {
         ...payload,
         refreshToken,
