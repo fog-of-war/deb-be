@@ -51,7 +51,7 @@ export class PlacesController {
   }
   /** -------------------- */
 
-  /** 모든 랜드마크 가져오기 */
+  /** 간단하게 장소검색하기 */
   @Get("/simple_search")
   @ApiOperation({
     summary: "간단하게 장소검색하기/ query 필요",
@@ -67,7 +67,7 @@ export class PlacesController {
     @Res() res
   ): Promise<void> {
     try {
-      const searchResult = await this.placesService.findPlacesInfoForJH(query);
+      const searchResult = await this.placesService.findSimplePlacesInfo(query);
       res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
       res
