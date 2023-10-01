@@ -150,11 +150,14 @@ export class AuthController {
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
   async refreshTokens(
-    @GetCurrentUserId() userId: number,
+    @GetCurrentUserId() userId: any,
     @GetCurrentUser("user_refresh_token") refreshToken: string
   ) {
     try {
-      const result = await this.authService.refreshTokens(userId, refreshToken);
+      const result = await this.authService.refreshTokens(
+        userId["sub"],
+        refreshToken
+      );
       this.logger.log(`user_id : ${userId["user_email"]} 토큰 리프레시`);
       return result;
     } catch (error) {

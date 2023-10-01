@@ -108,6 +108,8 @@ export class AuthService {
   /** 리프레시 토큰을 사용하여 엑세스토큰 재발급 */
   async refreshTokens(userId: number, rt: any): Promise<Tokens> {
     try {
+      console.log(userId);
+
       const user = await this.prisma.user.findUnique({
         where: {
           user_id: userId,
@@ -116,10 +118,19 @@ export class AuthService {
       if (!user || !user.user_refresh_token) {
         throw new ForbiddenException("Access Denied");
       }
-      const rtMatches = await argon.verify(user.user_refresh_token, rt);
+      console.log(
+        "user.user_refresh_token",
+        JSON.stringify(user.user_refresh_token)
+      );
+      const rtMatches = await argon.verify(
+        JSON.stringify(user.user_refresh_token),
+        rt
+      );
+
       if (!rtMatches) {
         throw new ForbiddenException("Access Denied");
       }
+
       const tokens = await this.signToken(user.user_id, user.user_email);
       await this.updateRtHash(user.user_id, tokens.refresh_token);
       return tokens;
