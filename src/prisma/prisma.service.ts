@@ -104,7 +104,6 @@ export class PrismaService extends PrismaClient {
             },
           },
         });
-        console.log("Created place:", createdPlace);
       }
     }
   }

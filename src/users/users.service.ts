@@ -53,7 +53,6 @@ export class UsersService {
     return user;
   }
   async findUserById(user_id: number): Promise<any | null> {
-    // console.log(`findUserById 58 user_id ${user_id}`);
     // 먼저 캐시에서 데이터를 가져오려고 시도합니다.
     const cachedItem = await this.cacheManager.get(`cached_item_${user_id}`);
     // 캐시에서 데이터가 있으면 해당 데이터를 반환합니다.
@@ -95,7 +94,7 @@ export class UsersService {
         1
       );
       this.refreshUserCache(user_id);
-      console.log("캐시저장완료");
+      // console.log("캐시저장완료");
     }
     return user;
   }
@@ -134,7 +133,6 @@ export class UsersService {
   async findUserBadges(userId: number) {
     const cachedItem = await this.cacheManager.get(`cached_item_${userId}`);
     if (cachedItem) {
-      console.log("Cached badges found", cachedItem);
       if (
         cachedItem["user_nickname"] !== null &&
         cachedItem["user_image_url"] !== null
@@ -153,9 +151,13 @@ export class UsersService {
 
     // 데이터를 캐시에 저장합니다.
     if (user) {
-      await this.cacheManager.set(`cached_item_${userId}`, user, 3);
-      this.refreshUserCache(userId);
-      // console.log("캐시 저장");
+      if (
+        cachedItem["user_nickname"] !== null &&
+        cachedItem["user_image_url"] !== null
+      ) {
+        await this.cacheManager.set(`cached_item_${userId}`, user, 3);
+        this.refreshUserCache(userId);
+      }
     }
 
     return user;

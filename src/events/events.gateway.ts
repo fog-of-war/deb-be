@@ -41,13 +41,21 @@ export class EventsGateway
 
   /** 웹소켓 연결시 */
   handleConnection(@ConnectedSocket() socket: Socket, client: any) {
-    // const interval = setInterval(() => {
-    //   const userInfo = socket.userInfo;
-    //   this.sendMessage(userInfo);
-    // }, 5000);
-    // socket.on("disconnect", () => {
-    //   clearInterval(interval);
-    // });
+    const userInfo = socket.userInfo;
+    console.log(userInfo);
+    // 연결된 클라이언트의 userInfo를 해당 클라이언트에게 주기적으로 전송
+    const interval = setInterval(() => {
+      this.sendMessageToClient(socket, userInfo);
+    }, 5000);
+
+    socket.on("disconnect", () => {
+      clearInterval(interval);
+    });
+  }
+
+  // 특정 클라이언트에게 메시지를 보내는 메서드
+  sendMessageToClient(socket: Socket, message: any) {
+    socket.emit("message", message); // 클라이언트에게 "userInfoUpdate" 이벤트로 메시지 전송
   }
 
   /** 메시지 전송 */
