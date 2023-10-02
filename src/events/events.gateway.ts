@@ -59,6 +59,15 @@ export class EventsGateway
     return Promise.resolve("Message sent successfully");
   }
 
+  /** 메시지 전송 */
+  sendNotification(message?: any, @ConnectedSocket() socket?: Socket) {
+    console.log(" \n 🌠 sendMessage \n", message);
+    const stringMessage = JSON.stringify(message);
+    console.log(stringMessage);
+    this.server.emit("message", stringMessage);
+    return Promise.resolve("Message sent successfully");
+  }
+
   /** 웹소켓 연결 해제시 */
   handleDisconnect(@ConnectedSocket() socket: Socket) {
     this.logger.log("🐤웹소켓 연결해제");
