@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('BASIC', 'ADMIN');
 
+-- CreateEnum
+CREATE TYPE "Alert_Type" AS ENUM ('NOTIFY', 'ACTIVITY');
+
 -- CreateTable
 CREATE TABLE "User" (
     "user_id" SERIAL NOT NULL,
@@ -160,10 +163,12 @@ CREATE TABLE "Level" (
 -- CreateTable
 CREATE TABLE "Alert" (
     "alert_id" SERIAL NOT NULL,
-    "alert_post_id" INTEGER NOT NULL,
-    "alert_region_id" INTEGER NOT NULL,
-    "alert_place_id" INTEGER NOT NULL,
+    "alert_post_id" INTEGER,
+    "alert_comment_id" INTEGER,
+    "alert_region_id" INTEGER,
+    "alert_place_id" INTEGER,
     "alert_created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "alert_type" "Alert_Type" NOT NULL,
 
     CONSTRAINT "Alert_pkey" PRIMARY KEY ("alert_id")
 );
