@@ -2,7 +2,7 @@
 CREATE TYPE "Role" AS ENUM ('BASIC', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "Alert_Type" AS ENUM ('NOTIFY', 'ACTIVITY');
+CREATE TYPE "AlertType" AS ENUM ('NOTIFY', 'ACTIVITY');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -168,7 +168,7 @@ CREATE TABLE "Alert" (
     "alert_region_id" INTEGER,
     "alert_place_id" INTEGER,
     "alert_created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "alert_type" "Alert_Type" NOT NULL,
+    "alert_type" "AlertType" NOT NULL,
 
     CONSTRAINT "Alert_pkey" PRIMARY KEY ("alert_id")
 );

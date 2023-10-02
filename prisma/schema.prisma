@@ -169,18 +169,18 @@ enum Role {
 }
 
 model Alert {
-  alert_id         Int       @id @default(autoincrement())
+  alert_id         Int      @id @default(autoincrement())
   alert_post_id    Int?
   alert_comment_id Int?
   alert_region_id  Int?
   alert_place_id   Int?
-  alert_created_at DateTime  @default(now())
-  alert_type       AlertType
+  alert_created_at DateTime @default(now())
+  alert_type       String
 }
 
-enum AlertType {
-  NOTIFY
-  ACTIVITY
-}
+// enum AlertType {
+//   NOTIFY
+//   ACTIVITY
+// }
 
 //참고 : https://vertabelo.com/blog/user-profile-database-model/

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { AlertType } from "@prisma/client";
+// import { AlertType } from "@prisma/client";
 import { EventsGateway } from "src/events/events.gateway";
 
 @Injectable()
@@ -13,7 +13,7 @@ export class AlertService {
   async createNotifyAlert(id: number) {
     const data = {
       alert_place_id: id,
-      alert_type: AlertType.NOTIFY,
+      alert_type: "NOTIFY",
     };
     const alert = await this.prisma.alert.create({ data: data });
     const result = await this.makePostAlertMessage(id);
@@ -29,7 +29,7 @@ export class AlertService {
   }
 
   async createActivityAlert(id: number) {
-    const data = { alert_comment_id: id, alert_type: AlertType.ACTIVITY };
+    const data = { alert_comment_id: id, alert_type: "ACTIVITY" };
     const alert = await this.prisma.alert.create({ data: data });
     const result = await this.makeCommentAlertMessage(id);
     await this.eventsGateway
