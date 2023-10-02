@@ -18,6 +18,8 @@ COPY tsconfig.json ./
 # 소스 코드 복사
 COPY . .
 
+RUN npx prisma generate
+
 # NestJS 애플리케이션을 빌드
 RUN npm run build
 
