@@ -17,6 +17,7 @@ export class AlertService {
     };
     const alert = await this.prisma.alert.create({ data: data });
     const result = await this.makePostAlertMessage(id);
+    console.log("createNotifyAlert", result);
     await this.eventsGateway
       .sendMessage(result)
       .then((response) => {
@@ -28,14 +29,24 @@ export class AlertService {
     return result;
   }
 
-  async createActivityAlert(id: number) {
-    const data = { alert_comment_id: id, alert_type: "ACTIVITY" };
+  async createActivityAlert(id: number, post_author_id: number) {
+    const data = {
+      alert_comment_id: id,
+      alert_type: "ACTIVITY",
+      alerted_user: {
+        connect: {
+          user_id: post_author_id,
+        },
+      },
+    };
     const alert = await this.prisma.alert.create({ data: data });
-    const result = await this.makeCommentAlertMessage(id);
+    const message = await this.makeCommentAlertMessage(id);
+    const result = { ...message, alerted_user_id: alert["alerted_user_id"] };
+    console.log("createActivityAlert");
     await this.eventsGateway
-      .sendMessage(result)
+      .sendMessageToClient(result)
       .then((response) => {
-        // console.log("🌠 Notification sent successfully:", response);
+        console.log("🌠 Notification sent successfully:", response);
       })
       .catch((error) => {
         console.error("🌠 Error sending notification:", error);

@@ -2,15 +2,15 @@ const fetch = require("node-fetch");
 const fs = require("fs");
 
 const placesArray = [
-  {
-    place_name: "코엑스",
-    post_star_rating: 5.0,
-    post_description: "코엑스",
-    post_image_url:
-      "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/1코엑스.jpeg",
-    place_latitude: 127.0588278439012,
-    place_longitude: 37.51266138067201,
-  },
+  // {
+  //   place_name: "코엑스",
+  //   post_star_rating: 5.0,
+  //   post_description: "코엑스",
+  //   post_image_url:
+  //     "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/1코엑스.jpeg",
+  //   place_latitude: 127.0588278439012,
+  //   place_longitude: 37.51266138067201,
+  // },
   // {
   //   place_name: "일자산허브천문공원",
   //   post_star_rating: 5.0,
@@ -227,15 +227,15 @@ const placesArray = [
   //   place_latitude: 127.090053515636,
   //   place_longitude: 37.5736051123377,
   // },
-  // {
-  //   place_name: "달리는커피 거제상동점",
-  //   post_star_rating: 5.0,
-  //   post_description: "달려라 왕바우",
-  //   post_image_url:
-  //     "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/25용마폭포공원.jpeg",
-  //   place_latitude: 128.635266779107,
-  //   place_longitude: 34.8610605916813,
-  // },
+  {
+    place_name: "달리는커피 거제상동점",
+    post_star_rating: 5.0,
+    post_description: "달려라 왕바우",
+    post_image_url:
+      "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/25용마폭포공원.jpeg",
+    place_latitude: 128.635266779107,
+    place_longitude: 34.8610605916813,
+  },
 ];
 
 const baseUrl = "http://localhost:5000/v1/posts";
@@ -255,7 +255,7 @@ async function fetchData(placeObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk2MTE5MzA2LCJleHAiOjE2OTYxMjI5MDZ9.jmLxVMWLEvmEDsmj9RIvzcm1CbIlnKTirSIrhp4Ve68",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk2MjUxMzg2LCJleHAiOjE2OTYyNTQ5ODZ9.k98WKVP51tuk-MgE5q_ZqoBnqW20YYhz53Vua3t77lU",
     },
     body: body,
   };

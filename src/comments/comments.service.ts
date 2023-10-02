@@ -32,7 +32,8 @@ export class CommentsService {
     };
     const result = await this.prisma.comment.create({ data: data });
     const message = await this.alertService.createActivityAlert(
-      result.comment_id
+      result.comment_id,
+      post.post_author_id
     );
     return result;
   }

@@ -31,6 +31,7 @@ model User {
   user_activities        UserActivities[]
   user_refresh_token     String?
   user_comment           Comment[]
+  user_alert             Alert[]
 
   // @@unique([user_email], name: "UniqueUserEmail", where: { user_email: { not: "deleted" } })
   @@index([user_email, user_points, user_level, user_created_at])
@@ -176,6 +177,8 @@ model Alert {
   alert_place_id   Int?
   alert_created_at DateTime @default(now())
   alert_type       String
+  alerted_user     User?    @relation(fields: [alerted_user_id], references: [user_id])
+  alerted_user_id  Int?
 }
 
 // enum AlertType {
