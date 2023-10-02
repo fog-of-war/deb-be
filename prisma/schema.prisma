@@ -168,16 +168,16 @@ enum Role {
 }
 
 model Alert {
-  alert_id         Int      @id @default(autoincrement())
+  alert_id         Int        @id @default(autoincrement())
   alert_post_id    Int?
   alert_comment_id Int?
   alert_region_id  Int?
   alert_place_id   Int?
-  alert_created_at DateTime @default(now())
-  alert_type       Type
+  alert_created_at DateTime   @default(now())
+  alert_type       Alert_Type
 }
 
-enum Type {
+enum Alert_Type {
   NOTIFY
   ACTIVITY
 }
