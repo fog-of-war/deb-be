@@ -43,14 +43,14 @@ export class EventsGateway
   handleConnection(@ConnectedSocket() socket: Socket, client: any) {
     const userInfo = socket.userInfo;
     console.log(userInfo);
-    console.log(this.server._checkNamespace);
-    // // 연결된 클라이언트의 userInfo를 해당 클라이언트에게 주기적으로 전송
-    const interval = setInterval(() => {
-      this.sendMessageToClient(socket, userInfo);
-    }, 5000);
-    socket.on("disconnect", () => {
-      clearInterval(interval);
-    });
+    // console.log(this.server._checkNamespace);
+    // // // 연결된 클라이언트의 userInfo를 해당 클라이언트에게 주기적으로 전송
+    // const interval = setInterval(() => {
+    //   this.sendMessageToClient(socket, userInfo);
+    // }, 5000);
+    // socket.on("disconnect", () => {
+    //   clearInterval(interval);
+    // });
   }
 
   // 특정 클라이언트에게 메시지를 보내는 메서드
