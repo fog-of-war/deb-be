@@ -84,6 +84,13 @@ export class EventsGateway
   handleDisconnect(@ConnectedSocket() socket: Socket) {
     this.logger.log("🐤웹소켓 연결해제");
   }
+
+  sendToUserNamespace(userId: number, message: any) {
+    console.log("sendToUserNamespace", message);
+    console.log(this.server);
+    this.server.to(`/ws-alert-${userId}`).emit("message", message);
+    return Promise.resolve("Message sent successfully");
+  }
 }
 
 // private activeSockets: Record<string, Socket> = {};

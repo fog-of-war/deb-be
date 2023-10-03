@@ -42,15 +42,15 @@ export class AlertService {
     const alert = await this.prisma.alert.create({ data: data });
     const message = await this.makeCommentAlertMessage(id);
     const result = { ...message, alerted_user_id: alert["alerted_user_id"] };
-    console.log("createActivityAlert");
     await this.eventsGateway
-      .sendMessageToClient(result)
+      .sendToUserNamespace(result["alerted_user_id"], result)
       .then((response) => {
         console.log("🌠 Notification sent successfully:", response);
       })
       .catch((error) => {
         console.error("🌠 Error sending notification:", error);
       });
+
     return result;
   }
 

@@ -1,24 +1,7 @@
 {
     "달리는커피 거제상동점": {
         "state": {
-            "new_badges": [
-                {
-                    "badge_id": 6,
-                    "badge_name": "냠냠이",
-                    "badge_category_id": 2,
-                    "badge_criteria": 1,
-                    "badge_points": 100,
-                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/냠냠이.png"
-                },
-                {
-                    "badge_id": 18,
-                    "badge_name": "아메리카노",
-                    "badge_category_id": 6,
-                    "badge_criteria": 1,
-                    "badge_points": 100,
-                    "badge_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/뱃지/아메리카노.png"
-                }
-            ]
+            "new_badges": []
         }
     }
 }
