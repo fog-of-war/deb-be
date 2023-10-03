@@ -1,7 +1,6 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import * as argon from "argon2";
-import bcrypt from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { Request } from "express";
@@ -69,7 +68,7 @@ export class AuthService {
       const rt_secret = await this.config.get("RT_SECRET");
       const [at, rt] = await Promise.all([
         this.jwt.signAsync(payload, {
-          expiresIn: "30s",
+          expiresIn: "60m",
           secret: at_secret,
         }),
         this.jwt.signAsync(payload, {

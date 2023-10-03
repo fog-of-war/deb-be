@@ -31,7 +31,7 @@ export class ATGuard extends AuthGuard("jwt-access") {
       }
       return user;
     } catch (error) {
-      console.error("인증 예외 발생:", error);
+      console.error("인증 예외 발생:", ATGuard.name);
       throw error;
     }
   }

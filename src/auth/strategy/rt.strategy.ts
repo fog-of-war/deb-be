@@ -30,7 +30,7 @@ export class RtStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
       "refresh_token" in req.cookies &&
       req.cookies.refresh_token.length > 0
     ) {
-      console.log("extractJWT RT /n", req.cookies.refresh_token);
+      console.log("extractJWT RT \n", req.cookies.refresh_token);
       return req.cookies.refresh_token;
     }
     return null;
