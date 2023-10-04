@@ -20,7 +20,10 @@ import { WsStrategy } from "src/auth/strategy";
 //ws://localhost:5000/v1/ws-alert postman 으로 성공
 @WebSocketGateway({
   cors: {
-    origin: "*",
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["authorization", "Authorization"],
+    credentials: true,
   },
   namespace: /\/ws-.+/,
 })
