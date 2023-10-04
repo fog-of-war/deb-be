@@ -17,14 +17,14 @@ export class AlertService {
     };
     const alert = await this.prisma.alert.create({ data: data });
     const result = await this.makePostAlertMessage(id);
-    console.log("createNotifyAlert", result);
+    // console.log("createNotifyAlert", result);
     await this.eventsGateway
       .sendMessage(result)
       .then((response) => {
         // console.log("🌠 Notification sent successfully:", response);
       })
       .catch((error) => {
-        console.error("🌠 Error sending notification:", error);
+        // console.error("🌠 Error sending notification:", error);
       });
     return result;
   }
@@ -45,10 +45,10 @@ export class AlertService {
     await this.eventsGateway
       .sendToUserNamespace(result["alerted_user_id"], result)
       .then((response) => {
-        console.log("🌠 Notification sent successfully:", response);
+        // console.log("🌠 Notification sent successfully:", response);
       })
       .catch((error) => {
-        console.error("🌠 Error sending notification:", error);
+        // console.error("🌠 Error sending notification:", error);
       });
 
     return result;
@@ -107,7 +107,7 @@ export class AlertService {
         comment_created_at: comment.comment_created_at,
       };
 
-      console.log(message);
+      // console.log(message);
       return message;
     } catch (error) {
       // 예외 처리

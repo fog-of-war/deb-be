@@ -47,7 +47,7 @@ export class EventsGateway
       const userId = userInfo.sub;
       const roomName = `/v1/ws-alert-${userId}`;
       socket.join(roomName); // 클라이언트를 생성한 방에 조인
-      console.log("Client joined room:", roomName);
+      // console.log("Client joined room:", roomName);
     }
   }
   // 특정 클라이언트에게 메시지를 보내는 메서드
@@ -60,7 +60,7 @@ export class EventsGateway
   sendMessage(message?: any, @ConnectedSocket() socket?: Socket) {
     console.log(" \n 🌠 sendMessage \n", message);
     const stringMessage = JSON.stringify(message);
-    console.log(stringMessage);
+    // console.log(stringMessage);
     this.server.emit("message", stringMessage);
     return Promise.resolve("Message sent successfully");
   }
@@ -69,7 +69,7 @@ export class EventsGateway
   sendNotification(message?: any, @ConnectedSocket() socket?: Socket) {
     console.log(" \n 🌠 sendMessage \n", message);
     const stringMessage = JSON.stringify(message);
-    console.log(stringMessage);
+    // console.log(stringMessage);
     this.server.emit("notification", stringMessage);
     return Promise.resolve("Message sent successfully");
   }
@@ -80,8 +80,8 @@ export class EventsGateway
   }
 
   sendToUserNamespace(userId: number, message: any) {
-    console.log("sendToUserNamespace", message);
-    console.log(this.server);
+    // console.log("sendToUserNamespace", message);
+    // console.log(this.server);
     this.server.to(`/v1/ws-alert-${userId}`).emit("activity", message);
     return Promise.resolve("Message sent successfully");
   }
