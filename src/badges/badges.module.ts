@@ -5,6 +5,7 @@ import { LoggerModule } from "src/logger/logger.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import * as redisStore from "cache-manager-redis-store";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { BadgesController } from "./badges.controller";
 @Module({
   imports: [
     LoggerModule,
@@ -32,6 +33,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
       inject: [ConfigService],
     }),
   ],
+  controllers: [BadgesController],
   providers: [BadgesService, PrismaModule],
   exports: [BadgesService],
 })

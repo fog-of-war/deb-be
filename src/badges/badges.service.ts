@@ -11,6 +11,11 @@ export class BadgesService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
   ) {}
 
+  async getAllBadges() {
+    const badges = await this.prisma.badge.findMany({});
+    return badges;
+  }
+
   /** 유저에게 뱃지를 부여하는 메서드 */
   async assignBadgeToUser(userId: number, badgeId: number) {
     try {
