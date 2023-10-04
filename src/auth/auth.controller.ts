@@ -70,7 +70,7 @@ export class AuthController {
     res.cookie("access_token", result.access_token, {
       sameSite: "none",
       secure: true,
-      httpOnly: false,
+      httpOnly: false, // 웹소켓 연결 시 프론트에서 가져오는 작업 필요하여 false 로 설정
     });
     res.cookie("refresh_token", result.refresh_token, {
       sameSite: "none",
@@ -99,7 +99,7 @@ export class AuthController {
     res.cookie("access_token", result.access_token, {
       sameSite: "none",
       secure: true,
-      httpOnly: false,
+      httpOnly: false, // 웹소켓 연결 시 프론트에서 가져오는 작업 필요하여 false 로 설정
     });
     res.cookie("refresh_token", result.refresh_token, {
       sameSite: "none",
@@ -128,7 +128,7 @@ export class AuthController {
     res.cookie("access_token", result.access_token, {
       sameSite: "none",
       secure: true,
-      httpOnly: false,
+      httpOnly: false, // 웹소켓 연결 시 프론트에서 가져오는 작업 필요하여 false 로 설정
     });
     res.cookie("refresh_token", result.refresh_token, {
       sameSite: "none",
@@ -190,7 +190,7 @@ export class AuthController {
       res.cookie("access_token", result.access_token, {
         sameSite: "none",
         secure: true,
-        httpOnly: false,
+        httpOnly: false, // 웹소켓 연결 시 프론트에서 가져오는 작업 필요하여 false 로 설정
       });
       res.cookie("refresh_token", result.refresh_token, {
         sameSite: "none",
