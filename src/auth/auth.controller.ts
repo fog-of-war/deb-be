@@ -70,7 +70,7 @@ export class AuthController {
     res.cookie("access_token", result.access_token, {
       sameSite: "none",
       secure: true,
-      httpOnly: true,
+      httpOnly: false,
     });
     res.cookie("refresh_token", result.refresh_token, {
       sameSite: "none",
@@ -99,7 +99,7 @@ export class AuthController {
     res.cookie("access_token", result.access_token, {
       sameSite: "none",
       secure: true,
-      httpOnly: true,
+      httpOnly: false,
     });
     res.cookie("refresh_token", result.refresh_token, {
       sameSite: "none",
@@ -128,7 +128,7 @@ export class AuthController {
     res.cookie("access_token", result.access_token, {
       sameSite: "none",
       secure: true,
-      httpOnly: true,
+      httpOnly: false,
     });
     res.cookie("refresh_token", result.refresh_token, {
       sameSite: "none",
@@ -190,7 +190,7 @@ export class AuthController {
       res.cookie("access_token", result.access_token, {
         sameSite: "none",
         secure: true,
-        httpOnly: true,
+        httpOnly: false,
       });
       res.cookie("refresh_token", result.refresh_token, {
         sameSite: "none",
@@ -201,6 +201,35 @@ export class AuthController {
     } catch (error) {
       this.logger.error("Token refresh error:", error);
       throw new ForbiddenException("Access Denied");
+    }
+  }
+
+  /** -------------------- */
+
+  /** 로그아웃 */
+  @UseGuards(ATGuard)
+  @Post("signout")
+  @ApiOperation({
+    summary:
+      "로그아웃 : 헤더(authorization)에 access_token을 담아서 보내주시면 됩니다",
+  })
+  @ApiBearerAuth("access_token")
+  @ApiCreatedResponse({
+    status: 201,
+    description: "success",
+    type: TokensResponse,
+  })
+  @HttpCode(HttpStatus.OK)
+  async signOsut(@GetCurrentUserId() userId: number): Promise<boolean> {
+    try {
+      const result = await this.authService.logout(userId);
+      this.logger.log(
+        `user_id : ${userId["user_email"]}님이 회원 탈퇴 하셨습니다.`
+      );
+      return result;
+    } catch (error) {
+      this.logger.error("Logout error:", error);
+      throw new ForbiddenException("Logout failed");
     }
   }
   /** -------------------- */

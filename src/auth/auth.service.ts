@@ -82,6 +82,7 @@ export class AuthService {
       throw new ForbiddenException("Token signing failed");
     }
   }
+  /** -------------------- */
 
   /** 로그아웃 */
   async logout(userId: number): Promise<any> {
@@ -134,6 +135,19 @@ export class AuthService {
       this.logger.error("Refresh tokens error:", error);
       throw new ForbiddenException("Token refresh failed");
     }
+  }
+  /** -------------------- */
+
+  /** 회원 탈퇴 */
+  async signOut(userId: number) {
+    const user = await this.prisma.user.update({
+      where: {
+        user_id: userId,
+      },
+      data: {
+        user_is_deleted: true,
+      },
+    });
   }
   /** -------------------- */
 

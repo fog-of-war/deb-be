@@ -42,17 +42,14 @@ export class EventsGateway
   /** 웹소켓 연결시 */
   handleConnection(@ConnectedSocket() socket: Socket, client: any) {
     const userInfo = socket.userInfo;
-    console.log(userInfo);
-    // console.log(this.server._checkNamespace);
-    // // // 연결된 클라이언트의 userInfo를 해당 클라이언트에게 주기적으로 전송
-    // const interval = setInterval(() => {
-    //   this.sendMessageToClient(socket, userInfo);
-    // }, 5000);
-    // socket.on("disconnect", () => {
-    //   clearInterval(interval);
-    // });
+    console.log("handleConnection", userInfo); // 클라이언트의 정보에서 유저 정보 추출
+    if (userInfo && userInfo.sub) {
+      const userId = userInfo.sub;
+      const roomName = `/v1/ws-alert-${userId}`;
+      socket.join(roomName); // 클라이언트를 생성한 방에 조인
+      console.log("Client joined room:", roomName);
+    }
   }
-
   // 특정 클라이언트에게 메시지를 보내는 메서드
   sendMessageToClient(socket: Socket, message: any) {
     socket.emit("message", message);
@@ -73,7 +70,7 @@ export class EventsGateway
     console.log(" \n 🌠 sendMessage \n", message);
     const stringMessage = JSON.stringify(message);
     console.log(stringMessage);
-    this.server.emit("message", stringMessage);
+    this.server.emit("notification", stringMessage);
     return Promise.resolve("Message sent successfully");
   }
 
@@ -85,7 +82,7 @@ export class EventsGateway
   sendToUserNamespace(userId: number, message: any) {
     console.log("sendToUserNamespace", message);
     console.log(this.server);
-    this.server.to(`/ws-alert-${userId}`).emit("message", message);
+    this.server.to(`/v1/ws-alert-${userId}`).emit("activity", message);
     return Promise.resolve("Message sent successfully");
   }
 }
