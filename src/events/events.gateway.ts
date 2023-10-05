@@ -26,7 +26,7 @@ import { WsStrategy } from "src/auth/strategy";
     credentials: true,
   },
   namespace: /\/ws-.+/,
-  transports: ["websocket"],
+  transports: ["websocket", "polling"],
 })
 @UseGuards(WsAuthGuard)
 @Injectable()
