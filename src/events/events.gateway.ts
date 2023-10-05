@@ -20,7 +20,7 @@ import { WsStrategy } from "src/auth/strategy";
 //ws://localhost:5000/v1/ws-alert postman 으로 성공
 @WebSocketGateway({
   cors: {
-    origin: "*",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     allowedHeaders: ["authorization", "Authorization"],
     credentials: true,
@@ -92,3 +92,4 @@ export class EventsGateway
 }
 
 // private activeSockets: Record<string, Socket> = {};
+// notifications:1 Access to XMLHttpRequest at 'http://api.yubinhome.com/socket.io/?EIO=4&transport=polling&t=OhzazFQ' from origin 'http://localhost:3000' has been blocked by CORS policy: notifications:1 Access to XMLHttpRequest at 'http://api.yubinhome.com/socket.io/?EIO=4&transport=polling&t=OhzazFQ' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.
