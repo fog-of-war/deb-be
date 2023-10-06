@@ -16,6 +16,7 @@ import { WsAuthGuard } from "src/auth/guard";
 import { ServerToClientEvents } from "./types";
 import { SocketAuthMiddleware } from "src/auth/middlewares";
 import { WsStrategy } from "src/auth/strategy";
+import { PrismaService } from "src/prisma/prisma.service";
 
 //ws://localhost:5000/v1/ws-alert postman 으로 성공
 @WebSocketGateway({
@@ -35,7 +36,11 @@ export class EventsGateway
 {
   @WebSocketServer()
   public server: Server<any, ServerToClientEvents>;
-  constructor(private logger: LoggerService, private wsStrategy: WsStrategy) {}
+  constructor(
+    private logger: LoggerService,
+    private wsStrategy: WsStrategy,
+    private prisma: PrismaService
+  ) {}
 
   /** 웹소켓 초기화 */
   afterInit(client: Socket): any {
@@ -52,6 +57,8 @@ export class EventsGateway
       const roomName = `/v1/ws-alert-${userId}`;
       socket.join(roomName); // 클라이언트를 생성한 방에 조인
       console.log("Client joined room:", roomName);
+      // "NOTIFY" 타입의 알림을 찾아서 클라이언트에게 전송
+      this.sendNotifyAlerts(socket, userId);
     }
   }
   // 특정 클라이언트에게 메시지를 보내는 메서드
@@ -88,6 +95,65 @@ export class EventsGateway
     // console.log(this.server);
     this.server.to(`/v1/ws-alert-${userId}`).emit("activity", message);
     return Promise.resolve("Message sent successfully");
+  }
+
+  sendToUserNamespaceNotify(userId: number, message: any) {
+    // console.log("sendToUserNamespace", message);
+    // console.log(this.server);
+    this.server.to(`/v1/ws-alert-${userId}`).emit("notification", message);
+    return Promise.resolve("Message sent successfully");
+  }
+
+  // sendNotifyAlerts 메서드 추가
+  async sendNotifyAlerts(socket: Socket, userId: number) {
+    try {
+      // PrismaService를 사용하여 "NOTIFY" 타입의 알림을 조회
+      const notifyAlerts = await this.prisma.alert.findMany({
+        where: {
+          alert_type: "NOTIFY",
+        },
+      });
+      console.log("notifyAlerts", notifyAlerts);
+      for (const notifyAlert of notifyAlerts) {
+        // 각 알림을 클라이언트에게 보냅니다.
+        const message = await this.makePostAlertMessage(
+          notifyAlert.alert_place_id
+        );
+        this.sendToUserNamespaceNotify(userId, message);
+      }
+    } catch (error) {
+      // 오류 처리
+      console.error("Error sending notify alerts:", error);
+    }
+  }
+
+  async makePostAlertMessage(placeId) {
+    const place = await this.prisma.place.findFirst({
+      where: { place_id: placeId },
+      select: { place_id: true, place_name: true, place_region: true },
+    });
+    // 가장 최신 게시물 조회
+    const latestPost = await this.prisma.post.findFirst({
+      where: { post_place_id: placeId, post_is_deleted: false },
+      select: {
+        post_id: true,
+        post_created_at: true,
+        post_updated_at: true,
+        post_image_url: true,
+      },
+      orderBy: {
+        post_created_at: "desc", // post_created_at을 내림차순으로 정렬하여 최신 게시물을 선택
+      },
+    });
+    const message = {
+      place_id: place["place_id"],
+      place_name: place["place_name"],
+      region_name: place["place_region"]["region_name"],
+      post_id: latestPost["post_id"],
+      post_created_at: latestPost["post_created_at"],
+      post_image_url: latestPost["post_image_url"],
+    };
+    return message;
   }
 }
 
