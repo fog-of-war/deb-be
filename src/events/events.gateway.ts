@@ -26,7 +26,7 @@ import { WsStrategy } from "src/auth/strategy";
     credentials: true,
   },
   namespace: /\/ws-.+/,
-  transports: ["websocket", "polling"],
+  transports: ["websocket"],
 })
 @UseGuards(WsAuthGuard)
 @Injectable()
@@ -51,7 +51,7 @@ export class EventsGateway
       const userId = userInfo.sub;
       const roomName = `/v1/ws-alert-${userId}`;
       socket.join(roomName); // 클라이언트를 생성한 방에 조인
-      // console.log("Client joined room:", roomName);
+      console.log("Client joined room:", roomName);
     }
   }
   // 특정 클라이언트에게 메시지를 보내는 메서드
