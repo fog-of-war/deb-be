@@ -143,7 +143,7 @@ export class EventsGateway
         const message = await this.makeCommentAlertMessage(
           activityAlert.alert_comment_id
         );
-        this.sendToUserNamespaceNotify(userId, message);
+        this.sendToUserNamespace(userId, message);
       }
     } catch (error) {
       // 오류 처리

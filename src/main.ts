@@ -113,8 +113,8 @@ async function bootstrap() {
 
   /** 스웨거 설정 */
   const config = new DocumentBuilder()
-    .setTitle("fog of war example")
-    .setDescription("The fog of war API description")
+    .setTitle("Fog of war example")
+    .setDescription("The Fog of war API description")
     .setVersion("1.0")
     .addTag("fog of war")
     .addSecurity("access_token", {
