@@ -18,7 +18,7 @@ async function fetchData(commentObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsInVzZXJfZW1haWwiOiJ5c2hpbmI5OEBuYXZlci5jb20iLCJpYXQiOjE2OTYzOTk4NDMsImV4cCI6MTY5NjQwMzQ0M30.eIM0C7Lq8wfOf7nxVBb8mjxYuyJwAEbwiMjR7ITp7Dc",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsInVzZXJfZW1haWwiOiJ5c2hpbmI5OEBuYXZlci5jb20iLCJpYXQiOjE2OTY1OTIxMjIsImV4cCI6MTY5NjU5NTcyMn0.uRwygT3U20bQSCTSSQrlaoXeeq6heF1a9nP7YpjHYWk",
     },
     body: body,
   };

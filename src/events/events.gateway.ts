@@ -10,7 +10,7 @@ import {
 } from "@nestjs/websockets";
 import { LoggerService } from "src/logger/logger.service";
 import { Server, Socket } from "socket.io";
-import { Injectable, UseGuards } from "@nestjs/common";
+import { Injectable, NotFoundException, UseGuards } from "@nestjs/common";
 import { onlineMap } from "./online";
 import { WsAuthGuard } from "src/auth/guard";
 import { ServerToClientEvents } from "./types";
@@ -49,7 +49,7 @@ export class EventsGateway
   }
 
   /** 웹소켓 연결시 */
-  handleConnection(@ConnectedSocket() socket: Socket, client: any) {
+  async handleConnection(@ConnectedSocket() socket: Socket, client: any) {
     const userInfo = socket.userInfo;
     console.log("handleConnection", userInfo); // 클라이언트의 정보에서 유저 정보 추출
     if (userInfo && userInfo.sub) {
@@ -58,7 +58,8 @@ export class EventsGateway
       socket.join(roomName); // 클라이언트를 생성한 방에 조인
       console.log("Client joined room:", roomName);
       // "NOTIFY" 타입의 알림을 찾아서 클라이언트에게 전송
-      this.sendNotifyAlerts(socket, userId);
+      await this.sendNotifyAlerts(socket, userId);
+      await this.sendActivityAlerts(socket, userId);
     }
   }
   // 특정 클라이언트에게 메시지를 보내는 메서드
@@ -126,6 +127,29 @@ export class EventsGateway
       console.error("Error sending notify alerts:", error);
     }
   }
+  // sendActivityAlerts 메서드 추가
+  async sendActivityAlerts(socket: Socket, userId: number) {
+    try {
+      // PrismaService를 사용하여 "ACTIVITY" 타입의 알림을 조회
+      const activityAlerts = await this.prisma.alert.findMany({
+        where: {
+          alert_type: "ACTIVITY",
+          alerted_user_id: userId,
+        },
+      });
+
+      for (const activityAlert of activityAlerts) {
+        // 각 알림을 클라이언트에게 보냅니다.
+        const message = await this.makeCommentAlertMessage(
+          activityAlert.alert_comment_id
+        );
+        this.sendToUserNamespaceNotify(userId, message);
+      }
+    } catch (error) {
+      // 오류 처리
+      console.error("Error sending activity alerts:", error);
+    }
+  }
 
   async makePostAlertMessage(placeId) {
     const place = await this.prisma.place.findFirst({
@@ -154,6 +178,38 @@ export class EventsGateway
       post_image_url: latestPost["post_image_url"],
     };
     return message;
+  }
+
+  async makeCommentAlertMessage(commentId) {
+    try {
+      if (typeof commentId !== "number" || commentId <= 0) {
+        throw new NotFoundException("Invalid comment ID");
+      }
+
+      const comment = await this.prisma.comment.findFirst({
+        where: { comment_id: commentId },
+        include: { comment_author: true },
+      });
+
+      if (!comment) {
+        // 댓글을 찾지 못한 경우 예외 throw
+        throw new NotFoundException("Comment not found");
+      }
+
+      const message = {
+        user_nickname: comment.comment_author.user_nickname,
+        user_image_url: comment.comment_author.user_image_url,
+        comment_id: comment.comment_id,
+        comment_text: comment.comment_text,
+        comment_created_at: comment.comment_created_at,
+      };
+
+      // console.log(message);
+      return message;
+    } catch (error) {
+      // 예외 처리
+      throw error; // 예외를 다시 던지거나, 에러 메시지를 로깅하거나, 적절한 에러 응답을 반환할 수 있습니다.
+    }
   }
 }
 
