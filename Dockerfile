@@ -30,4 +30,5 @@ RUN npm install -g pm2
 EXPOSE 5000
 
 # 마이그레이션을 포함하여 시작 스크립트 실행
-CMD ["npm", "run", "start:migrate:prod"]
+# CMD ["sh", "-c", "source set_env.sh && npm run start:migrate:prod"]
+
