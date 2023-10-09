@@ -154,28 +154,25 @@ export class AuthService {
         },
         select: { user_oauth_token: true, user_oauth_provider: true },
       });
-
       // 토큰이 없으면 종료
       if (!user || !user.user_oauth_token) {
         throw new NotFoundException("사용자 토큰을 찾을 수 없습니다.");
       }
-      console.log("Service revokeAccount", user.user_oauth_token);
-
       const oauthToken = user.user_oauth_token;
-      console.log("revokeAccount", oauthToken);
+      let status;
       switch (user.user_oauth_provider) {
         case "google":
-          await this.revokeGoogleAccount(oauthToken);
+          status = await this.revokeGoogleAccount(oauthToken);
           break;
         case "naver":
-          await this.revokeNaverAccount(oauthToken);
+          status = await this.revokeNaverAccount(oauthToken);
           break;
         default:
           throw new Error("지원되지 않는 OAuth 공급자입니다.");
       }
       // 유저 삭제여부 업데이트
       await this.changeUserStateDelete(userId);
-      return "탈퇴 성공";
+      return status;
     } catch (error) {
       throw error;
     }
@@ -197,9 +194,12 @@ export class AuthService {
 
   /** 구글 oauth 해제 */
   // https://developers.google.com/identity/protocols/oauth2/web-server?hl=ko#tokenrevoke
+  // https://developers.google.com/identity/account-linking/unlinking?hl=ko
   async revokeGoogleAccount(oauthToken) {
     try {
-      const postData = `token=${oauthToken}`;
+      const googleClientId = await this.config.get("GOOGLE_OAUTH_ID");
+      const googleClientSecret = await this.config.get("GOOGLE_OAUTH_SECRET");
+      const postData = `client_id=${googleClientId}&client_secret=${googleClientSecret}&token=${oauthToken}`;
       console.log("revokeGoogleAccount", postData);
       const postOptions = {
         url: "https://oauth2.googleapis.com/revoke",

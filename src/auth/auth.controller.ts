@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Get,
   HttpCode,
+  HttpException,
   HttpStatus,
   Post,
   Req,
@@ -209,12 +210,25 @@ export class AuthController {
   /** 회원 탈퇴 */
   @UseGuards(ATGuard)
   @Post("revoke")
-  async revokeAccount(@GetCurrentUserId() userId: any): Promise<any> {
+  async revokeAccount(
+    @GetCurrentUserId() userId: any,
+    @Res() res
+  ): Promise<any> {
     try {
       const result = await this.authService.revokeAccount(userId.sub);
-      return result;
+      res.status(HttpStatus.NO_CONTENT);
     } catch (error) {
       console.log("Controller revokeAccount", error);
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: error,
+        },
+        HttpStatus.NOT_FOUND,
+        {
+          cause: error,
+        }
+      );
     }
   }
 
