@@ -226,16 +226,6 @@ export class AuthController {
       res.status(HttpStatus.NO_CONTENT);
     } catch (error) {
       console.log("Controller revokeAccount", error);
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: error,
-        },
-        HttpStatus.NOT_FOUND,
-        {
-          cause: error,
-        }
-      );
     }
   }
 

@@ -1,5 +1,7 @@
 import {
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
@@ -220,7 +222,10 @@ export class AuthService {
       return response.status;
     } catch (error) {
       this.logger.error("revokeGoogleAccount 에러:", error);
-      throw error;
+      throw new HttpException(
+        "Google OAuth 토큰 취소 중 오류가 발생했습니다.",
+        HttpStatus.SERVICE_UNAVAILABLE
+      );
     }
   }
   /** -------------------- */
@@ -250,7 +255,10 @@ export class AuthService {
     } catch (error) {
       this.logger.error("revokeNaverAccount 에러:", error);
       // 에러가 발생한 경우 적절한 오류 메시지 또는 상태 코드를 반환하거나 예외를 다시 던질 수 있습니다.
-      throw new Error("Naver 계정 탈퇴 실패");
+      throw new HttpException(
+        "Naver OAuth 토큰 취소 중 오류가 발생했습니다.",
+        HttpStatus.SERVICE_UNAVAILABLE
+      );
     }
   }
   /** -------------------- */
