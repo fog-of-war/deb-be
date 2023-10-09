@@ -9,7 +9,7 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import * as passport from "passport";
 import { PrismaService } from "./prisma/prisma.service";
 import { LoggerService } from "./logger/logger.service";
-import { UnauthorizedExceptionFilter } from "./filters";
+import { HttpExceptionFilter, UnauthorizedExceptionFilter } from "./filters";
 import { EventsGateway } from "./events/events.gateway";
 import { PostsService } from "./posts/posts.service";
 import * as posts from "./prisma/posts.json";
@@ -70,7 +70,10 @@ async function bootstrap() {
   /** -------------------- */
 
   /** 글로벌 예외 필터 */
-  app.useGlobalFilters(new UnauthorizedExceptionFilter());
+  app.useGlobalFilters(
+    new UnauthorizedExceptionFilter(),
+    new HttpExceptionFilter()
+  );
   /** -------------------- */
 
   /** Prisma 로 DB에 seeding */
