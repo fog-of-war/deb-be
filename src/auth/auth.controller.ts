@@ -145,8 +145,7 @@ export class AuthController {
   @UseGuards(ATGuard)
   @Post("logout")
   @ApiOperation({
-    summary:
-      "로그아웃 : 헤더(authorization)에 access_token을 담아서 보내주시면 됩니다",
+    summary: "로그아웃 : access_token 필요",
   })
   @ApiBearerAuth("access_token")
   @ApiCreatedResponse({
@@ -172,8 +171,7 @@ export class AuthController {
   /** 토큰 리프레시 */
   @UseGuards(RtGuard)
   @ApiOperation({
-    summary:
-      "리프레시 토큰 사용 및 교체: 헤더(authorization)에 리프레시토큰을 담아서 보내주시면 됩니다",
+    summary: "리프레시 토큰 사용 및 교체: refresh_token 필요",
   })
   @ApiBearerAuth("refresh_token")
   @Post("refresh")
