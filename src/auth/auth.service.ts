@@ -155,13 +155,16 @@ export class AuthService {
       if (!user || !user.user_oauth_token) {
         throw new Error("사용자 토큰을 찾을 수 없습니다.");
       }
+      console.log("Service revokeAccount", user.user_oauth_token);
 
+      const oauthToken = user.user_oauth_token;
+      console.log("revokeAccount", oauthToken);
       switch (user.user_oauth_provider) {
         case "google":
-          await this.revokeGoogleAccount(user.user_oauth_token);
+          await this.revokeGoogleAccount(oauthToken);
           break;
         case "naver":
-          await this.revokeNaverAccount(user.user_oauth_token);
+          await this.revokeNaverAccount(oauthToken);
           break;
         default:
           throw new Error("지원되지 않는 OAuth 공급자입니다.");
@@ -170,7 +173,7 @@ export class AuthService {
       await this.changeUserStateDelete(userId);
       return "탈퇴 성공";
     } catch (error) {
-      throw error;
+      // throw error;
     }
   }
   /** -------------------- */
@@ -188,32 +191,41 @@ export class AuthService {
 
   /** 구글 oauth 해제 */
   // https://developers.google.com/identity/protocols/oauth2/web-server?hl=ko#tokenrevoke
-  async revokeGoogleAccount(user) {
-    const postData = `token=${user.user_oauth_token}`;
-    const postOptions = {
-      url: "https://oauth2.googleapis.com/revoke",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      data: postData,
-    };
-    const httpService = new HttpService();
-    const response = await httpService
-      .post(postOptions.url, postData, {
-        headers: postOptions.headers,
-      })
-      .toPromise();
-    return response;
+  async revokeGoogleAccount(oauthToken) {
+    try {
+      const postData = `token=${oauthToken}`;
+      console.log("revokeGoogleAccount", postData);
+      const postOptions = {
+        url: "https://oauth2.googleapis.com/revoke",
+        method: "POST",
+        port: "443",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Length": Buffer.byteLength(postData),
+        },
+        data: postData,
+      };
+      const httpService = new HttpService();
+      const response = await httpService
+        .post(postOptions.url, postData, {
+          headers: postOptions.headers,
+        })
+        .toPromise();
+      return response.status;
+    } catch (error) {
+      console.error("revokeGoogleAccount 에러:", error);
+      throw error;
+    }
   }
+
   /** -------------------- */
 
   /** 네이버 oauth 해제 */
   // https://developers.naver.com/docs/login/devguide/devguide.md#5-3-%EB%84%A4%EC%9D%B4%EB%B2%84-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%97%B0%EB%8F%99-%ED%95%B4%EC%A0%9C
-  async revokeNaverAccount(user) {
+  async revokeNaverAccount(oauthToken) {
     const naverClientID = await this.config.get("NAVER_CLIENT_ID");
     const naverClientSecret = await this.config.get("NAVER_CLIENT_PW");
-    const postData = `grant_type=delete&client_id=${naverClientID}&client_secret=${naverClientSecret}&access_token=${user.user_oauth_token}`;
+    const postData = `grant_type=delete&client_id=${naverClientID}&client_secret=${naverClientSecret}&access_token=${oauthToken}`;
     const postOptions = {
       url: "https://nid.naver.com/oauth2.0/token",
       method: "POST",
@@ -228,7 +240,7 @@ export class AuthService {
         headers: postOptions.headers,
       })
       .toPromise();
-    return response;
+    return response.status;
   }
   /** -------------------- */
 

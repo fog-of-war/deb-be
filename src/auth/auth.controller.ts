@@ -211,12 +211,10 @@ export class AuthController {
   @Post("revoke")
   async revokeAccount(@GetCurrentUserId() userId: any): Promise<any> {
     try {
-      console.log("revoke");
       const result = await this.authService.revokeAccount(userId.sub);
-      console.log("revoke", result);
       return result;
     } catch (error) {
-      console.log("revoke", error);
+      console.log("Controller revokeAccount", error);
     }
   }
 
