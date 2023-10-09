@@ -206,31 +206,19 @@ export class AuthController {
 
   /** -------------------- */
 
-  /** 로그아웃 */
+  /** 회원 탈퇴 */
   @UseGuards(ATGuard)
-  @Post("signout")
-  @ApiOperation({
-    summary:
-      "로그아웃 : 헤더(authorization)에 access_token을 담아서 보내주시면 됩니다",
-  })
-  @ApiBearerAuth("access_token")
-  @ApiCreatedResponse({
-    status: 201,
-    description: "success",
-    type: TokensResponse,
-  })
-  @HttpCode(HttpStatus.OK)
-  async signOsut(@GetCurrentUserId() userId: number): Promise<boolean> {
+  @Post("google/revoke")
+  async revokeGoogleAccount(@GetCurrentUserId() userId: any): Promise<any> {
     try {
-      const result = await this.authService.logout(userId);
-      this.logger.log(
-        `user_id : ${userId["user_email"]}님이 회원 탈퇴 하셨습니다.`
-      );
+      console.log("google/revoke");
+      const result = await this.authService.revokeGoogleAccount(userId.sub);
+      console.log("google/revoke", result);
       return result;
     } catch (error) {
-      this.logger.error("Logout error:", error);
-      throw new ForbiddenException("Logout failed");
+      console.log("google/revoke", error);
     }
   }
+
   /** -------------------- */
 }

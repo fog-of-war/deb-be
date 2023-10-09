@@ -50,6 +50,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
       const userDto = {
         user_providerId: id,
         user_email: email,
+        user_oauth_token: accessToken,
       };
       try {
         user = await this.usersService.createUser(userDto);

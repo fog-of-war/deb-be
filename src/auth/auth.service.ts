@@ -6,14 +6,15 @@ import { ConfigService } from "@nestjs/config";
 import { Request } from "express";
 import { Tokens } from "./types";
 import { LoggerService } from "src/logger/logger.service";
-
+import { HttpService } from "@nestjs/axios";
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
+    private readonly httpService: HttpService
   ) {}
   /** 구글 oauth 로그인 */
   async googleLogin(req: Request): Promise<any> {
@@ -139,15 +140,57 @@ export class AuthService {
   /** -------------------- */
 
   /** 회원 탈퇴 */
-  async signOut(userId: number) {
-    const user = await this.prisma.user.update({
-      where: {
-        user_id: userId,
-      },
-      data: {
-        user_is_deleted: true,
-      },
-    });
+  async revokeGoogleAccount(userId) {
+    try {
+      // 사용자 정보 가져오기
+      const user = await this.prisma.user.findFirst({
+        where: {
+          user_id: userId,
+        },
+        select: { user_oauth_token: true },
+      });
+
+      // 토큰이 없으면 종료
+      if (!user || !user.user_oauth_token) {
+        throw new Error("사용자 토큰을 찾을 수 없습니다.");
+      }
+
+      // POST 요청 데이터 구성
+      const postData = `token=${user.user_oauth_token}`;
+
+      // POST 요청 옵션 설정
+      const postOptions = {
+        url: "https://oauth2.googleapis.com/revoke",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        data: postData,
+      };
+
+      // HTTP 요청 보내기
+      const httpService = new HttpService();
+      const response = await httpService
+        .post(postOptions.url, postData, {
+          headers: postOptions.headers,
+        })
+        .toPromise();
+
+      // 유저 삭제여부 업데이트 (선택적으로 사용)
+      await this.prisma.user.update({
+        where: {
+          user_id: userId,
+        },
+        data: {
+          user_is_deleted: true,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("revokeGoogleAccount 에러:", error);
+      throw error;
+    }
   }
   /** -------------------- */
 
@@ -167,6 +210,37 @@ export class AuthService {
     } catch (error) {
       this.logger.error("Update refresh token hash error:", error);
       throw new ForbiddenException("Refresh token update failed");
+    }
+  }
+
+  /** -------------------- */
+
+  /** Oauth 토큰 암호화 */
+  // async hashingOauthToken(oauthAccessToken: string): Promise<string> {
+  //   try {
+  //     return await argon.hash(oauthAccessToken);
+  //   } catch (error) {
+  //     this.logger.error("hashing oauth token hash error:", error);
+  //     throw new ForbiddenException("hashing token update failed");
+  //   }
+  // }
+  /** -------------------- */
+
+  /** Oauth 토큰 업데이트 */
+  async updateOauthToken(userId: number, OauthToken: string): Promise<void> {
+    try {
+      console.log("updateOauthTokenHash", OauthToken);
+      await this.prisma.user.update({
+        where: {
+          user_id: userId,
+        },
+        data: {
+          user_oauth_token: OauthToken,
+        },
+      });
+    } catch (error) {
+      this.logger.error("Update oauth token hash error:", error);
+      throw new ForbiddenException("oauth token update failed");
     }
   }
   /** -------------------- */

@@ -19,4 +19,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty()
   user_email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  user_oauth_token: string;
 }

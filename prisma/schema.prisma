@@ -32,6 +32,7 @@ model User {
   user_refresh_token     String?
   user_comment           Comment[]
   user_alert             Alert[]
+  user_oauth_token       String?
 
   // @@unique([user_email], name: "UniqueUserEmail", where: { user_email: { not: "deleted" } })
   @@index([user_email, user_points, user_level, user_created_at])
