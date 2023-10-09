@@ -57,9 +57,9 @@ export class UsersService {
     const cachedItem = await this.cacheManager.get(`cached_item_${user_id}`);
     // 캐시에서 데이터가 있으면 해당 데이터를 반환합니다.
     if (cachedItem) {
-      console.log(
-        `findUserById 64 cached_item_${user_id} ` + "Cached result found"
-      );
+      // console.log(
+      //   `findUserById 64 cached_item_${user_id} ` + "Cached result found"
+      // );
       if (
         cachedItem["user_nickname"] !== null &&
         cachedItem["user_image_url"] !== null
