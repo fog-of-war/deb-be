@@ -18,6 +18,7 @@ import {
   ApiOAuth2,
   ApiOperation,
   ApiBearerAuth,
+  ApiNoContentResponse,
 } from "@nestjs/swagger";
 import { Response } from "express";
 import {
@@ -208,6 +209,14 @@ export class AuthController {
   /** -------------------- */
 
   /** 회원 탈퇴 */
+  @ApiOperation({
+    summary: "회원탈퇴 : access_token 필요",
+  })
+  @ApiBearerAuth("access_token")
+  @ApiNoContentResponse({
+    status: 204,
+    description: "탈퇴 성공 시 204 반환",
+  })
   @UseGuards(ATGuard)
   @Post("revoke")
   async revokeAccount(
