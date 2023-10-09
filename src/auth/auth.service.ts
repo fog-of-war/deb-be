@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import * as argon from "argon2";
 import { JwtService } from "@nestjs/jwt";
@@ -153,7 +157,7 @@ export class AuthService {
 
       // 토큰이 없으면 종료
       if (!user || !user.user_oauth_token) {
-        throw new Error("사용자 토큰을 찾을 수 없습니다.");
+        throw new NotFoundException("사용자 토큰을 찾을 수 없습니다.");
       }
       console.log("Service revokeAccount", user.user_oauth_token);
 
@@ -173,9 +177,10 @@ export class AuthService {
       await this.changeUserStateDelete(userId);
       return "탈퇴 성공";
     } catch (error) {
-      // throw error;
+      throw error;
     }
   }
+
   /** -------------------- */
   async changeUserStateDelete(userId) {
     await this.prisma.user.update({
@@ -184,6 +189,7 @@ export class AuthService {
       },
       data: {
         user_is_deleted: true,
+        user_oauth_token: null,
       },
     });
   }
@@ -213,34 +219,39 @@ export class AuthService {
         .toPromise();
       return response.status;
     } catch (error) {
-      console.error("revokeGoogleAccount 에러:", error);
+      this.logger.error("revokeGoogleAccount 에러:", error);
       throw error;
     }
   }
-
   /** -------------------- */
 
   /** 네이버 oauth 해제 */
   // https://developers.naver.com/docs/login/devguide/devguide.md#5-3-%EB%84%A4%EC%9D%B4%EB%B2%84-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%97%B0%EB%8F%99-%ED%95%B4%EC%A0%9C
   async revokeNaverAccount(oauthToken) {
-    const naverClientID = await this.config.get("NAVER_CLIENT_ID");
-    const naverClientSecret = await this.config.get("NAVER_CLIENT_PW");
-    const postData = `grant_type=delete&client_id=${naverClientID}&client_secret=${naverClientSecret}&access_token=${oauthToken}`;
-    const postOptions = {
-      url: "https://nid.naver.com/oauth2.0/token",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      data: postData,
-    };
-    const httpService = new HttpService();
-    const response = await httpService
-      .post(postOptions.url, postData, {
-        headers: postOptions.headers,
-      })
-      .toPromise();
-    return response.status;
+    try {
+      const naverClientID = await this.config.get("NAVER_CLIENT_ID");
+      const naverClientSecret = await this.config.get("NAVER_CLIENT_PW");
+      const postData = `grant_type=delete&client_id=${naverClientID}&client_secret=${naverClientSecret}&access_token=${oauthToken}`;
+      const postOptions = {
+        url: "https://nid.naver.com/oauth2.0/token",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        data: postData,
+      };
+      const httpService = new HttpService();
+      const response = await httpService
+        .post(postOptions.url, postData, {
+          headers: postOptions.headers,
+        })
+        .toPromise();
+      return response.status;
+    } catch (error) {
+      this.logger.error("revokeNaverAccount 에러:", error);
+      // 에러가 발생한 경우 적절한 오류 메시지 또는 상태 코드를 반환하거나 예외를 다시 던질 수 있습니다.
+      throw new Error("Naver 계정 탈퇴 실패");
+    }
   }
   /** -------------------- */
 
