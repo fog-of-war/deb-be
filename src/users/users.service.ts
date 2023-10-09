@@ -103,6 +103,7 @@ export class UsersService {
     return await this.prisma.user.findFirst({
       where: {
         user_email: email,
+        user_is_deleted: false,
       },
     });
   }
