@@ -16,6 +16,7 @@ export class AuthService {
     private readonly logger: LoggerService,
     private readonly httpService: HttpService
   ) {}
+
   /** 구글 oauth 로그인 */
   async googleLogin(req: Request): Promise<any> {
     try {
@@ -167,7 +168,7 @@ export class AuthService {
       }
       // 유저 삭제여부 업데이트
       await this.changeUserStateDelete(userId);
-      return "탈퇴완";
+      return "탈퇴 성공";
     } catch (error) {
       throw error;
     }
@@ -184,11 +185,11 @@ export class AuthService {
     });
   }
   /** -------------------- */
-  async revokeGoogleAccount(user) {
-    // POST 요청 데이터 구성
-    const postData = `token=${user.user_oauth_token}`;
 
-    // POST 요청 옵션 설정
+  /** 구글 oauth 해제 */
+  // https://developers.google.com/identity/protocols/oauth2/web-server?hl=ko#tokenrevoke
+  async revokeGoogleAccount(user) {
+    const postData = `token=${user.user_oauth_token}`;
     const postOptions = {
       url: "https://oauth2.googleapis.com/revoke",
       method: "POST",
@@ -197,38 +198,39 @@ export class AuthService {
       },
       data: postData,
     };
-
-    // HTTP 요청 보내기
     const httpService = new HttpService();
     const response = await httpService
       .post(postOptions.url, postData, {
         headers: postOptions.headers,
       })
       .toPromise();
+    return response;
   }
   /** -------------------- */
-  async revokeNaverAccount(user) {
-    // POST 요청 데이터 구성
-    const postData = `token=${user.user_oauth_token}`;
 
-    // POST 요청 옵션 설정
+  /** 네이버 oauth 해제 */
+  // https://developers.naver.com/docs/login/devguide/devguide.md#5-3-%EB%84%A4%EC%9D%B4%EB%B2%84-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%97%B0%EB%8F%99-%ED%95%B4%EC%A0%9C
+  async revokeNaverAccount(user) {
+    const naverClientID = await this.config.get("NAVER_CLIENT_ID");
+    const naverClientSecret = await this.config.get("NAVER_CLIENT_PW");
+    const postData = `grant_type=delete&client_id=${naverClientID}&client_secret=${naverClientSecret}&access_token=${user.user_oauth_token}`;
     const postOptions = {
-      url: "https://oauth2.googleapis.com/revoke",
+      url: "https://nid.naver.com/oauth2.0/token",
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       data: postData,
     };
-
-    // HTTP 요청 보내기
     const httpService = new HttpService();
     const response = await httpService
       .post(postOptions.url, postData, {
         headers: postOptions.headers,
       })
       .toPromise();
+    return response;
   }
+  /** -------------------- */
 
   /** 리프레시 토큰을 데이터베이스에 업데이트 */
   async updateRtHash(userId: number, rt: string): Promise<void> {

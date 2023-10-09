@@ -1,4 +1,4 @@
-import { Logger, Module } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { JwtModule } from "@nestjs/jwt";
@@ -16,6 +16,7 @@ import { HttpModule } from "@nestjs/axios";
 import { PassportModule } from "@nestjs/passport";
 import { RanksModule } from "src/ranks/ranks.module";
 import { LoggerModule } from "src/logger/logger.module";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { LoggerModule } from "src/logger/logger.module";
     UsersModule,
     RanksModule,
     LoggerModule,
+    ConfigModule,
   ],
   providers: [
     AuthService,
