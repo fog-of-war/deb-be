@@ -39,6 +39,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
         user_providerId: id,
         user_email: email,
         user_oauth_token: accessToken,
+        user_oauth_provider: "google",
       };
       try {
         user = await this.usersService.createUser(userDto);

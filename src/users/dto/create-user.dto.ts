@@ -24,4 +24,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty()
   user_oauth_token: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  user_oauth_provider: string;
 }

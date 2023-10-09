@@ -51,6 +51,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, "naver") {
         user_providerId: id,
         user_email: email,
         user_oauth_token: accessToken,
+        user_oauth_provider: "naver",
       };
       try {
         user = await this.usersService.createUser(userDto);
