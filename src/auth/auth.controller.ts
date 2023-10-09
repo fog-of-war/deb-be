@@ -209,14 +209,14 @@ export class AuthController {
   /** 회원 탈퇴 */
   @UseGuards(ATGuard)
   @Post("revoke")
-  async revokeGoogleAccount(@GetCurrentUserId() userId: any): Promise<any> {
+  async revokeAccount(@GetCurrentUserId() userId: any): Promise<any> {
     try {
       console.log("revoke");
-      const result = await this.authService.revokeGoogleAccount(userId.sub);
-revoke", result);
+      const result = await this.authService.revokeAccount(userId.sub);
+      console.log("revoke", result);
       return result;
     } catch (error) {
-      console.log("google/revoke", error);
+      console.log("revoke", error);
     }
   }
 

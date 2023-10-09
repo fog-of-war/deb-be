@@ -162,6 +162,7 @@ export class PrismaService extends PrismaClient {
         user_is_admin: "ADMIN", // BASIC 또는 다른 사용자 역할 값
         user_selected_badge_id: 1, // 선택한 뱃지 ID
         user_is_deleted: false,
+        user_oauth_provider: "admin",
       };
       const createdUser = await this.user.create({
         data: admin,

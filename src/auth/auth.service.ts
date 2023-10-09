@@ -140,14 +140,14 @@ export class AuthService {
   /** -------------------- */
 
   /** 회원 탈퇴 */
-  async revokeGoogleAccount(userId) {
+  async revokeAccount(userId) {
     try {
       // 사용자 정보 가져오기
       const user = await this.prisma.user.findFirst({
         where: {
           user_id: userId,
         },
-        select: { user_oauth_token: true },
+        select: { user_oauth_token: true, user_oauth_provider: true },
       });
 
       // 토큰이 없으면 종료
@@ -155,44 +155,80 @@ export class AuthService {
         throw new Error("사용자 토큰을 찾을 수 없습니다.");
       }
 
-      // POST 요청 데이터 구성
-      const postData = `token=${user.user_oauth_token}`;
-
-      // POST 요청 옵션 설정
-      const postOptions = {
-        url: "https://oauth2.googleapis.com/revoke",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        data: postData,
-      };
-
-      // HTTP 요청 보내기
-      const httpService = new HttpService();
-      const response = await httpService
-        .post(postOptions.url, postData, {
-          headers: postOptions.headers,
-        })
-        .toPromise();
-
-      // 유저 삭제여부 업데이트 (선택적으로 사용)
-      await this.prisma.user.update({
-        where: {
-          user_id: userId,
-        },
-        data: {
-          user_is_deleted: true,
-        },
-      });
-
-      return response.data;
+      switch (user.user_oauth_provider) {
+        case "google":
+          await this.revokeGoogleAccount(user.user_oauth_token);
+          break;
+        case "naver":
+          await this.revokeNaverAccount(user.user_oauth_token);
+          break;
+        default:
+          throw new Error("지원되지 않는 OAuth 공급자입니다.");
+      }
+      // 유저 삭제여부 업데이트
+      await this.changeUserStateDelete(userId);
+      return "탈퇴완";
     } catch (error) {
-      console.error("revokeGoogleAccount 에러:", error);
       throw error;
     }
   }
   /** -------------------- */
+  async changeUserStateDelete(userId) {
+    await this.prisma.user.update({
+      where: {
+        user_id: userId,
+      },
+      data: {
+        user_is_deleted: true,
+      },
+    });
+  }
+  /** -------------------- */
+  async revokeGoogleAccount(user) {
+    // POST 요청 데이터 구성
+    const postData = `token=${user.user_oauth_token}`;
+
+    // POST 요청 옵션 설정
+    const postOptions = {
+      url: "https://oauth2.googleapis.com/revoke",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: postData,
+    };
+
+    // HTTP 요청 보내기
+    const httpService = new HttpService();
+    const response = await httpService
+      .post(postOptions.url, postData, {
+        headers: postOptions.headers,
+      })
+      .toPromise();
+  }
+  /** -------------------- */
+  async revokeNaverAccount(user) {
+    // POST 요청 데이터 구성
+    const postData = `token=${user.user_oauth_token}`;
+
+    // POST 요청 옵션 설정
+    const postOptions = {
+      url: "https://oauth2.googleapis.com/revoke",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: postData,
+    };
+
+    // HTTP 요청 보내기
+    const httpService = new HttpService();
+    const response = await httpService
+      .post(postOptions.url, postData, {
+        headers: postOptions.headers,
+      })
+      .toPromise();
+  }
 
   /** 리프레시 토큰을 데이터베이스에 업데이트 */
   async updateRtHash(userId: number, rt: string): Promise<void> {
