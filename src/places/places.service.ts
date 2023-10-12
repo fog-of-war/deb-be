@@ -368,6 +368,8 @@ export class PlacesService {
         post_comments: true,
       },
     });
+
+    console.log("posts", posts);
     const postsWithUserInfo = [];
     for (const post of posts) {
       const user = await this.prisma.user.findUnique({
@@ -379,9 +381,12 @@ export class PlacesService {
         },
       });
 
+      const comments = post.post_comments || [];
+
       postsWithUserInfo.push({
         ...post,
         post_author: user,
+        post_comments: comments, // post_comments가 빈 배열이거나 값이 있는 경우 모두 할당
       });
     }
 

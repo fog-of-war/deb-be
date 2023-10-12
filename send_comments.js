@@ -4,7 +4,7 @@ const fs = require("fs");
 const commentsArray = [
   {
     comment_text: "댓글보내기예시",
-    commented_post_id: 26,
+    commented_post_id: 1,
   },
 ];
 
@@ -18,7 +18,7 @@ async function fetchData(commentObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsInVzZXJfZW1haWwiOiJ5c2hpbmI5OEBuYXZlci5jb20iLCJpYXQiOjE2OTY1OTIxMjIsImV4cCI6MTY5NjU5NTcyMn0.uRwygT3U20bQSCTSSQrlaoXeeq6heF1a9nP7YpjHYWk",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInVzZXJfZW1haWwiOiJ5c2hpbmI5OEBuYXZlci5jb20iLCJpYXQiOjE2OTcwOTkxMDcsImV4cCI6MTY5NzEwMjcwN30.v1DqCuQhdIfo_3WNIEEHBjdRpFVaAQJu2NZAJvt8wCw",
     },
     body: body,
   };
