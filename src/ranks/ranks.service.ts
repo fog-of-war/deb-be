@@ -35,50 +35,58 @@ export class RanksService {
   }
 
   async getAllUserRanks() {
-    await this.updateRanks();
-    const userRanks = await this.prisma.userRanking.findMany({
-      orderBy: {
-        user_points: "desc",
-      },
-    });
-    if (userRanks) {
-      const formattedUserRanks = await Promise.all(
-        userRanks.map(async (userRank, index) => {
-          console.log("userRank", userRank, index);
-          const user = await this.prisma.user.findUnique({
-            where: {
-              user_id: userRank["user_id"],
-              user_is_deleted: false,
-            },
-            select: {
-              user_id: true,
-              user_nickname: true,
-              user_image_url: true,
-              user_points: true,
-              user_badges: true,
-              user_is_deleted: true,
-            },
-          });
-          if (user && user["user_is_deleted"] == false) {
-            return {
-              user_id: user["user_id"],
-              user_nickname: user.user_nickname,
-              user_image_url: user.user_image_url,
-              user_points: user.user_points | 0,
-              user_badges_count: user.user_badges.length | 0,
-              rank: userRank.rank,
-            };
-          } else {
-            return;
-          }
-        })
-      );
-      const result = formattedUserRanks.filter(
-        (userRank) => userRank !== undefined
-      );
-      return result;
-    } else {
-      return null;
+    try {
+      await this.updateRanks();
+      const userRanks = await this.prisma.userRanking.findMany({
+        orderBy: {
+          user_points: "desc",
+        },
+      });
+      if (userRanks) {
+        const formattedUserRanks = await Promise.all(
+          userRanks.map(async (userRank, index) => {
+            console.log("userRank", userRank, index);
+            const user = await this.prisma.user.findUnique({
+              where: {
+                user_id: userRank["user_id"],
+                user_is_deleted: false,
+              },
+              select: {
+                user_id: true,
+                user_nickname: true,
+                user_image_url: true,
+                user_points: true,
+                user_badges: true,
+                user_is_deleted: true,
+              },
+            });
+            if (user && user["user_is_deleted"] == false) {
+              return {
+                user_id: user["user_id"],
+                user_nickname: user.user_nickname,
+                user_image_url: user.user_image_url,
+                user_points: user.user_points | 0,
+                user_badges_count: user.user_badges.length | 0,
+                rank: userRank.rank,
+              };
+            } else {
+              return;
+            }
+          })
+        );
+        const result = formattedUserRanks.filter(
+          (userRank) => userRank !== undefined
+        );
+        return result;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      // 에러 처리: 예외가 발생하면 이곳에서 처리할 수 있습니다.
+      console.error("에러 발생:", error);
+      // 에러를 적절히 처리하거나 메시지를 기록하십시오.
+      // 예를 들어 에러 메시지를 반환하거나 기본 값을 반환할 수 있습니다.
+      return null; // 에러가 발생한 경우 null 또는 다른 값을 반환합니다.
     }
   }
 

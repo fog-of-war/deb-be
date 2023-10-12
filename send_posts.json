@@ -124,6 +124,7 @@
     },
     "롯데월드타워": {
         "state": {
+            "new_level": 1,
             "new_badges": []
         }
     },

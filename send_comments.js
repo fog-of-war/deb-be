@@ -8,8 +8,8 @@ const commentsArray = [
   },
 ];
 
-const baseUrl = "http://localhost:5000/v1/comments";
-
+// const baseUrl = "http://localhost:5000/v1/comments";
+const baseUrl = "https://api.yubinhome.com/v1/posts";
 async function fetchData(commentObj) {
   const url = baseUrl;
   const body = JSON.stringify(commentObj); // commentObj를 직접 body로 전달
@@ -18,7 +18,7 @@ async function fetchData(commentObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInVzZXJfZW1haWwiOiJ5c2hpbmI5OEBuYXZlci5jb20iLCJpYXQiOjE2OTcwOTkxMDcsImV4cCI6MTY5NzEwMjcwN30.v1DqCuQhdIfo_3WNIEEHBjdRpFVaAQJu2NZAJvt8wCw",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk3MDk5NjcwLCJleHAiOjE2OTcxMDMyNzB9.rMonW_0MGrZefIlf_D48c46FVThtdAHDI-uUE0DKRBk",
     },
     body: body,
   };
