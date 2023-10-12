@@ -118,7 +118,6 @@ export class UsersController {
     }
   }
 
-  @UseInterceptors(CacheInterceptor)
   @Get("me/badges")
   @ApiOperation({ summary: "사용자의 소유한 뱃지 조회" }) // API 설명
   @ApiBearerAuth("access_token")

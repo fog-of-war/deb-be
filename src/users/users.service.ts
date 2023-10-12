@@ -132,15 +132,15 @@ export class UsersService {
   }
 
   async findUserBadges(userId: number) {
-    const cachedItem = await this.cacheManager.get(`cached_item_${userId}`);
-    if (cachedItem) {
-      if (
-        cachedItem["user_nickname"] !== null &&
-        cachedItem["user_image_url"] !== null
-      ) {
-        return cachedItem;
-      }
-    }
+    // const cachedItem = await this.cacheManager.get(`cached_item_${userId}`);
+    // if (cachedItem) {
+    //   if (
+    //     cachedItem["user_nickname"] !== null &&
+    //     cachedItem["user_image_url"] !== null
+    //   ) {
+    //     return cachedItem;
+    //   }
+    // }
 
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId, user_is_deleted: false },
@@ -151,15 +151,15 @@ export class UsersService {
     });
 
     // 데이터를 캐시에 저장합니다.
-    if (user) {
-      if (
-        cachedItem["user_nickname"] !== null &&
-        cachedItem["user_image_url"] !== null
-      ) {
-        await this.cacheManager.set(`cached_item_${userId}`, user, 3);
-        this.refreshUserCache(userId);
-      }
-    }
+    // if (user) {
+    //   if (
+    //     cachedItem["user_nickname"] !== null &&
+    //     cachedItem["user_image_url"] !== null
+    //   ) {
+    //     await this.cacheManager.set(`cached_item_${userId}`, user, 3);
+    //     this.refreshUserCache(userId);
+    //   }
+    // }
 
     return user;
   }
