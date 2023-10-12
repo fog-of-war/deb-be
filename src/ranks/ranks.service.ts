@@ -43,10 +43,11 @@ export class RanksService {
     });
     if (userRanks) {
       const formattedUserRanks = await Promise.all(
-        userRanks.map(async (userRank) => {
+        userRanks.map(async (userRank, index) => {
+          console.log("userRank", userRank, index);
           const user = await this.prisma.user.findUnique({
             where: {
-              user_id: userRank.user_id,
+              user_id: userRank["user_id"],
               user_is_deleted: false,
             },
             select: {
@@ -55,19 +56,27 @@ export class RanksService {
               user_image_url: true,
               user_points: true,
               user_badges: true,
+              user_is_deleted: true,
             },
           });
-          return {
-            user_id: user.user_id,
-            user_nickname: user.user_nickname,
-            user_image_url: user.user_image_url,
-            user_points: user.user_points,
-            user_badges_count: user.user_badges.length,
-            rank: userRank.rank,
-          };
+          if (user && user["user_is_deleted"] == false) {
+            return {
+              user_id: user["user_id"],
+              user_nickname: user.user_nickname,
+              user_image_url: user.user_image_url,
+              user_points: user.user_points | 0,
+              user_badges_count: user.user_badges.length | 0,
+              rank: userRank.rank,
+            };
+          } else {
+            return;
+          }
         })
       );
-      return formattedUserRanks;
+      const result = formattedUserRanks.filter(
+        (userRank) => userRank !== undefined
+      );
+      return result;
     } else {
       return null;
     }
