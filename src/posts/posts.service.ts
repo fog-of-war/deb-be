@@ -131,6 +131,7 @@ export class PostsService {
           place_latitude,
           place_longitude
         );
+        console.log("newPlace", newPlace);
         await this.createPostWithNewPlace(newPlace, userId, dto);
         placeId = newPlace.place_id;
       }
@@ -203,32 +204,36 @@ export class PostsService {
       },
     });
   }
+
   /** 새로운 장소와 함께 게시물 생성하기*/
-  private async createPostWithNewPlace(
+  async createPostWithNewPlace(
     newPlace: any,
     userId: number,
     dto: CreatePostDto
   ) {
-    const result = this.prisma.post.create({
-      data: {
-        post_star_rating: dto.post_star_rating,
-        post_description: dto.post_description,
-        post_image_url: dto.post_image_url,
-        post_place: {
-          connect: {
-            place_id: newPlace.place_id,
+    try {
+      const result = await this.prisma.post.create({
+        data: {
+          post_star_rating: dto.post_star_rating,
+          post_description: dto.post_description,
+          post_image_url: dto.post_image_url,
+          post_place: {
+            connect: {
+              place_id: newPlace.place_id,
+            },
+          },
+          post_author: {
+            connect: { user_id: userId },
           },
         },
-        post_author: {
-          connect: { user_id: userId },
-        },
-      },
-    });
-    await this.alertService.createNotifyAlert(newPlace.place_id);
-    // await this.eventsGateway.handleAlertEvent(newPlace.place_id);
-    return result;
+      });
+      await this.alertService.createNotifyAlert(newPlace.place_id);
+      return result;
+    } catch (error) {
+      console.error("Error creating post with new place:", error);
+      throw error;
+    }
   }
-
   /** 게시물 수정하기 */
   async editPostById(userId: number, postId: number, dto: EditPostDto) {
     try {
