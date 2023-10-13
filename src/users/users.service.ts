@@ -154,34 +154,37 @@ export class UsersService {
 
   /** 유저가 방문한 지역의 갯수 세기 */
   async getMyVisitedRegionCount(userId: number) {
-    try {
-      const result = await this.prisma.user.findFirst({
-        where: { user_id: userId },
-        select: { user_visited_places: { include: { visited_place: true } } },
-      });
-      const regions = await this.prisma.region.findMany({});
-      const regionsWithVisitedCount = regions.map((region) => ({
-        ...region,
-        region_visited_count: 0,
-      }));
-      if (result.user_visited_places.length != 0) {
-        result.user_visited_places.forEach((item) => {
-          const regionId = item.visited_place.place_region_id;
-
-          const regionToUpdate = regionsWithVisitedCount.find(
-            (region) => region.region_id === regionId
-          );
-          if (regionToUpdate) {
-            regionToUpdate.region_visited_count++;
-          }
+    return this.prisma.$transaction(async (prisma) => {
+      try {
+        const result = await prisma.user.findFirst({
+          where: { user_id: userId },
+          select: { user_visited_places: { include: { visited_place: true } } },
         });
-      } else {
-        return [];
+        const regions = await prisma.region.findMany({});
+        const regionsWithVisitedCount = regions.map((region) => ({
+          ...region,
+          region_visited_count: 0,
+        }));
+        if (result.user_visited_places.length != 0) {
+          result.user_visited_places.forEach((item) => {
+            const regionId = item.visited_place.place_region_id;
+
+            const regionToUpdate = regionsWithVisitedCount.find(
+              (region) => region.region_id === regionId
+            );
+            if (regionToUpdate) {
+              regionToUpdate.region_visited_count++;
+            }
+          });
+        } else {
+          return [];
+        }
+        return regionsWithVisitedCount;
+      } catch (err) {
+        console.log(err);
+        throw new Error('Failed to retrieve visited region count.');
       }
-      return regionsWithVisitedCount;
-    } catch (err) {
-      console.log(err);
-    }
+    });
   }
   /** -------------------- */
 
@@ -202,7 +205,7 @@ export class UsersService {
   /** -------------------- */
 
   /** 캐시 리프레시 */
-  private async refreshUserCache(userId: number) {
+  async refreshUserCache(userId: number) {
     setTimeout(async () => {
       const user = await this.prisma.user.findFirst({
         where: { user_id: userId, user_is_deleted: false },
