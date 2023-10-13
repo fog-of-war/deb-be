@@ -33,11 +33,27 @@ export class CommentsService {
       commented_post_id: commented_post_id,
     };
     const result = await this.prisma.comment.create({ data: data });
+
+    const author = await this.prisma.user.findFirst({
+      where: { user_id: userId },
+      select :{                
+        user_image_url: true,
+        user_nickname: true
+      }
+    });
+
+    if (!author) {
+      throw new HttpException(
+        "사용자 정보를 찾을 수 없습니다",
+        HttpStatus.NOT_FOUND
+      );
+    }
+
     const message = await this.alertService.createActivityAlert(
       result.comment_id,
       post.post_author_id
     );
-    return result;
+    return {...result, comment_author : author};
   }
   /** -------------------- */
 
@@ -72,7 +88,20 @@ export class CommentsService {
       where: { comment_id: id },
       data: data,
     });
-    return `commnet_id : #${id} 댓글 수정완료`;
+    const author = await this.prisma.user.findFirst({
+      where: { user_id: userId },
+      select :{                
+        user_image_url: true,
+        user_nickname: true
+      }
+    });
+    if (!author) {
+      throw new HttpException(
+        "사용자 정보를 찾을 수 없습니다",
+        HttpStatus.NOT_FOUND
+      );
+    }
+    return {...result, comment_author : author};
   }
   /** -------------------- */
 

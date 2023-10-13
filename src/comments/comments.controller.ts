@@ -21,7 +21,7 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { CommentResponse } from "./responses";
+import { CommentResponse, CommentResponseWithCommentAuthor } from "./responses";
 
 @ApiTags("comments")
 @Controller("comments")
@@ -43,6 +43,7 @@ export class CommentsController {
   @ApiResponse({
     status: 201,
     description: "",
+    type :CommentResponseWithCommentAuthor
   })
   async create(
     @GetCurrentUserId() userId: number,
@@ -83,6 +84,7 @@ export class CommentsController {
   @HttpCode(201)
   @ApiResponse({
     status: 201,
+    type :CommentResponseWithCommentAuthor
   })
   update(
     @GetCurrentUserId() userId: number,

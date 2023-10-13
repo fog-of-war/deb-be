@@ -1,14 +1,12 @@
-// {
-//   "comment_id": 1,
-//   "comment_text": "우왕",
-//   "comment_created_at": "2023-09-18T08:50:36.212Z",
-//   "comment_updated_at": "2023-09-18T08:50:36.212Z",
-//   "comment_author_id": 1,
-//   "commented_post_id": 1,
-//   "comment_is_deleted": false
-// }
-
 import { ApiProperty } from "@nestjs/swagger";
+
+export class CommentAuthor {
+  @ApiProperty()
+  user_image_url: string;
+
+  @ApiProperty()
+  user_nickname: string;
+}
 
 export class CommentResponse {
   @ApiProperty()
@@ -31,4 +29,9 @@ export class CommentResponse {
 
   @ApiProperty()
   comment_is_deleted: boolean;
+}
+
+export class CommentResponseWithCommentAuthor extends CommentResponse {
+  @ApiProperty({ type: CommentAuthor })
+  comment_author: CommentAuthor;
 }
