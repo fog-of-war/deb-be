@@ -11,6 +11,7 @@ import { BadgesService } from "../badges/badges.service";
 import { RanksService } from "src/ranks/ranks.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
+import { LoggerService } from "src/logger/logger.service";
 
 @Injectable()
 export class UsersService {
@@ -18,6 +19,7 @@ export class UsersService {
     private readonly prisma: PrismaService,
     private readonly badgesService: BadgesService,
     private readonly ranksService: RanksService,
+    private readonly logger: LoggerService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
   ) {}
 
@@ -65,6 +67,7 @@ export class UsersService {
 
   /** 유저 id 로 유저 찾기 */
   async findUserById(user_id: number): Promise<any | null> {
+    this.logger.log("UsersService findUserById",user_id)
     const user = await this.prisma.user.findFirst({
       where: { user_id: user_id, user_is_deleted: false },
       select: {
@@ -81,6 +84,7 @@ export class UsersService {
         user_authored_posts: true,
       },
     });
+    this.logger.log("UsersService findUserById result\n", user)
     return user;
   }
   /** -------------------- */

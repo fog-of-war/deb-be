@@ -59,10 +59,9 @@ export class UsersController {
     type: GetUserResponse,
   })
   async getMe(@GetCurrentUserInfo() user) {
-    // this.logger.log("자신의 회원정보 호출한 사람", user["user_email"]);
-    this.logger.log("자신의 회원정보 호출한 사람", user["sub"]);
+    this.logger.log("UsersController 자신의 회원정보 호출한 사람", user["sub"]);
     const result = await this.userService.findUserById(user["sub"]);
-    // this.logger.log("자신의 회원정보 호출 결과", result);
+    this.logger.log("UsersController 자신의 회원정보 호출 결과\n", result);
     return result;
   }
   /** -------------------- */
