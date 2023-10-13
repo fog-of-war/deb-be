@@ -165,7 +165,7 @@ export class EventsGateway
   */
   async sendActivityAlerts(socket: Socket, userId: number) {
     try {
-      const activityAlerts = await this.findActivityAlerts();
+      const activityAlerts = await this.findActivityAlerts(userId);
       for (const activityAlert of activityAlerts) {
         const message = await this.makeCommentAlertMessage(
           activityAlert.alert_comment_id
@@ -181,7 +181,7 @@ export class EventsGateway
   /** 
   * "ACTIVITY" 타입의 알림을 DB에서 찾아옴
   */
-   async findActivityAlerts(){
+   async findActivityAlerts(userId){
     return await this.prisma.alert.findMany({
        where: {
         alert_type: "ACTIVITY",
