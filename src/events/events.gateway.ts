@@ -201,18 +201,22 @@ export class EventsGateway
       }
       const comment = await this.prisma.comment.findFirst({
         where: { comment_id: commentId },
-        include: { comment_author: true },
+        include: { comment_author: true ,commented_post : {select: {post_place_id : true}}},
       });
+      
       if (!comment) {
         throw new NotFoundException("Comment not found");
       }
+
       const message = {
         user_nickname: comment.comment_author.user_nickname,
         user_image_url: comment.comment_author.user_image_url,
         comment_id: comment.comment_id,
         comment_text: comment.comment_text,
         comment_created_at: comment.comment_created_at,
+        commented_post_place_id : comment.commented_post.post_place_id
       };
+ 
       return message;
     } catch (error) {
       throw error; 

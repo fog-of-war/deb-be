@@ -92,9 +92,8 @@ export class AlertService {
 
       const comment = await this.prisma.comment.findFirst({
         where: { comment_id: commentId },
-        include: { comment_author: true },
+        include: { comment_author: true , commented_post : {select: {post_place_id : true}}},
       });
-
       if (!comment) {
         // 댓글을 찾지 못한 경우 예외 throw
         throw new NotFoundException("Comment not found");
@@ -106,9 +105,9 @@ export class AlertService {
         comment_id: comment.comment_id,
         comment_text: comment.comment_text,
         comment_created_at: comment.comment_created_at,
+        commented_post_place_id : comment.commented_post.post_place_id
       };
 
-      // console.log(message);
       return message;
     } catch (error) {
       // 예외 처리
