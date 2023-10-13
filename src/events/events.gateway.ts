@@ -57,106 +57,84 @@ export class EventsGateway
       const roomName = `/v1/ws-alert-${userId}`;
       socket.join(roomName); // 클라이언트를 생성한 방에 조인
       console.log("Client joined room:", roomName);
-      // "NOTIFY" 타입의 알림을 찾아서 클라이언트에게 전송
+      // "NOTIFY", "ACTIVITY" 타입의 알림을 찾아서 클라이언트에게 전송
       await this.sendNotifyAlerts(socket, userId);
       await this.sendActivityAlerts(socket, userId);
     }
   }
-  // 특정 클라이언트에게 메시지를 보내는 메서드
-  sendMessageToClient(socket: Socket, message: any) {
-    socket.emit("message", message);
-    return Promise.resolve("Message sent successfully");
-  }
 
-  /** 메시지 전송 */
+
+
+  /** "NOTIFY" 알림이 생성되면 서버에 있는 모든 클라이언트에게 메시지 전송 */
   sendMessage(message?: any, @ConnectedSocket() socket?: Socket) {
     console.log(" \n 🌠 sendMessage \n", message);
     const stringMessage = JSON.stringify(message);
-    // console.log(stringMessage);
-    this.server.emit("message", stringMessage);
-    return Promise.resolve("Message sent successfully");
-  }
-
-  /** 메시지 전송 */
-  sendNotification(message?: any, @ConnectedSocket() socket?: Socket) {
-    console.log(" \n 🌠 sendMessage \n", message);
-    const stringMessage = JSON.stringify(message);
-    // console.log(stringMessage);
     this.server.emit("notification", stringMessage);
     return Promise.resolve("Message sent successfully");
   }
+
 
   /** 웹소켓 연결 해제시 */
   handleDisconnect(@ConnectedSocket() socket: Socket) {
     this.logger.log("🐤웹소켓 연결해제");
   }
 
-  sendToUserNamespace(userId: number, message: any) {
-    // console.log("sendToUserNamespace", message);
-    // console.log(this.server);
-    this.server.to(`/v1/ws-alert-${userId}`).emit("activity", message);
-    return Promise.resolve("Message sent successfully");
-  }
 
+  /** 웹소켓 네임스페이스에 처음 연결 시 해당 유저에게 "NOTIFY" 전달 */
   sendToUserNamespaceNotify(userId: number, message: any) {
-    // console.log("sendToUserNamespace", message);
-    // console.log(this.server);
     this.server.to(`/v1/ws-alert-${userId}`).emit("notification", message);
     return Promise.resolve("Message sent successfully");
   }
 
-  // sendNotifyAlerts 메서드 추가
+  /** 
+   * 1. 웹소켓 네임스페이스에 처음 연결 시 해당 유저에게 "ACTIVITY" 전달
+   * 2. 댓글이 달릴 때 마다 해당 유저의 네임스페이스에 내용 전달 */
+  sendToUserNamespaceActivity(userId: number, message: any) {
+    this.server.to(`/v1/ws-alert-${userId}`).emit("activity", message);
+    return Promise.resolve("Message sent successfully");
+  }
+
+
+ /** 
+  * sendNotifyAlerts 메서드
+  * "NOTIFY" 타입의 메시지 생성
+ */
   async sendNotifyAlerts(socket: Socket, userId: number) {
     try {
-      // PrismaService를 사용하여 "NOTIFY" 타입의 알림을 조회
-      const notifyAlerts = await this.prisma.alert.findMany({
-        where: {
-          alert_type: "NOTIFY",
-        },
-      });
-      console.log("notifyAlerts", notifyAlerts);
+      const notifyAlerts =await this.findNotifyAlerts();
       for (const notifyAlert of notifyAlerts) {
-        // 각 알림을 클라이언트에게 보냅니다.
-        const message = await this.makePostAlertMessage(
+        const message = await this.makeNotifyAlertMessage(
           notifyAlert.alert_place_id
         );
-        this.sendToUserNamespaceNotify(userId, message);
+        await this.sendToUserNamespaceNotify(userId, message);
       }
     } catch (error) {
-      // 오류 처리
       console.error("Error sending notify alerts:", error);
     }
   }
-  // sendActivityAlerts 메서드 추가
-  async sendActivityAlerts(socket: Socket, userId: number) {
-    try {
-      // PrismaService를 사용하여 "ACTIVITY" 타입의 알림을 조회
-      const activityAlerts = await this.prisma.alert.findMany({
-        where: {
-          alert_type: "ACTIVITY",
-          alerted_user_id: userId,
-        },
-      });
+ /** -------------------- */
 
-      for (const activityAlert of activityAlerts) {
-        // 각 알림을 클라이언트에게 보냅니다.
-        const message = await this.makeCommentAlertMessage(
-          activityAlert.alert_comment_id
-        );
-        this.sendToUserNamespace(userId, message);
-      }
-    } catch (error) {
-      // 오류 처리
-      console.error("Error sending activity alerts:", error);
-    }
+ /** 
+  * "NOTIFY" 타입의 알림을 DB에서 찾아옴
+  */
+  async findNotifyAlerts(){
+   return await this.prisma.alert.findMany({
+      where: {
+        alert_type: "NOTIFY",
+      },
+    });
   }
-
-  async makePostAlertMessage(placeId) {
+ /** -------------------- */
+ 
+  /** 
+  * "NOTIFY" 타입의 알림을 가공하여 메시지를 생성함
+  */
+  async makeNotifyAlertMessage(placeId) {
     const place = await this.prisma.place.findFirst({
       where: { place_id: placeId },
       select: { place_id: true, place_name: true, place_region: true },
     });
-    // 가장 최신 게시물 조회
+
     const latestPost = await this.prisma.post.findFirst({
       where: { post_place_id: placeId, post_is_deleted: false },
       select: {
@@ -166,7 +144,7 @@ export class EventsGateway
         post_image_url: true,
       },
       orderBy: {
-        post_created_at: "desc", // post_created_at을 내림차순으로 정렬하여 최신 게시물을 선택
+        post_created_at: "desc", 
       },
     });
     const message = {
@@ -179,23 +157,55 @@ export class EventsGateway
     };
     return message;
   }
+ /** -------------------- */
+ 
+  /** 
+  * sendActivityAlerts 메서드
+  * "ACTIVITY" 타입의 알림 메세지 생성 및 네임스페이스에 전송
+  */
+  async sendActivityAlerts(socket: Socket, userId: number) {
+    try {
+      const activityAlerts = await this.findActivityAlerts();
+      for (const activityAlert of activityAlerts) {
+        const message = await this.makeCommentAlertMessage(
+          activityAlert.alert_comment_id
+        );
+        this.sendToUserNamespaceActivity(userId, message);
+      }
+    } catch (error) {
+      console.error("Error sending activity alerts:", error);
+    }
+  }
+ /** -------------------- */
+ 
+  /** 
+  * "ACTIVITY" 타입의 알림을 DB에서 찾아옴
+  */
+   async findActivityAlerts(){
+    return await this.prisma.alert.findMany({
+       where: {
+        alert_type: "ACTIVITY",
+        alerted_user_id: userId,
+       },
+     });
+   }
+ /** -------------------- */
 
+  /** 
+  * "ACTIVITY" 타입의 알림을 가공하여 메시지를 생성함
+  */
   async makeCommentAlertMessage(commentId) {
     try {
       if (typeof commentId !== "number" || commentId <= 0) {
         throw new NotFoundException("Invalid comment ID");
       }
-
       const comment = await this.prisma.comment.findFirst({
         where: { comment_id: commentId },
         include: { comment_author: true },
       });
-
       if (!comment) {
-        // 댓글을 찾지 못한 경우 예외 throw
         throw new NotFoundException("Comment not found");
       }
-
       const message = {
         user_nickname: comment.comment_author.user_nickname,
         user_image_url: comment.comment_author.user_image_url,
@@ -203,15 +213,31 @@ export class EventsGateway
         comment_text: comment.comment_text,
         comment_created_at: comment.comment_created_at,
       };
-
-      // console.log(message);
       return message;
     } catch (error) {
-      // 예외 처리
-      throw error; // 예외를 다시 던지거나, 에러 메시지를 로깅하거나, 적절한 에러 응답을 반환할 수 있습니다.
+      throw error; 
     }
   }
+   /** -------------------- */
 }
 
+ 
 // private activeSockets: Record<string, Socket> = {};
 // notifications:1 Access to XMLHttpRequest at 'http://api.yubinhome.com/socket.io/?EIO=4&transport=polling&t=OhzazFQ' from origin 'http://localhost:3000' has been blocked by CORS policy: notifications:1 Access to XMLHttpRequest at 'http://api.yubinhome.com/socket.io/?EIO=4&transport=polling&t=OhzazFQ' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.
+    
+
+
+
+
+/** 특정 클라이언트에게 메시지를 보내는 메서드 */
+  // sendMessageToClient(socket: Socket, message: any) {
+  //   socket.emit("message", message);
+  //   return Promise.resolve("Message sent successfully");
+  // }
+  // /** 메시지 전송 */
+  // sendNotification(message?: any, @ConnectedSocket() socket?: Socket) {
+  //   console.log(" \n 🌠 sendMessage \n", message);
+  //   const stringMessage = JSON.stringify(message);
+  //   this.server.emit("notification", stringMessage);
+  //   return Promise.resolve("Message sent successfully");
+  // }
