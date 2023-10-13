@@ -13,7 +13,7 @@ import {
 import { RanksService } from "./ranks.service";
 import { CreateRankDto } from "./dto/create-rank.dto";
 import { UpdateRankDto } from "./dto/update-rank.dto";
-import { GetCurrentUser, GetCurrentUserId, GetUser } from "../auth/decorator";
+import { GetCurrentUser, GetCurrentUserInfo, GetUser } from "../auth/decorator";
 import { ATGuard, JwtGuard } from "src/auth/guard";
 import {
   ApiBearerAuth,
@@ -65,7 +65,7 @@ export class RanksController {
   })
   @ApiBearerAuth("access_token")
   @UseGuards(ATGuard)
-  async getRankByUserId(@GetCurrentUserId() user) {
+  async getRankByUserId(@GetCurrentUserInfo() user) {
     const result = await this.ranksService.getUserRank(user["sub"]);
     return result;
   }

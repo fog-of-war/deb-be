@@ -14,7 +14,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 // import { User } from "@prisma/client";
-import { GetCurrentUserId, GetUser } from "../auth/decorator";
+import { GetCurrentUserInfo, GetUser } from "../auth/decorator";
 import { ATGuard, JwtGuard } from "../auth/guard";
 import { UsersService } from "./users.service";
 import { ChangeUserTitleDto, EditUserDto } from "./dto";
@@ -58,7 +58,7 @@ export class UsersController {
     description: "",
     type: GetUserResponse,
   })
-  async getMe(@GetCurrentUserId() user) {
+  async getMe(@GetCurrentUserInfo() user) {
     // this.logger.log("자신의 회원정보 호출한 사람", user["user_email"]);
     this.logger.log("자신의 회원정보 호출한 사람", user["sub"]);
     const result = await this.userService.findUserById(user["sub"]);
@@ -81,7 +81,7 @@ export class UsersController {
     description: "",
     type: EditUserResponse,
   })
-  async editUser(@GetCurrentUserId() user, @Body() dto: EditUserDto) {
+  async editUser(@GetCurrentUserInfo() user, @Body() dto: EditUserDto) {
     const errors = await validate(dto);
     if (errors.length > 0) {
       const errorResponse = {
@@ -116,7 +116,7 @@ export class UsersController {
     description: "사용자가 소유한 뱃지 정보",
     type: GetUserBadgeResponse,
   })
-  async getMyBadges(@GetCurrentUserId() user) {
+  async getMyBadges(@GetCurrentUserInfo() user) {
     const result = await this.userService.findUserBadges(user["sub"]);
     this.logger.log(`${user["user_email"]} 뱃지 정보 호출`);
     return result;
@@ -136,7 +136,7 @@ export class UsersController {
     type: EditUserResponse, 
   })
   async changeTitle(
-    @GetCurrentUserId() user,
+    @GetCurrentUserInfo() user,
     @Body() dto: ChangeUserTitleDto,
     @Res() res
   ) {
@@ -163,7 +163,7 @@ export class UsersController {
     type: [RegionWithVisitedCountDto],
   })
   async getMyVisitedRegionCount(
-    @GetCurrentUserId() user,
+    @GetCurrentUserInfo() user,
     @Res() res
   ) {
     try {
@@ -191,7 +191,7 @@ export class UsersController {
     status: 200,
     description: "탈퇴성공",
   })
-  async leaveService(@GetCurrentUserId() user, @Res() res) {
+  async leaveService(@GetCurrentUserInfo() user, @Res() res) {
     try {
       const result = await this.userService.leaveService(user["sub"]);
       this.logger.log(`user_id : ${user["user_email"]} 회원탈퇴`);

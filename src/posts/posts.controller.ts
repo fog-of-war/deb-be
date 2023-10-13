@@ -19,7 +19,7 @@ import {
 import { ATGuard, JwtGuard } from "../auth/guard";
 import { PostsService } from "./posts.service";
 import { CreatePostDto, EditPostDto } from "./dto";
-import { GetCurrentUserId, GetUser } from "../auth/decorator";
+import { GetCurrentUserInfo, GetUser } from "../auth/decorator";
 import {
   ApiTags,
   ApiBearerAuth,
@@ -59,7 +59,7 @@ export class PostsController {
   })
   @ApiBearerAuth("access_token")
   @UseGuards(ATGuard)
-  async getPostsByUserId(@GetCurrentUserId() userId: number) {
+  async getPostsByUserId(@GetCurrentUserInfo() userId: number) {
     const result = await this.postService.getPostsByUserId(userId["sub"]);
     this.logger.log(userId["user_email"], "가 자신의 게시물 호출");
     return result;
@@ -90,7 +90,7 @@ export class PostsController {
     type: PostPostsResponse, // 반환 모델을 지정
   })
   async createPost(
-    @GetCurrentUserId() userId: number,
+    @GetCurrentUserInfo() userId: number,
     @Body() dto: CreatePostDto,
     @Res() res
   ) {
@@ -109,7 +109,7 @@ export class PostsController {
   @UseGuards(ATGuard)
   @HttpCode(201)
   async editPostById(
-    @GetCurrentUserId() userId: number,
+    @GetCurrentUserInfo() userId: number,
     @Param("id", ParseIntPipe) postId: number,
     @Body() dto: EditPostDto
   ) {
@@ -133,7 +133,7 @@ export class PostsController {
   @ApiBearerAuth("access_token")
   @UseGuards(ATGuard)
   async deletePost(
-    @GetCurrentUserId() userId: number,
+    @GetCurrentUserInfo() userId: number,
     @Param("id", ParseIntPipe) postId: number
   ) {
     try {

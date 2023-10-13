@@ -29,7 +29,7 @@ import {
   RtGuard,
 } from "./guard";
 import { Tokens } from "./types";
-import { GetCurrentUser, GetCurrentUserId } from "./decorator";
+import { GetCurrentUser, GetCurrentUserInfo } from "./decorator";
 import { TokensResponse } from "./response";
 import { LoggerService } from "src/logger/logger.service";
 
@@ -154,7 +154,7 @@ export class AuthController {
     type: TokensResponse,
   })
   @HttpCode(HttpStatus.OK)
-  async logout(@GetCurrentUserId() user): Promise<boolean> {
+  async logout(@GetCurrentUserInfo() user): Promise<boolean> {
     try {
       const result = await this.authService.logout(user["sub"]);
       this.logger.log(
@@ -177,7 +177,7 @@ export class AuthController {
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
   async refreshTokens(
-    @GetCurrentUserId() user: any,
+    @GetCurrentUserInfo() user: any,
     @GetCurrentUser("user_refresh_token") refreshToken: string,
     @Res({ passthrough: true }) res: Response
   ) {
@@ -218,7 +218,7 @@ export class AuthController {
   @UseGuards(ATGuard)
   @Post("revoke")
   async revokeAccount(
-    @GetCurrentUserId() user,
+    @GetCurrentUserInfo() user,
     @Res() res
   ): Promise<any> {
     try {

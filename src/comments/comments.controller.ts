@@ -12,7 +12,7 @@ import {
 import { CommentsService } from "./comments.service";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
-import { GetCurrentUserId } from "../auth/decorator";
+import { GetCurrentUserInfo } from "../auth/decorator";
 import { ATGuard } from "src/auth/guard";
 import { LoggerService } from "src/logger/logger.service";
 import {
@@ -46,7 +46,7 @@ export class CommentsController {
     type :CommentResponseWithCommentAuthor
   })
   async create(
-    @GetCurrentUserId() userId: number,
+    @GetCurrentUserInfo() userId: number,
     @Body() createCommentDto: CreateCommentDto
   ) {
     const result = await this.commentsService.create(
@@ -87,7 +87,7 @@ export class CommentsController {
     type :CommentResponseWithCommentAuthor
   })
   update(
-    @GetCurrentUserId() userId: number,
+    @GetCurrentUserInfo() userId: number,
     @Param("id") commentId: number,
     @Body() updateCommentDto: UpdateCommentDto
   ) {
@@ -112,7 +112,7 @@ export class CommentsController {
   @ApiResponse({
     status: 204,
   })
-  remove(@GetCurrentUserId() userId: number, @Param("id") commentId: number) {
+  remove(@GetCurrentUserInfo() userId: number, @Param("id") commentId: number) {
     const result = this.commentsService.remove(commentId);
     this.logger.log("댓글 삭제하는 사람", userId["user_email"]);
     return result;
