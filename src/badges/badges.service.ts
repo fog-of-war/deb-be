@@ -11,10 +11,12 @@ export class BadgesService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
   ) {}
 
+  /** 뱃지 목록에서 사용할 전체 뱃지 정보 전달하는 메서드 */
   async getAllBadges() {
     const badges = await this.prisma.badge.findMany({});
     return badges;
   }
+  /** -------------------- */
 
   /** 유저에게 뱃지를 부여하는 메서드 */
   async assignBadgeToUser(userId: number, badgeId: number) {
@@ -42,7 +44,55 @@ export class BadgesService {
       throw error;
     }
   }
+  /** -------------------- */
 
+  /**
+   *  장소 방문 정보에 따른 뱃지 부여 로직
+   */
+  async checkAndAssignBadge(userId: number) {
+    try {
+      // 1 categoryId를 기반으로 해당 카테고리에 대응되는 뱃지 정보를 가져오는 로직
+      const user = await this.getUsersBadgesAndVisitedPlaceInfo(userId);
+
+      // 2 유저가 방문한 장소 아이디 추출하여 배열 생성
+      const user_visited_places_id_lists = await this.extractVisitedPlacesId(
+        user
+      );
+
+      // 3 유저가 방문한 장소 아이디 배열을 사용하여 장소 정보 조회
+      const user_visited_places = await this.getVisitedPlacesInfoByIds(
+        user_visited_places_id_lists
+      );
+
+      // 4 유저가 방문한 각 장소의 categoryId를 기반으로 카운트 증가
+      const categoryIdCountsFromUserVisitedPlaces =
+        await this.countPlacesCategory(user_visited_places);
+
+      // 5 장소의 카테고리와 관련된 뱃지 정보 가져오기
+      const badgeIdsByCategoryId = await this.getBadgesIdByCategoryId(
+        categoryIdCountsFromUserVisitedPlaces,
+        user_visited_places
+      );
+
+      // 6 유저가 뱃지를 이미 보유하고 있는지 확인
+      const userBadgeIds = await this.checkUserBadges(user);
+
+      // 7 뱃지를 체크하고 부여하는 로직
+      await this.processBadgeAwards(
+        badgeIdsByCategoryId,
+        categoryIdCountsFromUserVisitedPlaces,
+        userBadgeIds,
+        userId
+      );
+    } catch (error) {
+      this.logger.error(
+        `Error while checking and assigning badges for user ${userId}: ${error.message}`
+      );
+      throw error;
+    }
+  }
+  /** -------------------- */
+  
   /**
    * categoryId에 해당하는 badge_id를 가져오는 함수
    * categoryId를 기반으로 해당 카테고리에 대응되는 뱃지 정보를 가져오는 로직
@@ -60,6 +110,7 @@ export class BadgesService {
       throw error;
     }
   }
+  /** -------------------- */
 
   /**
    *  유저의 뱃지정보와 방문장소 가져오기
@@ -78,6 +129,7 @@ export class BadgesService {
       throw error;
     }
   }
+  /** -------------------- */
 
   /**
    *  유저가 방문한 장소 아이디 추출하여 배열 생성
@@ -95,6 +147,8 @@ export class BadgesService {
       throw error;
     }
   }
+  /** -------------------- */
+
   /**
    *  장소 아이디 배열을 사용하여 장소 정보 조회
    */
@@ -113,6 +167,8 @@ export class BadgesService {
       throw error;
     }
   }
+  /** -------------------- */
+
   /**
    *  유저가 방문한 각 장소의 categoryId를 기반으로 카운트 증가
    */
@@ -135,6 +191,7 @@ export class BadgesService {
       throw error;
     }
   }
+  /** -------------------- */
 
   /**
    *  장소의 카테고리와 관련된 뱃지 정보 가져오기
@@ -162,6 +219,7 @@ export class BadgesService {
       throw error;
     }
   }
+  /** -------------------- */
 
   /**
    *  유저가 해당 뱃지를 이미 보유하고 있는지 확인
@@ -175,6 +233,7 @@ export class BadgesService {
       throw error;
     }
   }
+  /** -------------------- */
 
   /**
    *  뱃지를 체크하고 부여하는 로직
@@ -225,47 +284,7 @@ export class BadgesService {
       throw error;
     }
   }
+  /** -------------------- */
 
-  async checkAndAssignBadge(userId: number) {
-    try {
-      // 1 categoryId를 기반으로 해당 카테고리에 대응되는 뱃지 정보를 가져오는 로직
-      const user = await this.getUsersBadgesAndVisitedPlaceInfo(userId);
 
-      // 2 유저가 방문한 장소 아이디 추출하여 배열 생성
-      const user_visited_places_id_lists = await this.extractVisitedPlacesId(
-        user
-      );
-
-      // 3 유저가 방문한 장소 아이디 배열을 사용하여 장소 정보 조회
-      const user_visited_places = await this.getVisitedPlacesInfoByIds(
-        user_visited_places_id_lists
-      );
-
-      // 4 유저가 방문한 각 장소의 categoryId를 기반으로 카운트 증가
-      const categoryIdCountsFromUserVisitedPlaces =
-        await this.countPlacesCategory(user_visited_places);
-
-      // 5 장소의 카테고리와 관련된 뱃지 정보 가져오기
-      const badgeIdsByCategoryId = await this.getBadgesIdByCategoryId(
-        categoryIdCountsFromUserVisitedPlaces,
-        user_visited_places
-      );
-
-      // 6 유저가 뱃지를 이미 보유하고 있는지 확인
-      const userBadgeIds = await this.checkUserBadges(user);
-
-      // 7
-      await this.processBadgeAwards(
-        badgeIdsByCategoryId,
-        categoryIdCountsFromUserVisitedPlaces,
-        userBadgeIds,
-        userId
-      );
-    } catch (error) {
-      this.logger.error(
-        `Error while checking and assigning badges for user ${userId}: ${error.message}`
-      );
-      throw error;
-    }
-  }
 }
