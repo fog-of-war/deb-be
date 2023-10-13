@@ -11,5 +11,5 @@ export class RegionWithVisitedCountDto {
   region_visited_count: number;
 
   @ApiProperty()
-  region_english_name: number;
+  region_english_name: string;
 }
