@@ -30,7 +30,9 @@ export class CommentsController {
     private readonly commentsService: CommentsService,
     private logger: LoggerService
   ) {}
+  /** -------------------- */
 
+  /** 댓글 생성하기 */
   @Post()
   @UseGuards(ATGuard)
   @ApiOperation({
@@ -53,7 +55,9 @@ export class CommentsController {
     this.logger.log("댓글 작성한 사람", userId["user_email"]);
     return result;
   }
+  /** -------------------- */
 
+  /** 댓글 가져오기 (comment_id 사용)*/
   @Get(":id")
   @ApiOperation({
     summary: "comment_id로 댓글 가져오기",
@@ -67,7 +71,9 @@ export class CommentsController {
   findOne(@Param("id") id: string) {
     return this.commentsService.findOne(+id);
   }
+  /** -------------------- */
 
+  /** 댓글 수정하기 */
   @Patch(":id")
   @UseGuards(ATGuard)
   @ApiOperation({
@@ -91,7 +97,9 @@ export class CommentsController {
     this.logger.log("댓글 수정한 사람", userId["user_email"]);
     return result;
   }
+  /** -------------------- */
 
+  /** 댓글 삭제하기 */
   @Delete(":id")
   @UseGuards(ATGuard)
   @ApiOperation({

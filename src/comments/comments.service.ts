@@ -13,7 +13,9 @@ export class CommentsService {
     private prisma: PrismaService,
     private readonly alertService: AlertService
   ) {}
+  /** -------------------- */
 
+  /** 댓글 생성하기 */
   async create(userId, CreateCommentDto) {
     const { comment_text, commented_post_id } = CreateCommentDto;
     const post = await this.prisma.post.findFirst({
@@ -37,11 +39,9 @@ export class CommentsService {
     );
     return result;
   }
+  /** -------------------- */
 
-  findAll() {
-    return `This action returns all comments`;
-  }
-
+  /** 댓글 가져오기 (comment_id 사용)*/
   async findOne(id: number) {
     const result = await this.prisma.comment.findFirst({
       where: { comment_id: id },
@@ -54,18 +54,16 @@ export class CommentsService {
     }
     return result;
   }
+  /** -------------------- */
 
+  /** 댓글 수정하기*/
   async update(userId, id: number, updateCommentDto: any) {
-    // 1. 해당 ID의 댓글이 실제로 존재하는지 확인
     const existingComment = await this.prisma.comment.findFirst({
       where: { comment_id: id },
     });
-
     if (!existingComment) {
-      // 2. 댓글이 존재하지 않는 경우 404 오류 반환
       throw new NotFoundException("해당 댓글이 존재하지 않습니다");
     }
-    // 3. 댓글이 존재하는 경우 업데이트 작업 수행
     const data = {
       comment_text: updateCommentDto.comment_text,
       comment_updated_at: new Date().toISOString(),
@@ -76,20 +74,18 @@ export class CommentsService {
     });
     return `commnet_id : #${id} 댓글 수정완료`;
   }
+  /** -------------------- */
 
+  /** 댓글 삭제하기*/
   async remove(id: number) {
-    // 1. 해당 ID의 댓글이 실제로 존재하는지 확인
     const existingComment = await this.prisma.comment.findFirst({
       where: { comment_id: id },
     });
-
     if (!existingComment) {
-      // 2. 댓글이 존재하지 않는 경우 404 오류 반환
       throw new NotFoundException("해당 댓글이 존재하지 않습니다");
     }
-
     await this.prisma.comment.delete({ where: { comment_id: id } });
-
     return `commnet_id : #${id} 댓글 삭제완료`;
   }
+  /** -------------------- */
 }
