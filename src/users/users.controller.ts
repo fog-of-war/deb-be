@@ -47,54 +47,41 @@ export class UsersController {
     private userService: UsersService,
     private logger: LoggerService
   ) {}
+  /** -------------------- */
 
+  /** 나의 정보 가져오기/ 마이페이지, 메인페이지 사용 */
   @Get("me")
   @ApiOperation({ summary: "나의 정보 가져오기/ 마이페이지, 메인페이지 사용" })
   @ApiBearerAuth("access_token")
   @ApiResponse({
     status: 200,
     description: "",
-    type: GetUserResponse, // 반환 모델을 지정
+    type: GetUserResponse,
   })
-  async getMe(@GetCurrentUserId() userId: number) {
-    // this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
-    this.logger.log("자신의 회원정보 호출한 사람", userId["sub"]);
-    const result = await this.userService.findUserById(userId["sub"]);
-
+  async getMe(@GetCurrentUserId() user) {
+    // this.logger.log("자신의 회원정보 호출한 사람", user["user_email"]);
+    this.logger.log("자신의 회원정보 호출한 사람", user["sub"]);
+    const result = await this.userService.findUserById(user["sub"]);
     // this.logger.log("자신의 회원정보 호출 결과", result);
     return result;
   }
+  /** -------------------- */
 
-  @Get("me/mypage")
-  @ApiOperation({ summary: "나의 정보 가져오기/ 마이페이지, 메인페이지 사용" })
-  @ApiBearerAuth("access_token")
-  @ApiResponse({
-    status: 200,
-    description: "",
-    type: GetUserResponse, // 반환 모델을 지정
-  })
-  async getMyPage(@GetCurrentUserId() userId: number) {
-    const result = await this.userService.findUserById(userId["sub"]);
-    // this.logger.log("자신의 회원정보 호출한 사람", userId["user_email"]);
-    // this.logger.log("자신의 회원정보 호출 결과", result);
-    return result;
-  }
-
+  /** "나의 정보 수정하기 / 프로필이미지, 닉네임, 변경 가능 */
   @Patch("me")
   @UseGuards(ATGuard)
   @ApiOperation({
     summary:
-      "나의 정보 수정하기 / 프로필이미지, 닉네임, 변경 가능 (칭호 변경 기능 개발중)",
+      "나의 정보 수정하기 / 프로필이미지, 닉네임, 변경 가능",
   })
   @ApiBearerAuth("access_token")
   @HttpCode(201)
   @ApiResponse({
     status: 200,
     description: "",
-    type: EditUserResponse, // 이 부분 수정
+    type: EditUserResponse,
   })
-  async editUser(@GetCurrentUserId() userId: number, @Body() dto: EditUserDto) {
-    // 유효성 검사 수행
+  async editUser(@GetCurrentUserId() user, @Body() dto: EditUserDto) {
     const errors = await validate(dto);
     if (errors.length > 0) {
       const errorResponse = {
@@ -107,8 +94,8 @@ export class UsersController {
       throw new UnprocessableEntityException(errorResponse);
     }
     try {
-      await this.userService.editUser(userId["sub"], dto);
-      this.logger.log(`${userId["user_email"]}의 회원 정보 변경`);
+      await this.userService.editUser(user["sub"], dto);
+      this.logger.log(`${user["user_email"]}의 회원 정보 변경`);
       return { message: "유저 정보 변경에 성공했습니다" };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -118,20 +105,25 @@ export class UsersController {
     }
   }
 
+  /** -------------------- */
+
+  /** 내가 소유한 뱃지 가져오기 */
   @Get("me/badges")
-  @ApiOperation({ summary: "사용자의 소유한 뱃지 조회" }) // API 설명
+  @ApiOperation({ summary: "사용자의 소유한 뱃지 조회" })
   @ApiBearerAuth("access_token")
   @ApiResponse({
     status: 200,
     description: "사용자가 소유한 뱃지 정보",
     type: GetUserBadgeResponse,
   })
-  async getMyBadges(@GetCurrentUserId() userId: number) {
-    const result = await this.userService.findUserBadges(userId["sub"]);
-    this.logger.log(`${userId["user_email"]} 뱃지 정보 호출`);
+  async getMyBadges(@GetCurrentUserId() user) {
+    const result = await this.userService.findUserBadges(user["sub"]);
+    this.logger.log(`${user["user_email"]} 뱃지 정보 호출`);
     return result;
   }
+  /** -------------------- */
 
+  /** 나의 칭호 변경하기 */
   @Patch("me/title")
   @ApiOperation({
     summary: "나의 칭호 변경하기",
@@ -141,17 +133,16 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: "",
-    type: EditUserResponse, // 이 부분 수정
+    type: EditUserResponse, 
   })
   async changeTitle(
-    @GetCurrentUserId() userId: number,
+    @GetCurrentUserId() user,
     @Body() dto: ChangeUserTitleDto,
     @Res() res
   ) {
-    // 유효성 검사 수행
     try {
-      await this.userService.changeTitle(userId["sub"], dto);
-      this.logger.log(`${userId["user_email"]}의 대표 칭호 변경`);
+      await this.userService.changeTitle(user["sub"], dto);
+      this.logger.log(`${user["user_email"]}의 대표 칭호 변경`);
       return { message: "유저 칭호 변경에 성공했습니다" };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -160,9 +151,11 @@ export class UsersController {
       throw new InternalServerErrorException();
     }
   }
+  /** -------------------- */
 
+  /** 사용자가 방문한 구역 정보 및 횟수 전달 */
   @Get("me/region")
-  @ApiOperation({ summary: "사용자가 방문한 구역 정보 및 횟수 전달" }) // API 설명
+  @ApiOperation({ summary: "사용자가 방문한 구역 정보 및 횟수 전달" })
   @ApiBearerAuth("access_token")
   @ApiResponse({
     status: 200,
@@ -170,15 +163,15 @@ export class UsersController {
     type: [RegionWithVisitedCountDto],
   })
   async getMyVisitedRegionCount(
-    @GetCurrentUserId() userId: number,
+    @GetCurrentUserId() user,
     @Res() res
   ) {
     try {
       const result = await this.userService.getMyVisitedRegionCount(
-        userId["sub"]
+        user["sub"]
       );
       this.logger.log(
-        `user_id : ${userId["user_email"]} 구역 정보 및 횟수 조회`
+        `user_id : ${user["user_email"]} 구역 정보 및 횟수 조회`
       );
       // this.logger.log(JSON.stringify(result));
       res.status(HttpStatus.OK).json(result);
@@ -188,28 +181,27 @@ export class UsersController {
         .json({ message: "유저정보를 찾을 수 없습니다" });
     }
   }
+  /** -------------------- */
 
+  /** 회원탈퇴 */
   @Delete("me/leave")
-  @ApiOperation({ summary: "사용자 탈퇴" }) // API 설명
+  @ApiOperation({ summary: "사용자 탈퇴" }) 
   @ApiBearerAuth("access_token")
   @ApiResponse({
     status: 200,
     description: "탈퇴성공",
   })
-  async leaveService(@GetCurrentUserId() userId: number, @Res() res) {
+  async leaveService(@GetCurrentUserId() user, @Res() res) {
     try {
-      const result = await this.userService.leaveService(userId["sub"]);
-      this.logger.log(`user_id : ${userId["user_email"]} 회원탈퇴`);
+      const result = await this.userService.leaveService(user["sub"]);
+      this.logger.log(`user_id : ${user["user_email"]} 회원탈퇴`);
       return res.status(HttpStatus.NO_CONTENT).json(result);
     } catch (error) {
-      console.log(
-        "🚀 ~ file: users.controller.ts:168 ~ UsersController ~ leaveService ~ error:",
-        error
-      );
-      // 에러 발생 시 에러 메시지를 응답으로 보내기
+      this.logger.error(error);
       return res
         .status(HttpStatus.NOT_FOUND)
         .json({ message: "유저정보를 찾을 수 없습니다" });
     }
   }
+  /** -------------------- */
 }
