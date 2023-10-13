@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from "@nestjs/common";
+import { Inject, Injectable, OnModuleDestroy, OnModuleInit, forwardRef } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaClient } from "@prisma/client";
 import * as placesData from "./landmarks.json";
@@ -7,9 +7,9 @@ import * as categories from "./categories.json";
 import * as levels from "./levels.json";
 import * as regions from "./regions.json";
 import * as posts from "./posts.json";
-import { PostsService } from "src/posts/posts.service";
+
 @Injectable()
-export class PrismaService extends PrismaClient {
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy{
   constructor(config: ConfigService) {
     super({
       datasources: {
@@ -18,6 +18,14 @@ export class PrismaService extends PrismaClient {
         },
       },
     });
+  }
+
+  async onModuleInit() {
+    await this.$connect();
+  }
+
+  async onModuleDestroy() {
+    await this.$disconnect();
   }
 
   async cleanDb() {
@@ -67,11 +75,9 @@ export class PrismaService extends PrismaClient {
 
   extractGu(place_address: string) {
     const array = place_address.split(" ");
-
     if (array.length >= 2 && array[1].match(/구$/)) {
       return array[1];
     }
-
     // 추출 실패 시 에러 메시지 반환
     throw new Error("구 이름을 추출할 수 없습니다.");
   }
