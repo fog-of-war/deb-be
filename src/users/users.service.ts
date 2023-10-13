@@ -67,7 +67,7 @@ export class UsersService {
 
   /** 유저 id 로 유저 찾기 */
   async findUserById(user_id: number): Promise<any | null> {
-    this.logger.log("UsersService findUserById",user_id)
+    this.logger.log("UsersService findUserById", user_id)
     const user = await this.prisma.user.findFirst({
       where: { user_id: user_id, user_is_deleted: false },
       select: {
@@ -84,7 +84,7 @@ export class UsersService {
         user_authored_posts: true,
       },
     });
-    this.logger.log("UsersService findUserById result\n", user)
+    this.logger.log("UsersService findUserById result\n",{ user_id : user.user_id, user_nickname : user.user_nickname})
     return user;
   }
   /** -------------------- */
