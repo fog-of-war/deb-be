@@ -154,11 +154,11 @@ export class AuthController {
     type: TokensResponse,
   })
   @HttpCode(HttpStatus.OK)
-  async logout(@GetCurrentUserId() userId: number): Promise<boolean> {
+  async logout(@GetCurrentUserId() user): Promise<boolean> {
     try {
-      const result = await this.authService.logout(userId);
+      const result = await this.authService.logout(user["sub"]);
       this.logger.log(
-        `user_id : ${userId["user_email"]}님이 로그아웃 하셨습니다.`
+        `user_id : ${user["user_email"]}님이 로그아웃 하셨습니다.`
       );
       return result;
     } catch (error) {
@@ -177,16 +177,16 @@ export class AuthController {
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
   async refreshTokens(
-    @GetCurrentUserId() userId: any,
+    @GetCurrentUserId() user: any,
     @GetCurrentUser("user_refresh_token") refreshToken: string,
     @Res({ passthrough: true }) res: Response
   ) {
     try {
       const result = await this.authService.refreshTokens(
-        userId["sub"],
+        user["sub"],
         refreshToken
       );
-      this.logger.log(`user_id : ${userId["user_email"]} 토큰 리프레시`);
+      this.logger.log(`user_id : ${user["user_email"]} 토큰 리프레시`);
       res.cookie("access_token", result.access_token, {
         sameSite: "none",
         secure: true,
@@ -218,11 +218,11 @@ export class AuthController {
   @UseGuards(ATGuard)
   @Post("revoke")
   async revokeAccount(
-    @GetCurrentUserId() userId: any,
+    @GetCurrentUserId() user,
     @Res() res
   ): Promise<any> {
     try {
-      const result = await this.authService.revokeAccount(userId.sub);
+      const result = await this.authService.revokeAccount(user.sub);
       res.status(HttpStatus.NO_CONTENT);
     } catch (error) {
       console.log("Controller revokeAccount", error);
