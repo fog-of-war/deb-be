@@ -17,7 +17,6 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
     RanksModule,
     LoggerModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    // 다른 모듈들을 여기에 추가
     CacheModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
@@ -42,6 +41,6 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
   ],
   controllers: [UsersController],
   providers: [UsersService, JwtStrategy],
-  exports: [UsersService], // UsersService를 다른 모듈에서 사용 가능하게 함
+  exports: [UsersService],
 })
 export class UsersModule {}
