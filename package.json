@@ -31,7 +31,7 @@
     "pretest:e2e": "npm run db:test:restart",
     "test:e2e": "dotenv -e ./.env.test -- jest --watch --no-cache --config ./test/jest-e2e.json",
     "prisma:generate": "npx prisma generate",
-    "start:migrate:prod": "prisma migrate deploy && npm run start:prod",
+    "start:migrate:prod": "npx prisma migrate deploy && npm run start:prod",
     "start:migrate:prod:deprecated": "prisma migrate deploy && npm run start:prod &&  docker exec -it ubuntu_dev-db_1 psql -U postgres -d nest -a -f /docker-entrypoint-initdb.d/trigger.sql"
   },
   "dependencies": {
