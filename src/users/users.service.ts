@@ -7,7 +7,7 @@ import {
   InitUserDto,
 } from "./dto";
 import { BadgesService } from "../badges/badges.service";
-// import { User } from "@prisma/client";
+// import { User } from "@prisma/client"; => 빌드시 지속 오류 사용보류
 import { RanksService } from "src/ranks/ranks.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { Cache } from "cache-manager";
@@ -20,6 +20,10 @@ export class UsersService {
     private readonly ranksService: RanksService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
   ) {}
+
+  /** -------------------- */
+
+  /** 유저 정보 수정 */
   async editUser(userId: number, dto: EditUserDto) {
     const user = await this.prisma.user.update({
       where: { user_id: userId, user_is_deleted: false },
@@ -34,6 +38,10 @@ export class UsersService {
     });
     return user;
   }
+
+  /** -------------------- */
+
+  /** 메인페이지에서 필요한 유저정보 전달 */
   async findUserByIdForMain(user_id: number): Promise<any | null> {
     const user = await this.prisma.user.findFirst({
       where: { user_id: user_id, user_is_deleted: false },
@@ -52,14 +60,13 @@ export class UsersService {
     });
     return user;
   }
+
+  /** -------------------- */
+
+  /** 유저 id 로 유저 찾기 */
   async findUserById(user_id: number): Promise<any | null> {
-    // 먼저 캐시에서 데이터를 가져오려고 시도합니다.
     const cachedItem = await this.cacheManager.get(`cached_item_${user_id}`);
-    // 캐시에서 데이터가 있으면 해당 데이터를 반환합니다.
     if (cachedItem) {
-      // console.log(
-      //   `findUserById 64 cached_item_${user_id} ` + "Cached result found"
-      // );
       if (
         cachedItem["user_nickname"] !== null &&
         cachedItem["user_image_url"] !== null
@@ -84,9 +91,6 @@ export class UsersService {
         user_authored_posts: true,
       },
     });
-    // console.log(`findUserById 89 user`);
-    // console.log(user);
-    // 데이터를 캐시에 저장합니다.
     if (user) {
       const cache = await this.cacheManager.set(
         `cached_item_${user_id}`,
@@ -94,11 +98,12 @@ export class UsersService {
         1
       );
       this.refreshUserCache(user_id);
-      // console.log("캐시저장완료");
     }
     return user;
   }
+  /** -------------------- */
 
+  /** 유저 email 로 유저 찾기 (신규 회원 가입 시 사용) */
   async findUserByEmail(email: string): Promise<any | null> {
     return await this.prisma.user.findFirst({
       where: {
@@ -107,13 +112,17 @@ export class UsersService {
       },
     });
   }
+  /** -------------------- */
 
+  /** 회원 가입 시 유저 생성 */
   async createUser(userDto: CreateUserDto) {
     const payload = {
       ...userDto,
     };
-    // 사용자에게 뱃지 부여
+    // 사용자 초기화
     const createdUser = await this.initUser(payload);
+
+    // 사용자에게 기본 뱃지 부여
     const badgeIdToAssign = 1; // 부여할 뱃지의 ID
     const userWithBadge = await this.badgesService.assignBadgeToUser(
       createdUser.user_id,
@@ -122,7 +131,9 @@ export class UsersService {
 
     return userWithBadge;
   }
+  /** -------------------- */
 
+  /** 사용자 초기화 */
   async initUser(userDto: any) {
     return await this.prisma.user.create({
       data: {
@@ -130,18 +141,10 @@ export class UsersService {
       },
     });
   }
+  /** -------------------- */
 
+  /** 유저의 뱃지를 가져오기 */
   async findUserBadges(userId: number) {
-    // const cachedItem = await this.cacheManager.get(`cached_item_${userId}`);
-    // if (cachedItem) {
-    //   if (
-    //     cachedItem["user_nickname"] !== null &&
-    //     cachedItem["user_image_url"] !== null
-    //   ) {
-    //     return cachedItem;
-    //   }
-    // }
-
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId, user_is_deleted: false },
       select: {
@@ -149,47 +152,27 @@ export class UsersService {
         user_selected_badge: true,
       },
     });
-
-    // 데이터를 캐시에 저장합니다.
-    // if (user) {
-    //   if (
-    //     cachedItem["user_nickname"] !== null &&
-    //     cachedItem["user_image_url"] !== null
-    //   ) {
-    //     await this.cacheManager.set(`cached_item_${userId}`, user, 3);
-    //     this.refreshUserCache(userId);
-    //   }
-    // }
-
     return user;
   }
+  /** -------------------- */
 
+  /** 유저의 대표 칭호 변경 */
   async changeTitle(userId: number, dto: ChangeUserTitleDto) {
     const user = await this.prisma.user.update({
       where: { user_id: userId, user_is_deleted: false },
       data: {
         user_selected_badge: {
-          connect: { badge_id: dto.user_selected_badge_id }, // ChangeUserTitleDto에 선택한 뱃지 ID를 포함해야 함
+          connect: { badge_id: dto.user_selected_badge_id },
         },
       },
     });
     return user;
   }
+  /** -------------------- */
 
+  /** 유저가 방문한 지역의 갯수 세기 */
   async getMyVisitedRegionCount(userId: number) {
     try {
-      // const cachedItem = await this.cacheManager.get(`cached_item_${userId}`);
-      // if (cachedItem) {
-      //   console.log("Cached visited regions found");
-      //   if (
-      //     cachedItem["user_nickname"] !== null &&
-      //     cachedItem["user_image_url"] !== null &&
-      //     cachedItem["user_visited_regions"] !== null
-      //   ) {
-      //     return cachedItem;
-      //   }
-      // }
-
       const result = await this.prisma.user.findFirst({
         where: { user_id: userId },
         select: { user_visited_places: { include: { visited_place: true } } },
@@ -213,20 +196,14 @@ export class UsersService {
       } else {
         return [];
       }
-      // 데이터를 캐시에 저장합니다.
-      // await this.cacheManager.set(
-      //   `cached_item_${userId}`,
-      //   regionsWithVisitedCount,
-      //   1
-      // );
-      // this.refreshUserCache(userId);
-      // // console.log("캐시 저장");
       return regionsWithVisitedCount;
     } catch (err) {
       console.log(err);
     }
   }
+  /** -------------------- */
 
+  /** 서비스 탈퇴 */
   async leaveService(userId: number) {
     const result = await this.prisma.user.update({
       where: { user_id: userId, user_is_deleted: false },
@@ -240,7 +217,9 @@ export class UsersService {
     });
     return result;
   }
-  // 백그라운드에서 캐시를 갱신하는 메서드
+  /** -------------------- */
+
+  /** 캐시 리프레시 */
   private async refreshUserCache(userId: number) {
     setTimeout(async () => {
       const user = await this.prisma.user.findFirst({
@@ -262,7 +241,6 @@ export class UsersService {
 
       if (user) {
         await this.cacheManager.set(`cached_item_${userId}`, user, 1);
-        // console.log(`Refreshed cached_item_${userId}`);
       }
     }, 1000); // 1초 후에 캐시를 갱신
   }

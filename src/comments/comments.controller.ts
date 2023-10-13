@@ -50,7 +50,6 @@ export class CommentsController {
       userId["sub"],
       createCommentDto
     );
-    // await this.eventsGateway.handleAlert(result["comment_id"]);
     this.logger.log("댓글 작성한 사람", userId["user_email"]);
     return result;
   }
