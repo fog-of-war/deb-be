@@ -65,16 +65,6 @@ export class UsersService {
 
   /** 유저 id 로 유저 찾기 */
   async findUserById(user_id: number): Promise<any | null> {
-    const cachedItem = await this.cacheManager.get(`cached_item_${user_id}`);
-    if (cachedItem) {
-      if (
-        cachedItem["user_nickname"] !== null &&
-        cachedItem["user_image_url"] !== null
-      ) {
-        this.refreshUserCache(user_id);
-        return cachedItem;
-      }
-    }
     const user = await this.prisma.user.findFirst({
       where: { user_id: user_id, user_is_deleted: false },
       select: {
@@ -91,14 +81,6 @@ export class UsersService {
         user_authored_posts: true,
       },
     });
-    if (user) {
-      const cache = await this.cacheManager.set(
-        `cached_item_${user_id}`,
-        user,
-        1
-      );
-      this.refreshUserCache(user_id);
-    }
     return user;
   }
   /** -------------------- */
