@@ -365,7 +365,17 @@ export class PlacesService {
         post_image_url: true,
         post_author_id: true,
         post_star_rating: true,
-        post_comments: true,
+        post_comments: {
+          where: { comment_is_deleted: false },
+          include: {
+            comment_author: {
+              select: {
+                user_image_url: true,
+                user_nickname: true,
+              },
+            },
+          },
+        },
       },
     });
 
