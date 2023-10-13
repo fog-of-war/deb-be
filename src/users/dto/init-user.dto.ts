@@ -20,18 +20,18 @@ export class InitUserDto {
   @ApiProperty()
   user_email: string;
 
-  @IsArray() // 추가
+  @IsArray() 
   @IsOptional()
   @ApiProperty({ default: [] })
-  user_authored_posts: any[]; // 예시로 number[]로 가정
+  user_authored_posts: any[]; 
 
-  @IsArray() // 추가
+  @IsArray() 
   @IsOptional()
   @ApiProperty({ default: [] })
-  user_visited_places: any[]; // 예시로 number[]로 가정
+  user_visited_places: any[]; 
 
-  @IsArray() // 추가
+  @IsArray()
   @IsOptional()
   @ApiProperty({ default: [] })
-  user_badges: any[]; // 예시로 number[]로 가정
+  user_badges: any[];
 }
