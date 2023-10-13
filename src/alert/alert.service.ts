@@ -44,7 +44,7 @@ export class AlertService {
     const message = await this.makeCommentAlertMessage(id);
     const result = { ...message, alerted_user_id: alert["alerted_user_id"] };
     await this.eventsGateway
-      .sendToUserNamespace(result["alerted_user_id"], result)
+      .sendToUserNamespaceActivity(result["alerted_user_id"], result)
       .then((response) => {
         // console.log("🌠 Notification sent successfully:", response);
       })
