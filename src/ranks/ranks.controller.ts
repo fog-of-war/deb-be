@@ -39,52 +39,60 @@ import {
 @Controller("ranks")
 export class RanksController {
   constructor(private readonly ranksService: RanksService) {}
+  /** -------------------- */
 
+  /** 전체 랭킹 가져오기 */
   @Get()
   @ApiOperation({ summary: "전체 랭킹 가져오기" })
   @ApiResponse({
     status: 200,
     description: "",
-    type: [GetManyRanksResponse], // 반환 모델을 지정
+    type: [GetManyRanksResponse], 
   })
   async getRanks() {
     const result = await this.ranksService.getAllUserRanks();
     return result;
   }
+  /** -------------------- */
 
+  /** 나의 랭킹 가져오기 */
   @Get("me")
   @ApiOperation({ summary: "나의 랭킹 가져오기" })
   @ApiResponse({
     status: 200,
     description: "",
-    type: GetOneRankResponse, // 반환 모델을 지정
+    type: GetOneRankResponse, 
   })
   @ApiBearerAuth("access_token")
   @UseGuards(ATGuard)
-  async getRankByUserId(@GetCurrentUserId() userId: number) {
-    const result = await this.ranksService.getUserRank(userId["sub"]);
+  async getRankByUserId(@GetCurrentUserId() user) {
+    const result = await this.ranksService.getUserRank(user["sub"]);
     return result;
   }
+  /** -------------------- */
 
+  /** 모든 구별 랭킹 가져오기*/
   @Get("/region")
   @ApiOperation({ summary: "모든 구별 랭킹 가져오기" })
   @ApiResponse({
     status: 200,
     description: "",
-    type: [RegionRanking], // 반환 모델을 지정
+    type: [RegionRanking], 
   })
   async getRanksByAllRegion() {
     const result = await this.ranksService.generateUserRankingByAllRegions();
     return result;
   }
+  /** -------------------- */
 
+  /** 구별 랭킹 가져오기 */
   @Get("/region/:id")
   @ApiOperation({ summary: "구별 랭킹 가져오기" })
   @ApiParam({ name: "id", description: "해당 구의 아이디" })
   @ApiResponse({
     status: 200,
     description: "",
-    type: [GetManyRanksResponse], // 반환 모델을 지정
+    type: [GetManyRanksResponse], 
   })
   async getRanksByRegion(@Param("id", ParseIntPipe) region_id: string) {
     const result = await this.ranksService.generateUserRankingForRegion(
@@ -92,4 +100,5 @@ export class RanksController {
     );
     return result.userRanking;
   }
+  /** -------------------- */
 }

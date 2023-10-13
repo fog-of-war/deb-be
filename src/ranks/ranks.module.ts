@@ -10,7 +10,6 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
   imports: [
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    // 다른 모듈들을 여기에 추가
     CacheModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
