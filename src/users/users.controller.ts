@@ -182,25 +182,25 @@ export class UsersController {
   }
   /** -------------------- */
 
-  /** 회원탈퇴 */
-  @Delete("me/leave")
-  @ApiOperation({ summary: "사용자 탈퇴" }) 
-  @ApiBearerAuth("access_token")
-  @ApiResponse({
-    status: 200,
-    description: "탈퇴성공",
-  })
-  async leaveService(@GetCurrentUserInfo() user, @Res() res) {
-    try {
-      const result = await this.userService.leaveService(user["sub"]);
-      this.logger.log(`user_id : ${user["user_email"]} 회원탈퇴`);
-      return res.status(HttpStatus.NO_CONTENT).json(result);
-    } catch (error) {
-      this.logger.error(error);
-      return res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: "유저정보를 찾을 수 없습니다" });
-    }
-  }
+  /** DEPRECATED 회원탈퇴 */
+  // @Delete("me/leave")
+  // @ApiOperation({ summary: "사용자 탈퇴" }) 
+  // @ApiBearerAuth("access_token")
+  // @ApiResponse({
+  //   status: 200,
+  //   description: "탈퇴성공",
+  // })
+  // async leaveService(@GetCurrentUserInfo() user, @Res() res) {
+  //   try {
+  //     const result = await this.userService.leaveService(user["sub"]);
+  //     this.logger.log(`user_id : ${user["user_email"]} 회원탈퇴`);
+  //     return res.status(HttpStatus.NO_CONTENT).json(result);
+  //   } catch (error) {
+  //     this.logger.error(error);
+  //     return res
+  //       .status(HttpStatus.NOT_FOUND)
+  //       .json({ message: "유저정보를 찾을 수 없습니다" });
+  //   }
+  // }
   /** -------------------- */
 }

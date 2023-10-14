@@ -183,13 +183,14 @@ export class AuthService {
   /** -------------------- */
   async changeUserStateDelete(userId) {
     await this.prisma.user.update({
-      where: {
-        user_id: userId,
-      },
+      where: { user_id: userId, user_is_deleted: false },
       data: {
         user_is_deleted: true,
-        user_oauth_token: null,
-      },
+        user_email: "deleted",
+        user_nickname: "탈퇴한사용자",
+        user_refresh_token: null,
+        user_delete_at: new Date()
+      }
     });
   }
   /** -------------------- */

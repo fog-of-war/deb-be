@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   HttpCode,
@@ -208,7 +209,7 @@ export class AuthController {
 
   /** 회원 탈퇴 */
   @ApiOperation({
-    summary: "회원탈퇴 : access_token 필요",
+    summary: "사용자 탈퇴 : access_token 필요",
   })
   @ApiBearerAuth("access_token")
   @ApiNoContentResponse({
@@ -216,18 +217,21 @@ export class AuthController {
     description: "탈퇴 성공 시 204 반환",
   })
   @UseGuards(ATGuard)
-  @Post("revoke")
+  @Delete("leave")
   async revokeAccount(
     @GetCurrentUserInfo() user,
     @Res() res
   ): Promise<any> {
     try {
       const result = await this.authService.revokeAccount(user.sub);
+      this.logger.log(`user_id : ${user["user_email"]} 회원탈퇴`);
       res.status(HttpStatus.NO_CONTENT);
     } catch (error) {
-      console.log("Controller revokeAccount", error);
+      this.logger.error("Controller revokeAccount", error);
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: "유저정보를 찾을 수 없습니다" });
     }
   }
-
   /** -------------------- */
 }
