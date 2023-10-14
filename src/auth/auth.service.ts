@@ -203,7 +203,7 @@ export class AuthService {
       const googleClientId = await this.config.get("GOOGLE_OAUTH_ID");
       const googleClientSecret = await this.config.get("GOOGLE_OAUTH_SECRET");
       const postData = `client_id=${googleClientId}&client_secret=${googleClientSecret}&token=${oauthToken}`;
-      console.log("revokeGoogleAccount", postData);
+      // this.logger.log("revokeGoogleAccount", postData);
       const postOptions = {
         url: "https://oauth2.googleapis.com/revoke",
         method: "POST",
@@ -267,7 +267,7 @@ export class AuthService {
   /** 리프레시 토큰을 데이터베이스에 업데이트 */
   async updateRtHash(userId: number, rt: string): Promise<void> {
     try {
-      console.log("updateRtHash", rt);
+      // this.logger.log("updateRtHash", rt);
       const hash = await argon.hash(rt);
       await this.prisma.user.update({
         where: {

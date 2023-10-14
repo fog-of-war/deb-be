@@ -72,8 +72,8 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ): Promise<Tokens> {
     const result = await this.authService.googleLogin(req);
-    console.log(`Bearer ${result.access_token}`);
-    console.log(`Refresh ${result.refresh_token}`);
+    // this.logger.log(`Bearer ${result.access_token}`);
+    // this.logger.log(`Refresh ${result.refresh_token}`);
     res.cookie("access_token", result.access_token, {
       sameSite: "none",
       secure: true,
@@ -101,8 +101,8 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ) {
     const result = await this.authService.naverLogin(req);
-    console.log(`Bearer ${result.access_token}`);
-    console.log(`Refresh ${result.refresh_token}`);
+    // this.logger.log(`Bearer ${result.access_token}`);
+    // this.logger.log(`Refresh ${result.refresh_token}`);
     res.cookie("access_token", result.access_token, {
       sameSite: "none",
       secure: true,
@@ -130,8 +130,8 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ) {
     const result = await this.authService.kakaoLogin(req);
-    console.log(`AT : Bearer ${result.access_token}`);
-    console.log(`RT : Bearer ${result.refresh_token}`);
+    // this.logger.log(`AT : Bearer ${result.access_token}`);
+    // this.logger.log(`RT : Bearer ${result.refresh_token}`);
     res.cookie("access_token", result.access_token, {
       sameSite: "none",
       secure: true,
