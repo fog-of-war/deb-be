@@ -22,7 +22,7 @@ import { RanksModule } from "./ranks/ranks.module";
 import { LoggerModule } from "./logger/logger.module";
 import { EventsModule } from "./events/events.module";
 import { UnauthorizedExceptionFilter } from "./filters";
-import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { AppService } from "./app.service";
 import { AppController } from "./app.controller";
@@ -30,9 +30,14 @@ import { CommentsModule } from "./comments/comments.module";
 import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager";
 import * as redisStore from "cache-manager-redis-store";
 import { AlertModule } from "./alert/alert.module";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([{
+      ttl: 60,
+      limit: 100,
+    }]),
     ConfigModule.forRoot({ isGlobal: true }),
     // 다른 모듈들을 여기에 추가
     CacheModule.registerAsync({
@@ -90,6 +95,10 @@ import { AlertModule } from "./alert/alert.module";
       provide: APP_FILTER,
       scope: Scope.REQUEST,
       useClass: UnauthorizedExceptionFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
     },
     // {
     //   provide: APP_INTERCEPTOR,

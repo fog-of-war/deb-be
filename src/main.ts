@@ -14,12 +14,14 @@ import { EventsGateway } from "./events/events.gateway";
 import { PostsService } from "./posts/posts.service";
 import * as posts from "./prisma/posts.json";
 import * as cookieParser from "cookie-parser";
+import { NestExpressApplication } from "@nestjs/platform-express";
 
 async function bootstrap() {
   /** app 초기화 */
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
+  
   //  bufferLogs 를 true 로 만들면 로그 메시지가 일정량만큼 쌓였을 때 한 번에 출력되므로 로그의 수가 줄어들어 성능에 도움이 될 수 있습니다.
   /** -------------------- */
 
@@ -134,6 +136,9 @@ async function bootstrap() {
   SwaggerModule.setup("api", app, document);
   /** -------------------- */
 
+  app.set('trust proxy', true)
+
+  /** -------------------- */
   await app.listen(5000);
 }
 bootstrap();
