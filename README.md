@@ -18,6 +18,7 @@ $ npm run start:dev
 env.development 를 생성한 후 환경변수 추가
 
 ```
+ENVIRONMENT=development
 DB_HOST={}
 DB_USER={}
 DB_PASSWORD={}
