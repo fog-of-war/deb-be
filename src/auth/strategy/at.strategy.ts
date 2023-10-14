@@ -27,7 +27,7 @@ export class AtStrategy extends PassportStrategy(Strategy, "jwt-access") {
       "access_token" in req.cookies &&
       req.cookies.access_token.length > 0
     ) {
-      console.log("extractJWT AT \n", req.cookies.access_token);
+      // console.log("extractJWT AT \n", req.cookies.access_token);
       return req.cookies.access_token;
     }
     return null;

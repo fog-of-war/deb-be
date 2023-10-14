@@ -30,7 +30,7 @@ export class RtStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
       "refresh_token" in req.cookies &&
       req.cookies.refresh_token.length > 0
     ) {
-      console.log("extractJWT RT \n", req.cookies.refresh_token);
+      // console.log("extractJWT RT \n", req.cookies.refresh_token);
       return req.cookies.refresh_token;
     }
     return null;
@@ -54,7 +54,7 @@ export class RtStrategy extends PassportStrategy(Strategy, "jwt-refresh") {
       };
     } catch (error) {
       // 예외 처리 로직을 추가합니다.
-      this.loggerService.error("Refresh token validation error:", error);
+      // this.loggerService.error("Refresh token validation error:", error);
       throw new ForbiddenException("Refresh token validation failed");
     }
   }
