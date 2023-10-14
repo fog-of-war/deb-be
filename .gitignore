@@ -37,3 +37,8 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+send_comments.js
+send_comments.json
+send_posts.js
+send_posts.json
