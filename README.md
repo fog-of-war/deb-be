@@ -1,4 +1,4 @@
-# 제로초님 질문 위한 브랜치
+# 전장의 안개
 
 docker-compose.yml 로 postgresql 과 redis 컨테이너 실행가능합니다.
 
@@ -18,6 +18,7 @@ $ npm run start:dev
 env.development 를 생성한 후 환경변수 추가
 
 ```
+ENVIRONMENT=development
 DB_HOST={}
 DB_USER={}
 DB_PASSWORD={}
