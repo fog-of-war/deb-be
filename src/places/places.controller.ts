@@ -23,9 +23,11 @@ import {
   landmarksResponse,
 } from "./responses";
 import { UserSubCheckInterceptor } from "src/common/interceptor";
+import { PlaceStarRatingInterceptor } from "./interceptor";
 
 @ApiTags("places")
 @Controller("places")
+@UseInterceptors(PlaceStarRatingInterceptor)
 export class PlacesController {
   constructor(
     private readonly placesService: PlacesService,
@@ -40,15 +42,16 @@ export class PlacesController {
     description: "랜드마크 목록을 성공적으로 가져왔습니다.",
     type: landmarksResponse,
   })
-  async getLandmarks(@Res() res) {
+  async getLandmarks() {
     try {
       const result = await this.placesService.getLandmarks();
       // 클라이언트에게 결과를 응답으로 보내기
-      return res.status(HttpStatus.OK).json(result);
+      return result;
+      // return res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      return res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: "Error occurred during search." });
+      // return res
+      //   .status(HttpStatus.NOT_FOUND)
+      //   .json({ message: "Error occurred during search." });
     }
   }
   /** -------------------- */
@@ -70,7 +73,8 @@ export class PlacesController {
   ): Promise<void> {
     try {
       const searchResult = await this.placesService.findSimplePlacesInfo(query);
-      res.status(HttpStatus.OK).json(searchResult);
+      return searchResult;
+      // res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
       res
         .status(HttpStatus.NOT_FOUND)
@@ -97,7 +101,7 @@ export class PlacesController {
     @Query("x") xCoordinate: number,
     @Query("y") yCoordinate: number,
     @Res() res
-  ): Promise<void> {
+  ): Promise<any> {
     try {
       this.logger.log(
         `🔍 위도(latitude) : ${yCoordinate}, 경도(longitude) : ${xCoordinate}, 검색어 : ${query}`
@@ -108,7 +112,9 @@ export class PlacesController {
           yCoordinate,
           query
         );
-      res.status(HttpStatus.OK).json(searchResult);
+
+      return searchResult;
+      // res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
       res
         .status(HttpStatus.NOT_FOUND)
@@ -125,14 +131,15 @@ export class PlacesController {
   @ApiCreatedResponse({
     status: 200,
   })
-  async getAllPlaces(@Res() res) {
+  async getAllPlaces() {
     try {
       const result = await this.placesService.getAll();
-      return res.status(HttpStatus.OK).json(result);
+      return result;
+      // return res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: "Error occurred during search." });
+      // res
+      //   .status(HttpStatus.NOT_FOUND)
+      //   .json({ message: "Error occurred during search." });
     }
   }
   /** -------------------- */
@@ -165,15 +172,16 @@ export class PlacesController {
     description: "",
     type: PlaceWithPostsResponse,
   })
-  async getPlacePosts(@Param("id", ParseIntPipe) placeId: number, @Res() res) {
+  async getPlacePosts(@Param("id", ParseIntPipe) placeId: number) {
     try {
       const result = await this.placesService.getPlacePosts(placeId);
       this.logger.log(`장소id (${placeId}) 의 게시물들이 조회됨 `);
-      return res.status(HttpStatus.OK).json(result);
+      return result;
+      // return res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: "Error occurred during search." });
+      // res
+      //   .status(HttpStatus.NOT_FOUND)
+      //   .json({ message: "Error occurred during search." });
     }
   }
   /** -------------------- */

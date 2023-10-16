@@ -1,0 +1,1 @@
+export * from "./place-star-rating.interceptor"

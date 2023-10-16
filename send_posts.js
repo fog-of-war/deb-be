@@ -2,15 +2,15 @@ const fetch = require("node-fetch");
 const fs = require("fs");
 
 const placesArray = [
-  // {
-  //   place_name: "코엑스",
-  //   post_star_rating: 5.0,
-  //   post_description: "코엑스",
-  //   post_image_url:
-  //     "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/1코엑스.jpeg",
-  //   place_latitude: 127.0588278439012,
-  //   place_longitude: 37.51266138067201,
-  // },
+  {
+    place_name: "코엑스",
+    post_star_rating: 4.22222222,
+    post_description: "코엑스",
+    post_image_url:
+      "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/1코엑스.jpeg",
+    place_latitude: 127.0588278439012,
+    place_longitude: 37.51266138067201,
+  },
   // {
   //   place_name: "일자산허브천문공원",
   //   post_star_rating: 5.0,
@@ -238,8 +238,8 @@ const placesArray = [
   },
 ];
 
-// const baseUrl = "http://localhost:5000/v1/posts";
-const baseUrl = "https://api.yubinhome.com/v1/posts";
+const baseUrl = "http://localhost:5000/v1/posts";
+// const baseUrl = "https://api.yubinhome.com/v1/posts";
 async function fetchData(placeObj) {
   const url = baseUrl;
   const body = JSON.stringify({
@@ -255,7 +255,7 @@ async function fetchData(placeObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer YOUR_ACCESS_TOKEN",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk3NDQ4MDY0LCJleHAiOjE2OTc0NTE2NjR9.Czs8siZox7CAhFcvINqQet1UN0a0C255TUoVh5r4fiU",
     },
     body: body,
   };
