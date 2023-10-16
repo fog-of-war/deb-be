@@ -15,6 +15,7 @@ import {
   UseFilters,
   UnauthorizedException,
   NotFoundException,
+  UseInterceptors,
 } from "@nestjs/common";
 import { ATGuard, JwtGuard } from "../auth/guard";
 import { PostsService } from "./posts.service";
@@ -29,7 +30,9 @@ import {
 import { GetPostResponse, PostPostsResponse } from "./responses";
 import { LoggerService } from "src/logger/logger.service";
 import { UnauthorizedExceptionFilter } from "../filters";
+import { UserSubCheckInterceptor } from "src/common/interceptor";
 
+@UseInterceptors(UserSubCheckInterceptor)
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {

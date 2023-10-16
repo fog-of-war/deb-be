@@ -6,8 +6,10 @@ import { UsersModule } from "src/users/users.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import * as redisStore from "cache-manager-redis-store";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { LoggerModule } from "src/logger/logger.module";
 @Module({
   imports: [
+    LoggerModule,
     PrismaModule,
     ConfigModule.forRoot({ isGlobal: true }),
     CacheModule.registerAsync({

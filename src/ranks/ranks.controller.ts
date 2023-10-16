@@ -34,7 +34,9 @@ import {
   CacheKey,
   CacheTTL,
 } from "@nestjs/cache-manager";
+import { UserSubCheckInterceptor } from "src/common/interceptor";
 
+@UseInterceptors(UserSubCheckInterceptor)
 @ApiTags("ranks")
 @Controller("ranks")
 export class RanksController {

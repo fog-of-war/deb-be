@@ -8,6 +8,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  UseInterceptors,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -21,7 +22,9 @@ import {
   PlaceWithPostsResponse,
   landmarksResponse,
 } from "./responses";
+import { UserSubCheckInterceptor } from "src/common/interceptor";
 
+@UseInterceptors(UserSubCheckInterceptor)
 @ApiTags("places")
 @Controller("places")
 export class PlacesController {

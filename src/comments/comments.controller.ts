@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   HttpCode,
+  UseInterceptors,
 } from "@nestjs/common";
 import { CommentsService } from "./comments.service";
 import { CreateCommentDto } from "./dto/create-comment.dto";
@@ -22,7 +23,9 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { CommentResponse, CommentResponseWithCommentAuthor } from "./responses";
+import { UserSubCheckInterceptor } from "src/common/interceptor";
 
+@UseInterceptors(UserSubCheckInterceptor)
 @ApiTags("comments")
 @Controller("comments")
 export class CommentsController {
