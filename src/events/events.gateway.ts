@@ -51,12 +51,12 @@ export class EventsGateway
   /** 웹소켓 연결시 */
   async handleConnection(@ConnectedSocket() socket: Socket, client: any) {
     const userInfo = socket.userInfo;
-    console.log("handleConnection", userInfo); // 클라이언트의 정보에서 유저 정보 추출
+    console.log("🐤 handleConnection", userInfo); // 클라이언트의 정보에서 유저 정보 추출
     if (userInfo && userInfo.sub) {
       const userId = userInfo.sub;
       const roomName = `/v1/ws-alert-${userId}`;
       socket.join(roomName); // 클라이언트를 생성한 방에 조인
-      console.log("Client joined room:", roomName);
+      console.log("🐤 Client joined room:", roomName);
       // "NOTIFY", "ACTIVITY" 타입의 알림을 찾아서 클라이언트에게 전송
       await this.sendNotifyAlerts(socket, userId);
       await this.sendActivityAlerts(socket, userId);
@@ -118,11 +118,12 @@ export class EventsGateway
   * "NOTIFY" 타입의 알림을 DB에서 찾아옴
   */
   async findNotifyAlerts(){
-   return await this.prisma.alert.findMany({
+   const result= await this.prisma.alert.findMany({
       where: {
         alert_type: "NOTIFY",
       },
     });
+    return result;
   }
  /** -------------------- */
  
