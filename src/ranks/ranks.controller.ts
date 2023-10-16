@@ -36,7 +36,7 @@ import {
 } from "@nestjs/cache-manager";
 import { UserSubCheckInterceptor } from "src/common/interceptor";
 
-@UseInterceptors(UserSubCheckInterceptor)
+
 @ApiTags("ranks")
 @Controller("ranks")
 export class RanksController {
@@ -58,6 +58,7 @@ export class RanksController {
   /** -------------------- */
 
   /** 나의 랭킹 가져오기 */
+  @UseInterceptors(UserSubCheckInterceptor)
   @Get("me")
   @ApiOperation({ summary: "나의 랭킹 가져오기" })
   @ApiResponse({

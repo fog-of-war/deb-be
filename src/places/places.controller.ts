@@ -138,23 +138,23 @@ export class PlacesController {
   /** -------------------- */
 
   /** 특정 id 를 가진 장소 가져오기 */
-  @Get("/:id")
-  @ApiOperation({ summary: "특정 id 를 가진 장소 가져오기" })
-  @ApiResponse({
-    status: 200,
-    description: "",
-    type: GetPlaceById,
-  })
-  async getPlace(@Param("id", ParseIntPipe) placeId: number, @Res() res) {
-    try {
-      const result: GetPlaceById = await this.placesService.getOne(placeId);
-      return result;
-    } catch (error) {
-      res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: "Error occurred during search." });
-    }
-  }
+  // @Get("/:id")
+  // @ApiOperation({ summary: "특정 id 를 가진 장소 가져오기" })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: "",
+  //   type: GetPlaceById,
+  // })
+  // async getPlace(@Param("id", ParseIntPipe) placeId: number, @Res() res) {
+  //   try {
+  //     const result: GetPlaceById = await this.placesService.getOne(placeId);
+  //     return result;
+  //   } catch (error) {
+  //     res
+  //       .status(HttpStatus.NOT_FOUND)
+  //       .json({ message: "Error occurred during search." });
+  //   }
+  // }
   /** -------------------- */
 
   /** 특정 id 를 가진 장소의 리뷰를 가져오기 */
