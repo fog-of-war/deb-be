@@ -15,8 +15,8 @@ export class UserSubCheckInterceptor implements NestInterceptor {
     return next.handle().pipe(
       switchMap(async (data) => {
         if (user['sub'] && data.user_id) {
-          console.log("user['sub']",user['sub'])
-          console.log("data.user_id",data.user_id)
+          // console.log("user['sub']", user['sub'])
+          // console.log("data.user_id", data.user_id)
           if (data.user_id && originalUserSub !== undefined && data.user_id !== originalUserSub) {
             // user["sub"] 값이 변경되었으므로 해당 메서드를 다시 호출합니다.
             this.logger.log("UserSubCheckInterceptor : user['sub'] 가 동일하지 않습니다 " + originalUserSub +  "!==" + data.user.user_id)
