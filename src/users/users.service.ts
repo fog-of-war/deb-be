@@ -134,6 +134,7 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({
       where: { user_id: userId, user_is_deleted: false },
       select: {
+        user_id: true,
         user_badges: true,
         user_selected_badge: true,
       },
@@ -152,6 +153,7 @@ export class UsersService {
         },
       },
     });
+    console.log(user)
     return user;
   }
   /** -------------------- */
@@ -162,17 +164,22 @@ export class UsersService {
       try {
         const result = await prisma.user.findFirst({
           where: { user_id: userId },
-          select: { user_visited_places: { include: { visited_place: true } } },
+          select: { user_id: true, user_visited_places: { include: { visited_place: true } } },
         });
+
         const regions = await prisma.region.findMany({});
+
+
         const regionsWithVisitedCount = regions.map((region) => ({
           ...region,
           region_visited_count: 0,
         }));
+
+
         if (result.user_visited_places.length != 0) {
+
           result.user_visited_places.forEach((item) => {
             const regionId = item.visited_place.place_region_id;
-
             const regionToUpdate = regionsWithVisitedCount.find(
               (region) => region.region_id === regionId
             );
@@ -180,10 +187,11 @@ export class UsersService {
               regionToUpdate.region_visited_count++;
             }
           });
+
         } else {
-          return [];
+          return { user_id: result["user_id"], counts :  [] };
         }
-        return regionsWithVisitedCount;
+        return { user_id: result["user_id"], counts : regionsWithVisitedCount };
       } catch (err) {
         console.log(err);
         throw new Error('Failed to retrieve visited region count.');

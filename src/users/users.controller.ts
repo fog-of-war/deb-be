@@ -142,14 +142,12 @@ export class UsersController {
     @Res() res
   ) {
     try {
-      await this.userService.changeTitle(user["sub"], dto);
+      const result = await this.userService.changeTitle(user["sub"], dto);
       this.logger.log(`${user["user_email"]}의 대표 칭호 변경`);
-      return { message: "유저 칭호 변경에 성공했습니다" };
+      // return result;
+      return res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new InternalServerErrorException();
+      this.logger.log(error);
     }
   }
   /** -------------------- */
@@ -175,7 +173,8 @@ export class UsersController {
         `user_id : ${user["user_email"]} 구역 정보 및 횟수 조회`
       );
       // this.logger.log(JSON.stringify(result));
-      res.status(HttpStatus.OK).json(result);
+      res.status(HttpStatus.OK).json(result.counts);
+      return result;
     } catch (err) {
       return res
         .status(HttpStatus.NOT_FOUND)
