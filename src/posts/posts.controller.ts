@@ -32,7 +32,7 @@ import { LoggerService } from "src/logger/logger.service";
 import { UnauthorizedExceptionFilter } from "../filters";
 import { UserSubCheckInterceptor } from "src/common/interceptor";
 
-@UseInterceptors(UserSubCheckInterceptor)
+
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {
@@ -54,6 +54,7 @@ export class PostsController {
   }
 
   @Get("me")
+  @UseInterceptors(UserSubCheckInterceptor)
   @ApiOperation({ summary: "나의 게시물 가져오기" })
   @ApiResponse({
     status: 200,
@@ -62,9 +63,10 @@ export class PostsController {
   })
   @ApiBearerAuth("access_token")
   @UseGuards(ATGuard)
-  async getPostsByUserId(@GetCurrentUserInfo() userId: number) {
-    const result = await this.postService.getPostsByUserId(userId["sub"]);
-    this.logger.log(userId["user_email"], "가 자신의 게시물 호출");
+  async getPostsByUserId(@GetCurrentUserInfo() user: number) {
+    const result = await this.postService.getPostsByUserId(user["sub"]);
+    this.logger.log(user["user_email"], "가 자신의 게시물 호출");
+    console.log(result)
     return result;
   }
 
@@ -84,6 +86,7 @@ export class PostsController {
   @ApiOperation({
     summary: "게시물 생성하기 / 레벨, 뱃지에 변동 시 해당 결과 반환",
   })
+  @UseInterceptors(UserSubCheckInterceptor)
   @ApiBearerAuth("access_token")
   @UseGuards(ATGuard)
   @HttpCode(201)
@@ -100,13 +103,15 @@ export class PostsController {
     try {
       const result = await this.postService.createPost(userId["sub"], dto);
       this.logger.log(userId["user_email"], "가 게시물 작성");
-      res.status(HttpStatus.CREATED).json(result);
+      res.status(HttpStatus.CREATED).json(result.state);
+      return result;
     } catch (error) {
       throw error;
     }
   }
 
   @Patch(":id")
+  @UseInterceptors(UserSubCheckInterceptor)
   @ApiOperation({ summary: "게시물 수정하기 / 별점과 설명만 수정가능" })
   @ApiBearerAuth("access_token")
   @UseGuards(ATGuard)

@@ -139,6 +139,7 @@ export class PostsService {
       const message = await this.createPostActions(userId, placeId);
       const result = await this.compareUserStates(userId, userStateBefore);
       result.message = message;
+      result.user_id = userId;
       return result;
     } catch (error) {
       if (error) {
