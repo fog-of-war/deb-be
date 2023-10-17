@@ -7,26 +7,30 @@ export class PlaceStarRatingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data) => {
-
-        // A
         if (Array.isArray(data)) {
-          const result = data.map((item) => {
-            if (item.place_star_rating !== null) {
-              return { ...item, place_star_rating: parseFloat(item.place_star_rating.toFixed(1)) };
-            }
-            return item;
-          });
-          console.log("Array.isArray", result);
-          return result;
-        } 
-        else if (typeof data === 'object' && data.place_star_rating !== null) {
-          data.place_star_rating = parseFloat(data.place_star_rating.toFixed(1));
-          console.log("else if")
-          return data;
+          return this.handleArrayData(data);
+        } else if (typeof data === 'object' && data.place_star_rating !== null) {
+          return this.handleObjectData(data);
         }
-        return data;
-      }),
-      toArray() // 배열로 수집
+        return data; // 나머지 경우에는 원래 형태로 반환
+      })
     );
+  }
+
+  private handleArrayData(data: any[]) {
+    const result = data.map((item) => {
+      if (item.place_star_rating !== null) {
+        return { ...item, place_star_rating: parseFloat(item.place_star_rating.toFixed(1)) };
+      }
+      return item;
+    });
+    // console.log("handleArrayData");
+    return result;
+  }
+
+  private handleObjectData(data: any) {
+    data.place_star_rating = parseFloat(data.place_star_rating.toFixed(1));
+    // console.log("handleObjectData");
+    return data;
   }
 }
