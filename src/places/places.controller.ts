@@ -69,16 +69,12 @@ export class PlacesController {
   @ApiResponse({ status: 404, description: "해당 장소 검색 실패" })
   async jhPlaceSearch(
     @Query("query") query: string,
-    @Res() res
   ): Promise<void> {
     try {
       const searchResult = await this.placesService.findSimplePlacesInfo(query);
       return searchResult;
       // res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
-      res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: "Error occurred during search." });
     }
   }
   /** -------------------- */
