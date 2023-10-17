@@ -96,7 +96,6 @@ export class PlacesController {
     @Query("query") query: string,
     @Query("x") xCoordinate: number,
     @Query("y") yCoordinate: number,
-    @Res() res
   ): Promise<any> {
     try {
       this.logger.log(
@@ -112,9 +111,6 @@ export class PlacesController {
       return searchResult;
       // res.status(HttpStatus.OK).json(searchResult);
     } catch (error) {
-      res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: "Error occurred during search." });
     }
   }
   /** -------------------- */
