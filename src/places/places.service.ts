@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosResponse } from "axios";
 import { PrismaService } from "../prisma/prisma.service";
@@ -307,7 +307,7 @@ export class PlacesService {
 
       return createdPlace;
     } catch (error) {
-      throw new Error(`createPlace: 장소 생성 실패 - ${error.message}`);
+      throw new HttpException(`createPlace: 장소 생성 실패 - ${error.message}`, HttpStatus.BAD_REQUEST);
     }
   }
   /** -------------------- */
@@ -334,6 +334,11 @@ export class PlacesService {
         place_region: true,
       },
     });
+    if (!result) {
+      // 해당 장소를 찾을 수 없는 경우 404 에러 처리
+      throw new HttpException('해당 장소를 찾을 수 없습니다', HttpStatus.NOT_FOUND);
+    }
+
     return result;
   }
   /** -------------------- */
@@ -357,8 +362,8 @@ export class PlacesService {
     });
 
     if (!place) {
-      // 장소를 찾을 수 없는 경우 404 에러 처리
-      throw new Error("해당 장소를 찾을 수 없습니다");
+      // 해당 장소를 찾을 수 없는 경우 404 에러 처리
+      throw new HttpException('해당 장소를 찾을 수 없습니다', HttpStatus.NOT_FOUND);
     }
 
     const posts = await this.prisma.post.findMany({
