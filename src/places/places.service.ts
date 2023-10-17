@@ -351,10 +351,16 @@ export class PlacesService {
 
   /** 특정 id 를 가진 장소의 리뷰를 가져오기 */
   async getPlacePosts(placeId: number) {
-    const place = await this.prisma.place.findFirst({
+      const place = await this.prisma.place.findFirst({
       where: { place_id: placeId },
       select: { place_id: true, place_name: true, place_star_rating: true },
     });
+
+    if (!place) {
+      // 장소를 찾을 수 없는 경우 404 에러 처리
+      throw new Error("해당 장소를 찾을 수 없습니다");
+    }
+
     const posts = await this.prisma.post.findMany({
       where: { post_place_id: placeId, post_is_deleted: false },
       select: {
