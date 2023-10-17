@@ -1,6 +1,8 @@
 # 전장의 안개
 
-docker-compose.yml 로 postgresql 과 redis 컨테이너 실행가능합니다.
+## 서비스 아키텍처
+
+![개발 아키텍처](https://github.com/fog-of-war/dev-be/assets/68121478/02549a3d-03a4-4fe3-bd19-933f4ffde006)
 
 ## 실행방법
 
