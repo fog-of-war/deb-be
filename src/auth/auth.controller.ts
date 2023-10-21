@@ -157,18 +157,23 @@ export class AuthController {
   })
   @ApiBearerAuth("access_token")
   @ApiCreatedResponse({
-    status: 201,
+    status: 200,
     description: "success",
     type: TokensResponse,
   })
   @HttpCode(HttpStatus.OK)
-  async logout(@GetCurrentUserInfo() user): Promise<boolean> {
+  async logout(@GetCurrentUserInfo() user): Promise<HttpStatus> {
+    // 반환 타입 변경
     try {
       const result = await this.authService.logout(user["sub"]);
       this.logger.log(
         `user_id : ${user["user_email"]}님이 로그아웃 하셨습니다.`
       );
-      return result;
+      if (result.count === 1) {
+        return HttpStatus.OK;
+      } else {
+        throw new Error("로그아웃 실패");
+      }
     } catch (error) {
       this.logger.error("Logout error:", error);
       throw new ForbiddenException("Logout failed");
