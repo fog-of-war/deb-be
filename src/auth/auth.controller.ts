@@ -38,7 +38,6 @@ import { LoggerService } from "src/logger/logger.service";
 // import { Throttle } from "@nestjs/throttler";
 import { UserSubCheckInterceptor } from "src/common/interceptor";
 
-
 export class AuthRes {
   @ApiProperty()
   access_token: string;
@@ -226,19 +225,18 @@ export class AuthController {
   })
   @UseGuards(ATGuard)
   @Delete("leave")
-  async revokeAccount(
-    @GetCurrentUserInfo() user,
-    @Res() res
-  ): Promise<any> {
+  async revokeAccount(@GetCurrentUserInfo() user): Promise<any> {
     try {
       const result = await this.authService.revokeAccount(user.sub);
       this.logger.log(`user_id : ${user["user_email"]} 회원탈퇴`);
-      res.status(HttpStatus.NO_CONTENT);
+      return HttpStatus.NO_CONTENT;
+      // res.status(HttpStatus.NO_CONTENT);
     } catch (error) {
       this.logger.error("Controller revokeAccount", error);
-      return res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: "유저정보를 찾을 수 없습니다" });
+      return { message: "유저정보를 찾을 수 없습니다" };
+      // return res
+      //   .status(HttpStatus.NOT_FOUND)
+      //   .json({ message: "유저정보를 찾을 수 없습니다" });
     }
   }
   /** -------------------- */
