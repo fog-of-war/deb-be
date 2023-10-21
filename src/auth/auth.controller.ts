@@ -177,7 +177,7 @@ export class AuthController {
   /** -------------------- */
 
   /** 토큰 리프레시 */
-  // @Throttle({ default: { limit: 1, ttl: 1 } })
+  @Throttle({ default: { limit: 100, ttl: 60 } })
   @UseGuards(RtGuard)
   @ApiOperation({
     summary: "리프레시 토큰 사용 및 교체: refresh_token 필요",
