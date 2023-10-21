@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Post,
   Req,
   Res,
@@ -233,7 +234,7 @@ export class AuthController {
       // res.status(HttpStatus.NO_CONTENT);
     } catch (error) {
       this.logger.error("Controller revokeAccount", error);
-      return { message: "유저정보를 찾을 수 없습니다" };
+      throw new NotFoundException("유저정보를 찾을 수 없습니다");
       // return res
       //   .status(HttpStatus.NOT_FOUND)
       //   .json({ message: "유저정보를 찾을 수 없습니다" });
