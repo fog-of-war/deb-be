@@ -34,8 +34,8 @@ import { Tokens } from "./types";
 import { GetCurrentUser, GetCurrentUserInfo } from "./decorator";
 import { TokensResponse } from "./response";
 import { LoggerService } from "src/logger/logger.service";
-import { ThrottlerBehindProxyGuard } from '../common';
-import { Throttle } from "@nestjs/throttler";
+// import { ThrottlerBehindProxyGuard } from '../common';
+// import { Throttle } from "@nestjs/throttler";
 import { UserSubCheckInterceptor } from "src/common/interceptor";
 
 
@@ -45,7 +45,7 @@ export class AuthRes {
 }
 
 @UseInterceptors(UserSubCheckInterceptor)
-@UseGuards(ThrottlerBehindProxyGuard)
+// @UseGuards(ThrottlerBehindProxyGuard)
 @ApiTags("auth")
 @Controller("auth")
 export class AuthController {
@@ -177,7 +177,7 @@ export class AuthController {
   /** -------------------- */
 
   /** 토큰 리프레시 */
-  @Throttle({ default: { limit: 100, ttl: 60 } })
+  // @Throttle({ default: { limit: 100, ttl: 60 } })
   @UseGuards(RtGuard)
   @ApiOperation({
     summary: "리프레시 토큰 사용 및 교체: refresh_token 필요",

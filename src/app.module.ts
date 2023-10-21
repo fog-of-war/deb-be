@@ -102,10 +102,10 @@ import { ThrottlerStorageRedisService } from "nestjs-throttler-storage-redis";
       scope: Scope.REQUEST,
       useClass: UnauthorizedExceptionFilter,
     },
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard
+    // },
     // {
     //   provide: APP_INTERCEPTOR,
     //   useClass: CacheInterceptor,
