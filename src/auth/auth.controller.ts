@@ -44,7 +44,7 @@ export class AuthRes {
   access_token: string;
 }
 
-@UseInterceptors(UserSubCheckInterceptor)
+// @UseInterceptors(UserSubCheckInterceptor)
 // @UseGuards(ThrottlerBehindProxyGuard)
 @ApiTags("auth")
 @Controller("auth")

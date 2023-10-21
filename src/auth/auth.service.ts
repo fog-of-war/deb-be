@@ -95,7 +95,7 @@ export class AuthService {
   /** 로그아웃 */
   async logout(userId: number): Promise<any> {
     try {
-      await this.prisma.user.updateMany({
+      const result = await this.prisma.user.updateMany({
         where: {
           user_id: userId["sub"],
           user_refresh_token: {
@@ -106,6 +106,7 @@ export class AuthService {
           user_refresh_token: null,
         },
       });
+      return result;
     } catch (error) {
       this.logger.error("Logout error:", error);
       throw new ForbiddenException("Logout failed");
