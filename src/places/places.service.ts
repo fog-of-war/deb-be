@@ -24,6 +24,12 @@ export class PlacesService {
   */
   async findPlacesInfoFromKakao(x: any, y: any, query: string): Promise<any> {
     const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;
+
+    let sortOption = "accuracy"; 
+    if (query.includes("미식") || query.includes("커피") || query.includes("맛집")) {
+      sortOption = "distance"; 
+    }
+
     const options = {
       headers: {
         Authorization: "KakaoAK " + this.clientID,
@@ -31,9 +37,9 @@ export class PlacesService {
       params: {
         x: x, //longitude
         y: y, //latitude
-        radius: 10000,
+        // radius: 10000,
         query: query.includes("미식") ? "맛집" : query, 
-        sort: "distance"
+        sort: sortOption
       },
     };
     try {
