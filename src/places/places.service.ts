@@ -18,7 +18,10 @@ export class PlacesService {
     this.clientID = this.config.get("KAKAO_CLIENT_ID");
   }
 
-  /** 카카오 API 로 장소 가져오기 */
+  /** 카카오 API 로 장소 가져오기 
+   * 
+   *  https://developers.kakao.com/docs/latest/ko/local/dev-guide#search-by-keyword
+  */
   async findPlacesInfoFromKakao(x: any, y: any, query: string): Promise<any> {
     const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;
     const options = {
@@ -30,6 +33,7 @@ export class PlacesService {
         y: y, //latitude
         radius: 20000,
         query: query.includes("미식") ? "맛집" : query, 
+        sort: "distance"
       },
     };
     try {
@@ -53,7 +57,10 @@ export class PlacesService {
   }
   /** -------------------- */
 
-  /** 간단한 쿼리로 장소 검색하기 */
+  /** 간단한 쿼리로 장소 검색하기 
+   * 
+   * https://developers.kakao.com/docs/latest/ko/local/dev-guide#search-by-keyword
+  */
   async findSimplePlacesInfo(query: string): Promise<any> {
     const api_url = `https://dapi.kakao.com/v2/local/search/keyword`;
     const options = {
@@ -63,6 +70,7 @@ export class PlacesService {
       params: {
         radius: 20000,
         query: query.includes("미식") ? "맛집" : query,
+        sort: "distance"
       },
     };
     try {
