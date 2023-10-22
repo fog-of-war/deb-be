@@ -31,7 +31,7 @@ export class PlacesService {
       params: {
         x: x, //longitude
         y: y, //latitude
-        radius: 20000,
+        radius: 10000,
         query: query.includes("미식") ? "맛집" : query, 
         sort: "distance"
       },
