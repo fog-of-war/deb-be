@@ -40,7 +40,7 @@
     "place_longitude": 37.45978574975834
   },
   {
-    "place_name": "어린이대공원",
+    "place_name": "서울어린이대공원 놀이동산",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
     "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/6어린이대공원.png",
@@ -88,7 +88,7 @@
     "place_longitude": 37.5908403884541
   },
   {
-    "place_name": "노량진 수산시장",
+    "place_name": "노량진수산물도매시장",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
     "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/12노량진수상시장.jpeg",
@@ -115,7 +115,7 @@
     "place_name": "예술의전당",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
-    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/14독립문.jpeg",
+    "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/%E1%84%85%E1%85%A2%E1%86%AB%E1%84%83%E1%85%B3%E1%84%86%E1%85%A1%E1%84%8F%E1%85%B3/15%E1%84%8B%E1%85%A8%E1%84%89%E1%85%AE%E1%86%AF%E1%84%8B%E1%85%B4%E1%84%8C%E1%85%A5%E1%86%AB%E1%84%83%E1%85%A1%E1%86%BC.webp",
     "place_latitude": 127.0117919806623,
     "place_longitude": 37.47922106107729
   },
@@ -144,7 +144,7 @@
     "place_longitude": 37.51260447840551
   },
   {
-    "place_name": "목동아이스링크",
+    "place_name": "목동종합운동장 목동아이스링크",
     "post_star_rating": 5.0,
     "post_description": "랜드마크",
     "post_image_url": "https://fog-of-war.s3.ap-northeast-2.amazonaws.com/랜드마크/19목동아이스링크.jpeg",
