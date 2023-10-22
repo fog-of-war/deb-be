@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Post,
   Req,
   Res,
@@ -37,7 +38,6 @@ import { LoggerService } from "src/logger/logger.service";
 // import { ThrottlerBehindProxyGuard } from '../common';
 // import { Throttle } from "@nestjs/throttler";
 import { UserSubCheckInterceptor } from "src/common/interceptor";
-
 
 export class AuthRes {
   @ApiProperty()
@@ -157,18 +157,23 @@ export class AuthController {
   })
   @ApiBearerAuth("access_token")
   @ApiCreatedResponse({
-    status: 201,
+    status: 200,
     description: "success",
     type: TokensResponse,
   })
   @HttpCode(HttpStatus.OK)
-  async logout(@GetCurrentUserInfo() user): Promise<boolean> {
+  async logout(@GetCurrentUserInfo() user): Promise<HttpStatus> {
+    // 반환 타입 변경
     try {
       const result = await this.authService.logout(user["sub"]);
       this.logger.log(
         `user_id : ${user["user_email"]}님이 로그아웃 하셨습니다.`
       );
-      return result;
+      if (result.count === 1) {
+        return HttpStatus.OK;
+      } else {
+        throw new Error("로그아웃 실패");
+      }
     } catch (error) {
       this.logger.error("Logout error:", error);
       throw new ForbiddenException("Logout failed");
@@ -226,19 +231,18 @@ export class AuthController {
   })
   @UseGuards(ATGuard)
   @Delete("leave")
-  async revokeAccount(
-    @GetCurrentUserInfo() user,
-    @Res() res
-  ): Promise<any> {
+  async revokeAccount(@GetCurrentUserInfo() user): Promise<any> {
     try {
       const result = await this.authService.revokeAccount(user.sub);
       this.logger.log(`user_id : ${user["user_email"]} 회원탈퇴`);
-      res.status(HttpStatus.NO_CONTENT);
+      return HttpStatus.NO_CONTENT;
+      // res.status(HttpStatus.NO_CONTENT);
     } catch (error) {
       this.logger.error("Controller revokeAccount", error);
-      return res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: "유저정보를 찾을 수 없습니다" });
+      throw new NotFoundException("유저정보를 찾을 수 없습니다");
+      // return res
+      //   .status(HttpStatus.NOT_FOUND)
+      //   .json({ message: "유저정보를 찾을 수 없습니다" });
     }
   }
   /** -------------------- */

@@ -190,8 +190,8 @@ export class AuthService {
         user_email: "deleted",
         user_nickname: "탈퇴한사용자",
         user_refresh_token: null,
-        user_delete_at: new Date()
-      }
+        user_delete_at: new Date(),
+      },
     });
   }
   /** -------------------- */
