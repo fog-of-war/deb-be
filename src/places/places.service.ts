@@ -29,7 +29,7 @@ export class PlacesService {
         x: x, //longitude
         y: y, //latitude
         radius: 20000,
-        query: query,
+        query: query.includes("미식") ? "맛집" : query, 
       },
     };
     try {
@@ -62,7 +62,7 @@ export class PlacesService {
       },
       params: {
         radius: 20000,
-        query: query,
+        query: query.includes("미식") ? "맛집" : query,
       },
     };
     try {
