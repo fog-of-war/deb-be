@@ -57,7 +57,7 @@
   {
     "place_created_at": "2023-08-21T11:31:27.070Z",
     "place_updated_at": "2023-08-21T11:31:27.070Z",
-    "place_name": "어린이대공원",
+    "place_name": "서울어린이대공원 놀이동산",
     "place_star_rating": null,
     "place_points": null,
     "place_address": "서울 광진구 능동로 216",
@@ -123,7 +123,7 @@
   {
     "place_created_at": "2023-08-21T11:31:27.611Z",
     "place_updated_at": "2023-08-21T11:31:27.611Z",
-    "place_name": "노량진 수산시장",
+    "place_name": "노량진수산물도매시장",
     "place_star_rating": null,
     "place_points": null,
     "place_address": "서울 동작구 노들로 674",
@@ -200,7 +200,7 @@
   {
     "place_created_at": "2023-08-21T11:31:28.216Z",
     "place_updated_at": "2023-08-21T11:31:28.216Z",
-    "place_name": "목동아이스링크",
+    "place_name": "목동종합운동장 목동아이스링크",
     "place_star_rating": null,
     "place_points": null,
     "place_address": "서울 양천구 안양천로 939",
