@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsOptional, IsString, IsUrl, Length } from "class-validator";
+import { IsEmail, IsNumber, IsOptional, IsString, IsUrl, Length } from "class-validator";
 
 export class EditUserDto {
   @IsString()
@@ -12,4 +12,10 @@ export class EditUserDto {
   @IsOptional()
   @ApiProperty()
   user_image_url?: string;
+
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  user_selected_badge_id?: number;
 }

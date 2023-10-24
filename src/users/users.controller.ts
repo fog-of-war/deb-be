@@ -68,12 +68,12 @@ export class UsersController {
   }
   /** -------------------- */
 
-  /** "나의 정보 수정하기 / 프로필이미지, 닉네임, 변경 가능 */
+  /** "나의 정보 수정하기 / 프로필이미지, 닉네임, 대표칭호 변경 가능 */
   @Patch("me")
   @UseGuards(ATGuard)
   @ApiOperation({
     summary:
-      "나의 정보 수정하기 / 프로필이미지, 닉네임, 변경 가능",
+      "나의 정보 수정하기 / 프로필이미지, 닉네임, 대표칭호 변경 가능",
   })
   @ApiBearerAuth("access_token")
   @HttpCode(201)
@@ -95,6 +95,7 @@ export class UsersController {
       throw new UnprocessableEntityException(errorResponse);
     }
     try {
+      console.log(dto);
       await this.userService.editUser(user["sub"], dto);
       this.logger.log(`${user["user_email"]}의 회원 정보 변경`);
       return { message: "유저 정보 변경에 성공했습니다" };

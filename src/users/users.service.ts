@@ -27,6 +27,7 @@ export class UsersService {
 
   /** 유저 정보 수정 */
   async editUser(userId: number, dto: EditUserDto) {
+    console.log("editUser",dto);
     const user = await this.prisma.user.update({
       where: { user_id: userId, user_is_deleted: false },
       data: { ...dto },
@@ -36,8 +37,10 @@ export class UsersService {
         user_points: true,
         user_level: true,
         user_is_admin: true,
+        user_selected_badge:true
       },
     });
+    console.log('user', user)
     return user;
   }
 

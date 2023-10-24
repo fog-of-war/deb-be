@@ -66,7 +66,6 @@ export class PostsController {
   async getPostsByUserId(@GetCurrentUserInfo() user: number) {
     const result = await this.postService.getPostsByUserId(user["sub"]);
     this.logger.log(user["user_email"], "가 자신의 게시물 호출");
-    console.log(result)
     return result;
   }
 
