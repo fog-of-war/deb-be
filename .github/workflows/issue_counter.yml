@@ -30,5 +30,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ISSUE_GITHUB_TOKEN}}
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID}}
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN}}
+          
