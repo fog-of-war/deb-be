@@ -61,6 +61,51 @@ export class PlacesService {
       );
     }
   }
+
+
+   /** 카카오 API 로 장소 가져오기 
+   * 
+   *  https://developers.kakao.com/docs/latest/ko/local/dev-guide#search-by-keyword
+  */
+   async findPlacesWithXY(x: any, y: any): Promise<any> {
+    const api_url = "https://dapi.kakao.com/v2/local/search/category";
+  
+    const categoryCodes = ['CT1', 'AT4', 'FD6', 'CE7']; // Array of category codes
+  
+    try {
+      const results = []; // Array to store results for each category code
+  
+      for (const categoryCode of categoryCodes) {
+        const options = {
+          headers: {
+            Authorization: "KakaoAK " + this.clientID,
+          },
+          params: {
+            x: x, // longitude
+            y: y, // latitude
+            category_group_code: categoryCode,
+          },
+        };
+  
+        const response: AxiosResponse<any> = await axios.get(api_url, options);
+        const filteredResults = response.data.documents.filter((document: any) => {
+          return true;
+        });
+  
+        const result = await this.areTheyExistInDB(filteredResults);
+        await this.processItems(result);
+        results.push(...result); // Store the results for this category code
+      }
+      const sortedResults = results.sort((a, b) => a.distance - b.distance);
+      const closest15Results = sortedResults.slice(0, 15);
+      return closest15Results; 
+    } catch (error) {
+      throw new Error(
+        `findPlacesInfoFromKakao: 카카오에서 해당 장소 검색 실패`
+      );
+    }
+  }
+  
   /** -------------------- */
 
   /** 간단한 쿼리로 장소 검색하기 

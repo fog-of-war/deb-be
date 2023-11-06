@@ -177,4 +177,36 @@ export class PlacesController {
     }
   }
   /** -------------------- */
+
+   /** 장소 검색하기
+   *
+   *  예시 : http://localhost:5000/v1/places/search?x=126.975278&y=37.559722&query=숭례문
+   */
+   @ApiOperation({
+    summary: "장소검색하기/ x,y 필요",
+  })
+  @ApiResponse({
+    status: 200,
+    type: SearchResponse,
+  })
+  @ApiResponse({ status: 404, description: "해당 장소 검색 실패" })
+  @Get("/current-xy")
+  async findPlacesWithXY(
+    @Query("x") xCoordinate: number,
+    @Query("y") yCoordinate: number,
+  ): Promise<any> {
+    try {
+      this.logger.log(
+        `🔍 위도(latitude) : ${yCoordinate}, 경도(longitude) : ${xCoordinate}`
+      );
+      const searchResult: SearchResponse[] =
+        await this.placesService.findPlacesWithXY(
+          xCoordinate,
+          yCoordinate
+        );
+
+      return searchResult;
+    } catch (error) {
+    }
+  }
 }

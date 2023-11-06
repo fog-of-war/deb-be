@@ -232,7 +232,7 @@ async function fetchData(placeObj) {
     headers: {
       "Content-Type": "application/json",
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJfZW1haWwiOiJ5c2hpbmI5OEBuYXZlci5jb20iLCJpYXQiOjE2OTgxMDc0MDksImV4cCI6MTY5ODExMTAwOX0.6XJ5fAZbfwo0pEPssdY8mcD3NN40c_fFTYA0ttZxPn0",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJfZW1haWwiOiJzaGluLnl1YmluMThAZ21haWwuY29tIiwiaWF0IjoxNjk5MTYxOTc4LCJleHAiOjE2OTkxNjU1Nzh9.vQ9oxAWv5qlftFYkJfCSM7zEUCEAMzbwbTwip_AJCBs",
     },
     body: body,
   };
