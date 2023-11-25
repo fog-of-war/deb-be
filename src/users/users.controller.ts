@@ -125,6 +125,20 @@ export class UsersController {
   }
   /** -------------------- */
 
+  /** 나의 이메일 가져오기 */
+  @Get("me/email")
+  @ApiOperation({ summary: "나의 이메일 조회" })
+  @ApiBearerAuth("access_token")
+  @ApiResponse({
+    status: 200,
+    description: "나의 이메일 조회"
+  })
+  async getMyEmail(@GetCurrentUserInfo() user) {
+    this.logger.log(`${user["user_email"]} 이메일 조회 호출`);
+    return {user_email : user["user_email"]};
+  }
+  /** -------------------- */
+
   /** 나의 칭호 변경하기 */
   @Patch("me/title")
   @ApiOperation({
