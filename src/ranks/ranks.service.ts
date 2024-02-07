@@ -50,6 +50,9 @@ export class RanksService {
               where: {
                 user_id: userRank["user_id"],
                 user_is_deleted: false,
+                user_nickname: {
+                  not: null,
+                },
               },
               select: {
                 user_id: true,
